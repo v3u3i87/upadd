@@ -1,6 +1,19 @@
 {
+  "name": "v3u3i87/upadd",
+  "keywords": ["upadd", "php upadd mvc framework", "php upadd"],
+   "description": "Upadd is a small PHP MVC framework, and realize more light more driving model operation",
+   "license": "MIT",
+   "authors": [
+			    {
+			        "name":         "Richard.zhang",
+			        "email":        "v3u3i87@gmail.com",
+			        "homepage":     "http://www.zmq.cc"
+			    }
+	],
+
   "require": {
-    "filp/whoops": "*"
+    "filp/whoops": "*",
+    "Upadd": "*"
   },
 
    "autoload": {

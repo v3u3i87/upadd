@@ -2,8 +2,7 @@
 
 namespace Upadd\Frame;
 
-use Upadd\Bin\View\Templates;
-/**
+ /**
 	+----------------------------------------------------------------------
 	| UPADD [ Can be better to Up add]
 	+----------------------------------------------------------------------
@@ -13,16 +12,12 @@ use Upadd\Bin\View\Templates;
 	+----------------------------------------------------------------------
 	| Author: Richard.z <v3u3i87@gmail.com>
  **/
+use Upadd\Bin\View\Templates;
+
 
 // 控制器
 class Action {
-	
-	/**
-	 * html
-	 * @var unknown
-	 */
-	public $_html = null;
-	
+
 	/**
 	 * 获取参数
 	 * @var unknown
@@ -31,17 +26,28 @@ class Action {
 
     public $_model = null;
 
-	public function __construct() 
-	{
-        $this->Run();
-	}
+    public $_view = null;
 
+    public $_rbac = null;
 
-    protected function Run(){
-        if($this->_html===null){
-            $this->_html = Templates\Templates::getHtml();
+	public function __construct(){
+        if($this->_view === null){
+            $this->_view = new Templates();
         }
     }
+
+    /**
+     * 设置模板控制器
+     * @param $name
+     */
+    public function setViewAction($name){
+        $lode = lode('\\',$name);
+        if(isset($lode[2])){
+            $name = $lode[2];
+        }
+        $this->_view->setPath(strtolower ($name));
+    }
+
 
 
 

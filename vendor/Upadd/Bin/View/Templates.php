@@ -1,6 +1,5 @@
 <?php
-
-namespace Upadd\Bin\View\Templates;
+namespace Upadd\Bin\View;
 /**
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
@@ -87,20 +86,18 @@ class Templates {
 	 */
 	public $_actionName = null;
 
-	private static $_instance = null;
-	
-	// 公共静态方法获取实例化的对象
-	static public function getHtml() {
-		if (! (self::$_instance instanceof self)) {
-			self::$_instance = new self ();
-		}
-		return self::$_instance;
-	}
-	
-	// 私有克隆
-	final private function __clone() {}
+    /**
+     * 设置目录
+     * @var null
+     */
+    public $_dir = null;
 
-	public function __construct() {}
+    /**
+     * 设置段落
+     * @var array
+     */
+    public $_section = array();
+
 
 	/**
 	 * 设置模板路径
@@ -109,12 +106,25 @@ class Templates {
 	 */
 	public function setPath($path = null) {
 		if (! empty ( $path )) {
-			$this->_path = HTML_PAHT . $path . '/';
+			$this->_path =  $path . '/';
 		} else {
 			exit ( "找不到模板路径" );
 		}
 	}
-	
+
+    /**
+     * 设置目录
+     * @param $dirPath
+     */
+    public function setDir($dirPath){
+        if (! empty ( $dirPath )) {
+            $this->_dir = UPADD_HOST . $dirPath . '/';
+        } else {
+            exit ( "找不到模板路径" );
+        }
+    }
+
+
 	/**
 	 * 模板变量
 	 * @param string $key        	
@@ -133,19 +143,15 @@ class Templates {
 	 *
 	 * @param string $_File        	
 	 */
-	public function view($file = '', $cache = 0) {
+	public function path($file = '', $cache = 0) {
 		if ($cache) {
 			HTML_IS_CACHE ? ob_start () : null;
 		}
 		
 		extract ( $this->_keyArr );
-		
-		// 判断目录是否存在，如果不存在就根据访问路径创建
-		if (! isset ( $this->_path ) && ! is_dir ( $this->_path )) {
-			$this->_htmlFile = HTML_PAHT . $this->_actionName . '/' . $file;
-		} else {
-			$this->_htmlFile = $this->_path . $file;
-		}
+
+        //获取文件路径
+        $this->_htmlFile = $this->_dir . $this->_path . $file;
 
 		// 判断编译目录
 		self::checkPath ( HTML_COMPILED_DIR );
@@ -166,25 +172,30 @@ class Templates {
 		if (! $this->_fileVar = file_get_contents ( $this->_htmlFile )) {
 			exit ( '模板文件读取错误!' );
 		}
-		
+
+
 		// 判断编译文件是否更新
 		if (! file_exists ( $this->_compiled ) || filemtime ( $this->_compiled ) < filemtime ( $this->_htmlFile )) {
-			$this->setComilled ();
+			$this->getComilled ();
 		}
+
+
 		// 引入编译文件
 		include $this->_compiled;
 		// 模板缓存
-		$this->setCache ();
+		$this->getCache ();
 	}
 	
 	/**
 	 * 模板编译
 	 */
-	public function setComilled() {
+	protected function getComilled() {
 		if (HTML_TAG) {
-            $this->pregstyle();
+            //$this->pregstyle();
 			$this->pregVal ();
+            $this->load();
 		}
+
 
 		if (! file_put_contents ( $this->_compiled, $this->_fileVar )) {
 			exit ( '编译后的文件产生的错误!' );
@@ -194,7 +205,7 @@ class Templates {
 	/**
 	 * 模板缓存
 	 */
-	private function setCache() {
+    protected function getCache() {
 		if (! file_exists ( $this->_cache ) || filemtime ( $this->_cache ) < filemtime ( $this->_compiled )) {
 			if (HTML_IS_CACHE) {
 				file_put_contents ( $this->_cache, ob_get_contents () );
@@ -225,7 +236,7 @@ class Templates {
 				'/<\!--\s+if\s+\$([\w]+)\s+\-->/',
 				'/<\!--\s+\/if\s+\-->/',
 				'/<\!--\s+else\s+\-->/',
-				'/<\!--\s+loop\s+\$([\w]+)\(([\w]+),([\w]+)\)\s+\-->/',
+				'/\@loop\$([\w]+)\(([\w]+),([\w]+)\)/',
 				'/<\!--\s+\@([\w]+\[\'[\w]+\'\])\s+\-->/',
 				'/<\!--\s+\/loop\s+\-->/',
 				'/<\!--\s+\#(.*)\s+\-->/',
@@ -261,27 +272,41 @@ class Templates {
 		}
 	}
 
+    public function load()
+    {
+        $preg = array();
+        $val = array();
+        $key = 'load';
+        if($preg[] = "/\@{$key}\(\'(.*?)\'\)/i")
+        {
+            $val[] = '<?php include UPADD_HOST."$1"; ?>';
+        }
+
+        $this->_fileVar = preg_replace ( $preg, $val, $this->_fileVar );
+    }
 
     /**
      * 前端资源
      */
     public function pregStyle(){
+
         $preg = array();
         $val = array();
-        $key = array('js','css');
+        $key = array('public_js','css','plug_js','plug_css');
         foreach ($key as $k=>$v){
             $preg[] = "/\@{$v}\(\'(.*?)\'\)/i";
             switch ($v){
                 case 'css':
-                    $val[] = '<link rel="stylesheet" type="text/css" href="$1">';
-
+                    $public_css = conf('conf@site').'/resou/css/'."$1";
+                    $val[] = '<link rel="stylesheet" href='.$public_css.'>';
                     break;
 
-                case 'js':
+                case 'public_js':
                     $val[] = '<script type="text/javascript" href="$1"></script>';
                     break;
             }
         }
+
         $this->_fileVar = preg_replace ( $preg, $val, $this->_fileVar );
     }
 

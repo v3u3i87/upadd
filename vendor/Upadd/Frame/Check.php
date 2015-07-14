@@ -31,21 +31,6 @@ class Check extends Verify {
 
 
 
-    /**
-     * 定义JSON输出格式
-     * @param int $code
-     * @param string $msg
-     * @param array $data
-     */
-    public function msg($code=204,$msg='hi,您正在非法请求',$data=array()){
-        echo json(array(
-            'status'=>$code,
-            'message'=>$msg,
-            'data'=>$data
-        ));
-        exit;
-    }
-
 
 
 

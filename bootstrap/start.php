@@ -12,6 +12,12 @@ return array(
         'dev'=>array('renrentest')
     ),
 
+    //命名空间辐射关系
+    'autoload'=>array(
+        //控制器
+        "Up\\Action\\"=>'works/action/',
+
+    ),
 
 
 

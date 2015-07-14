@@ -8,15 +8,7 @@
 
 use Upadd\Bin\Route;
 
-Route::get('/', 'Job@index');
+Route::get('/', 'Up\Action\Index@home');
 
-Route::get('/test', 'Job@test');
-
-
-
-
-Route::get('(:all)', function($fu) {
-    echo '未匹配到路由<br>'.$fu;
-});
 
 Route::dispatch();

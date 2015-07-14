@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title><?php echo $name;?></title>
+	<meta http-equiv="refresh" content="3;url=<?php echo $url;?>" />	
+</head>
+
+<body>
+	<div>
+		<h2>注意提示</h2>
+		<?php
+			if(isset($info) && is_array($info)){
+				foreach ($info as $key => $v) {
+					$num = $key+1;
+					echo "<p>[{$num}].{$v}</p>";
+				}
+			}else{
+				echo "<p>{$info}</p>";
+			}
+		?>
+	</div>
+
+</body>
+</html>

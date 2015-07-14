@@ -40,13 +40,13 @@ if ( ! function_exists('p'))
      * @param string $type
      *        	true as 1 为不断点执行
      */
-    function p($data, $type = '') {
+    function p($data, $type = null) {
         echo '<pre>';
         print_r ( $data );
         echo '</pre>';
-        if (! $type)
-            exit ();
+        !$type ? exit () : null;
     }
+
 }
 
 if(! function_exists('vd')) {
@@ -62,9 +62,9 @@ if(! function_exists('vd')) {
         echo '<pre>';
         var_dump($data);
         echo '</pre>';
-        if (!$type)
-            exit ();
+        !$type ? exit () : null;
     }
+
 }
 
 if (! function_exists('is_exit')) {
@@ -108,7 +108,7 @@ if(! function_exists('jump')) {
      *
      * @param string $url
      */
-    function Jump($url)
+    function jump($url)
     {
         if (isset ($url)) {
             header('Location:' . $url);
@@ -188,6 +188,7 @@ if(!function_exists('conf')) {
         if (count($name) < 2) {
                 is_exit(lang('is_conf_no'));
         }
+
         $file = null;
         if ($name[0] == 'start') {
             $file = UPADD_HOST . 'bootstrap/' . $name [0] . IS_EXP;
@@ -212,7 +213,7 @@ if(!function_exists('conf')) {
 if(!function_exists('load_conf')){
 
     /**
-     * 
+     * 加载配置文件
      * @return Ambigous <NULL, unknown>|boolean
      */
     function load_conf(){
@@ -265,6 +266,7 @@ if(!function_exists('json')){
     function json($data=null,$DataType=1){
         if($data){
             if(is_array($data)){
+                header('Content-type:application/json');
                 return json_encode($data);
             }else{
                 return json_decode($data,$DataType);
@@ -325,57 +327,17 @@ if(!function_exists('array_sort_field')) {
 }
 
 
-if(!function_exists('isRunMachineName')) {
-
-    /**
-     * 判断运行环境机器名称是否合格
-     * @return bool as name value
-     */
-    function isRunMachineName()
-    {
-        
-        $env = conf('start@environment');
-        //merge in config array
-        $oneEnv = array_merge_one($env);
-        $osName = getMachineName();
-        if(in_array($osName,$oneEnv)){
-            // 总目录
-            is_dirName(CONF_DIR);
-            foreach ($env as $k => $v) {
-                // 不是数字类型执行
-                if (!is_numeric($k)) {
-                    // 创建配置目录
-                    if (!is_dir(CONF_DIR . $k)) {
-                        if ($k) {
-                            is_dirName(CONF_DIR . $k);
-                        }
-                    }
-                }else{
-                    return true;
-                }
-               //end for
-            }
-            return true;
-        }else{
-            is_exit(lang('run_is_name').'isRunMachineName()->is_numeric');
-        }
-        
-    }
-    
-}
-
-
 if(!function_exists('m')){
     
     /**
-     * 获取模型对象
+     * 获取表模型对象
      * @param unknown $table
      * @return Model
      */
     function m($table){
         if($table){
             $model = new \Upadd\Frame\Model();
-            $model->setTable($table);
+            $model->setTableName($table);
             return $model;
         }    
     }
@@ -404,54 +366,75 @@ if(!function_exists('getMachineName')){
 }
 
 if(!function_exists('msg')){
+
     /**
-     * 定义JSON输出格式
+     * 对外接口数据msg
      * @param int $code
-     * @param string $msg
+     * @param string $message
      * @param array $data
+     * @param string $type or json
      */
-    function msg($code=204,$msg='非法访问',$data=array()){
-        echo json(array(
-            'status'=>$code,
-            'message'=>$msg,
-            'data'=>$data
-        ));
-        exit;
+    function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json'){
+       exit(json(array(
+           'code'=>$code,
+           'msg'=>$message,
+           'data'=>$data
+       )));
     }
+
 }
 
 
-if ( ! function_exists('u'))
+if ( ! function_exists('param'))
 {
     /**
-     * 该函数格式化打印数组
-     *
-     * @param unknown $data
-     * @param string $type
-     *        	true as 1 为不断点执行
+     * 获取数据
+     * @param null $k
+     * @param null $default
+     * @param null $check as callable or array
+     * @return bool|null
      */
-    function u($k=null) {
-        $data = array();
-        if(isset($_SERVER['REQUEST_METHOD'])){
-            switch ($_SERVER['REQUEST_METHOD']){
-                case 'POST':
-                   break;
-                case 'GET':
-                 break;     
-            }
-        }else{
-            return false;
+    function param($k=null,$default=null,$check=null) {
+        if(isset($_GET[$k])){
+            $default = $_GET[$k];
+        }elseif(isset($_POST[$k])){
+            $default = $_POST[$k];
         }
-        //设置模式
-         
-        //设置获取方式
 
-        //返回类型
+        if(is_array($check)){
+           $_check = new \Upadd\Frame\Check();
+        }elseif(is_callable($check)){
+            call_user_func($check,$default);
+        }
 
-        
-
-
-
+        return $default;
     }
+
+}
+
+
+
+if(!function_exists('checkInfo')){
+    /**
+     * 验证信息
+     * @param $url
+     * @param $info
+     */
+    function checkInfo($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
+        $_view = new \Upadd\Bin\View\Templates();
+        $_view->setDir(UPADD_HOST);
+        $_view->setPath('Public/Html');
+        if($info){
+            $_view->val('name', '提示');
+            if (empty($url)) {
+                $url = empty($_SERVER["HTTP_REFERER"]) ? '###' : $_SERVER["HTTP_REFERER"];
+            }
+            $_view->val('url', $url);
+            $_view->val('info', $info);
+            $_view->path($html);
+            exit;
+        }
+    }
+
 
 }

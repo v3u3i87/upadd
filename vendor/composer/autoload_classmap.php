@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Home\\Logic\\Load' => $vendorDir . '/Upadd/Bin/file/Load.php',
     'Upadd\\Bin\\Cache\\Cache' => $vendorDir . '/Upadd/Bin/Cache/Cache.php',
     'Upadd\\Bin\\Cache\\Mem\\Mem' => $vendorDir . '/Upadd/Bin/Cache/Mem.php',
     'Upadd\\Bin\\Conf' => $vendorDir . '/Upadd/Bin/Conf.php',
@@ -14,13 +15,14 @@ return array(
     'Upadd\\Bin\\Db\\Mysql' => $vendorDir . '/Upadd/Bin/Db/Mysql.php',
     'Upadd\\Bin\\Loader' => $vendorDir . '/Upadd/Bin/Loader.php',
     'Upadd\\Bin\\Log' => $vendorDir . '/Upadd/Bin/Log.php',
+    'Upadd\\Bin\\PageData' => $vendorDir . '/Upadd/Bin/PageData.php',
+    'Upadd\\Bin\\Rbac' => $vendorDir . '/Upadd/Bin/Rbac.php',
     'Upadd\\Bin\\Route' => $vendorDir . '/Upadd/Bin/Route.php',
     'Upadd\\Bin\\Security' => $vendorDir . '/Upadd/Bin/Security.php',
-    'Upadd\\Bin\\SplClassLoader' => $vendorDir . '/Upadd/Bin/SplClassLoader.php',
     'Upadd\\Bin\\Tool' => $vendorDir . '/Upadd/Bin/Tool.php',
     'Upadd\\Bin\\UpaddException' => $vendorDir . '/Upadd/Bin/UpaddException.php',
     'Upadd\\Bin\\Verify' => $vendorDir . '/Upadd/Bin/Verify.php',
-    'Upadd\\Bin\\View\\Templates\\Templates' => $vendorDir . '/Upadd/Bin/View/Templates.php',
+    'Upadd\\Bin\\View\\Templates' => $vendorDir . '/Upadd/Bin/View/Templates.php',
     'Upadd\\Frame\\Action' => $vendorDir . '/Upadd/Frame/Action.php',
     'Upadd\\Frame\\Check' => $vendorDir . '/Upadd/Frame/Check.php',
     'Upadd\\Frame\\Model' => $vendorDir . '/Upadd/Frame/Model.php',

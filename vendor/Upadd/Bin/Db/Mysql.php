@@ -13,7 +13,7 @@ use Upadd\Bin\Log;
  +----------------------------------------------------------------------
  | Author: Richard.z <v3u3i87@gmail.com>
  **/
-class Mysql extends Db {
+class Mysql implements Db {
 	
 	/**
 	 * 对象
@@ -21,7 +21,12 @@ class Mysql extends Db {
 	 * @var unknown
 	 */
 	protected $_linkID = null;
-	
+
+    /**
+     * 当前SQL
+     * @var null
+     */
+    public $_sql = null;
 
 	public function __construct($link) {
 		if ($this->_linkID === null) {
@@ -115,7 +120,7 @@ class Mysql extends Db {
 	}
 	
 	// 释放结果集
-	protected function out($result) {
+    public function out($result) {
 		if (is_resource ( $result )) {
 			$result = mysql_free_result ( $result );
 			$result = null;
@@ -127,17 +132,51 @@ class Mysql extends Db {
 	/**
 	 * 提交SQL
 	 */
-	protected function query($sql) {
+	public function query($sql) {
         Log::write ( $sql, 'log.sql' ); // 记录SQL
+        $this->_sql = $sql;
 		$result = @mysql_query ( $sql ) or die ( '当前操作:SQL语句有误!' . $this->log ( $result ) );
 		return $result;
 	}
 	
 	// 记录SQL错误
-	protected function log($result = '') {
+    public function log($result = '') {
 		$con = 'URL:' . $_SERVER ['REQUEST_URI'] . "\r\r错误:" . mysql_error () . $result . "\r\r错误发生时间:" . date ( "Y-m-d H:i:s" ) . "\r\n";
         Log::write ( $con, 'SqlError.sql' ); // 记录SQL
 	}
 
+
+    /**
+     * 开启事务
+     * @return mixed
+     */
+    public function begin(){
+
+    }
+
+    /**
+     * 提交事务并结束
+     * @return mixed
+     */
+    public function commit(){
+
+    }
+
+    /**
+     * 回顾事务
+     * @return mixed
+     */
+    public function rollback(){
+
+    }
+
+    /**
+     * 返回一条SQL语句s
+     * @param $type as exit or
+     * @return mixed
+     */
+    public function printSql($type=1){
+        $type ? p($this->_sql) : p($this->_sql,1);
+    }
 
 }

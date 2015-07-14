@@ -11,12 +11,14 @@ namespace Upadd\Bin\Db;
  +----------------------------------------------------------------------
   | Author: Richard.z <v3u3i87@gmail.com>
  */
-abstract class Db {
-	
-	/**
-	 * 查询
-	 */
-	abstract protected function select($sql);
+interface Db {
+
+    /**
+     * 查询
+     * @param $sql
+     * @return mixed
+     */
+	 public function select($sql);
 	
 	/**
 	 * 获取下条自增ID
@@ -24,14 +26,14 @@ abstract class Db {
 	 * @param unknown $sql        	
 	 * @return multitype:multitype:
 	 */
-	abstract protected function getNextId($sql);
+    public function getNextId($sql);
 	
 	/**
 	 * 获取表总行数
 	 *
 	 * @param unknown $sql        	
 	 */
-	abstract protected function getTotal($sql);
+    public function getTotal($sql);
 	
 	/**
 	 * 获取表字段 并返回索引数组
@@ -41,45 +43,73 @@ abstract class Db {
 	 * @param string $t        	
 	 * @return multitype:
 	 */
-	abstract protected function getField($sql = null);
+    public function getField($sql = null);
 	
 	/**
 	 * 返回当前新增ID
 	 *
 	 * @return number
 	 */
-	abstract protected function getId($sql = null);
+	public function getId($sql = null);
 	
 	/**
 	 * 对外提供SQL语句查询
 	 *
 	 * @param unknown $sql        	
 	 */
-	abstract protected function sql($sql);
+	public function sql($sql);
 	
 	/**
 	 * 释放结果集
 	 *
 	 * @param unknown $sql        	
 	 */
-	abstract protected function out($sql);
+	 public function out($sql);
 	
 	/**
 	 * 单条查询
 	 *
 	 * @param unknown $sql        	
 	 */
-	abstract protected function find($sql);
+    public function find($sql);
 	
 	/**
 	 * 提交SQL
 	 */
-	abstract protected function query($sql);
+	public function query($sql);
 	
 	/**
 	 * 记录SQL
-	 *
 	 * @param unknown $sql        	
 	 */
-	abstract protected function log($sql);
+	public function log($sql);
+
+    /**
+     * 开启事务
+     * @return mixed
+     */
+    public function begin();
+
+    /**
+     * 提交事务并结束
+     * @return mixed
+     */
+    public function commit();
+
+    /**
+     * 回顾事务
+     * @return mixed
+     */
+    public function rollback();
+
+    /**
+     * 返回一条SQL语句
+     * @param $type as exit or
+     * @return mixed
+     */
+    public function printSql($type);
+
+
+
+
 }

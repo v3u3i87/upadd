@@ -3,22 +3,25 @@ namespace Upadd\Bin\Db;
 
 use Upadd\Bin\Log;
 
-class LinkPdoMysql extends Db{
+class LinkPdoMysql implements Db{
 
     /**
      * 对象
      *
      * @var unknown
      */
-    protected $_linkID = null;
+    public $_linkID = null;
 
+    public $_sql = '';
 
-    public function __construct($link) {
+    public $_query = null;
+
+    public function __construct($link)
+    {
         try {
-            $pdoDns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
-            //'SET NAMES '.$link ['charset'] mysql:dbname=test;host=localhost
-            $this->_pdo = new \PDO($pdoDns,$link ['user'], $link ['pass']);
-            $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
+            $this->_linkID = new \PDO($dns,$link ['user'], $link ['pass']);
+            $this->_linkID->query('SET NAMES '.$link ['charset']);
         } catch (PDOException $e) {
             exit($e->getMessage());
         }
@@ -28,61 +31,71 @@ class LinkPdoMysql extends Db{
     /**
      * 查询
      */
-    public function select($sql) {
-        if ($sql) {
-            $result = $this->query ( $sql );
-            p($result);
-            $_result = array ();
-            while ( ! ! $row = mysql_fetch_assoc ( $result ) ) {
-                $_result [] = $row;
-            }
-            $this->out ( $result );
-            return $_result;
+    public function select($sql)
+    {
+        if($sql)
+        {
+            $result = $this->query($sql);
+            return $result->fetchAll(2);
+        }else{
+            return false;
         }
     }
 
-    public function find($sql) {
-        $result = $this->query ( $sql );
-        $data = mysql_fetch_assoc ( $result );
-        $this->out ( $result );
-        return $data;
+    /**
+     * 查询一条
+     * @param unknown $sql
+     * @return $data or bool
+     */
+    public function find($sql)
+    {
+        if($sql)
+        {
+            $result = $this->query ( $sql );
+            return $result->fetch(2);
+        }else{
+            return false;
+        }
     }
 
     /**
      * 获取下条自增ID
-     *
      * @param unknown $sql
      * @return multitype:multitype:
      */
-    public function getNextId($sql) {
-        if ($sql) {
+    public function getNextId($sql)
+    {
+        if ($sql)
+        {
             $_result = $this->select ( $sql );
             return $_result [0] ['Auto_increment'];
+        }else{
+            return false;
         }
     }
 
     /**
      * 获取表总行数
-     *
      * @param unknown $sql
      */
-    public function getTotal($sql) {
-        $total = mysql_fetch_row ( $this->query ( $sql ) );
-        return $total [0];
+    public function getTotal($sql)
+    {
+        $total = $this->query ( $sql );
+        return $total->fetchColumn();
     }
 
     /**
      * 获取表字段 并返回索引数组
-     *
      * @name
-     *
      * @param string $t
      * @return multitype:
      */
-    public function getField($sql = null) {
+    public function getField($sql = null)
+    {
         $_result = $this->select ( $sql );
         $field = '';
-        foreach ( $_result as $k => $v ) {
+        foreach ( $_result as $k => $v )
+        {
             $field .= $v ['Field'] . ',';
         }
         $field = substr ( $field, 0, - 1 );
@@ -95,33 +108,70 @@ class LinkPdoMysql extends Db{
      *
      * @return number
      */
-    public function getId($sql = null) {
-        return mysql_insert_id ();
+    public function getId($sql = null)
+    {
+        return $this->_linkID->lastInsertId();
     }
 
     /**
      * 对外提供提交SQL
      */
-    public function sql($sql) {
-        return $this->query ( $sql );
+    public function sql($sql)
+    {
+        $this->_sql = $sql;
+        return $this->_linkID->exec( $sql );
     }
 
     // 释放结果集
-    protected function out($result='') { }
+    public function out($result='') { }
 
     /**
      * 提交SQL
      */
-    protected function query($sql) {
-        Log::write ( $sql, 'log.sql' ); // 记录SQL
-        $_stmt = $this->_pdo->prepare($sql);
-        $_stmt->execute();
-        return $_stmt;
+    public function query($sql) {
+        $this->log($sql);
+        return $this->_linkID->query($sql);
     }
 
     // 记录SQL错误
-    protected function log($result = '') {}
+    public function log($sql = '') {
+        $this->_sql = $sql;
+        Log::write ( $sql, 'log.sql' ); // 记录SQL
+    }
 
+
+    /**
+     * 开启事务
+     * @return mixed
+     */
+    public function begin(){
+        return $this->_linkID->beginTransaction();
+    }
+
+    /**
+     * 提交事务并结束
+     * @return mixed
+     */
+    public function commit(){
+        return $this->_linkID->commit();
+    }
+
+    /**
+     * 回滚事务
+     * @return mixed
+     */
+    public function rollback(){
+        return $this->_linkID->rollBack();
+    }
+
+    /**
+     * 返回一条SQL语句s
+     * @param $type as exit or
+     * @return mixed
+     */
+    public function printSql($type=1){
+        $type ? p($this->_sql) : p($this->_sql,1);
+    }
 
 
 

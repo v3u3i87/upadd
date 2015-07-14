@@ -23,16 +23,17 @@ if(UP_RUN_MODE) {
     define ('VENDOR', '');
 }
 
-//引入报错文件
-$whoops = new \Whoops\Run;
-$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-$whoops->register();
+if(APP_DEBUG) {
+    //引入报错文件
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
 
 // 常量配置
 require UPADD_HOST .VENDOR.'/Public/Define.inc.php';
 // 函数库
 require UPADD_HOST .VENDOR.'/Public/Function.inc.php';
-// 运行判断
-require UPADD_HOST .VENDOR.'/Public/IsRun.inc.php';
+
 
 \Upadd\Bin\Loader::Run();

@@ -60,7 +60,7 @@ class Load {
      */
     public function setLoadFilePath(){
         if($this->_path===null){
-            $this->_path = UPADD_HOST.'Data/img';
+            $this->_path = UPADD_HOST.'data/upload';
         }
     }
 

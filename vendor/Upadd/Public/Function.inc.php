@@ -102,21 +102,7 @@ if(! function_exists('lang')) {
     }
 }
 
-if(! function_exists('jump')) {
-    /**
-     * 转跳
-     *
-     * @param string $url
-     */
-    function jump($url)
-    {
-        if (isset ($url)) {
-            header('Location:' . $url);
-            exit ();
-        }
-    }
 
-}
 
 if(! function_exists('lode')) {
     /**
@@ -254,6 +240,17 @@ if(!function_exists('load_conf')){
 
 }
 
+if(!function_exists('is_json')){
+    /**
+     * 判断JSON是否合法
+     * @param null $string
+     * @return bool
+     */
+    function is_json($string = null) {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+}
 
 if(!function_exists('json')){
     
@@ -275,13 +272,12 @@ if(!function_exists('json')){
             is_exit(lang('is_json'));
         }
     }
-
 }
 
-if(!function_exists('is_dirName')) {
+if(!function_exists('is_dirName'))
+{
     /**
      * 判断目录是否存在，如果不存在就创建
-     *
      * @param unknown $path
      */
     function is_dirName($dirName)
@@ -295,18 +291,9 @@ if(!function_exists('is_dirName')) {
     }
 }
 
-if(!function_exists('is_upToken')) {
-    /**
-     * 令牌
-     */
-    function is_upToken()
-    {
-        defined('UPADD_HOST') or exit ('Please visit the normal!');
-    }
-}
 
-
-if(!function_exists('array_sort_field')) {
+if(!function_exists('array_sort_field'))
+{
     /**
      * 根据某字段多维数组排序
      *
@@ -324,49 +311,55 @@ if(!function_exists('array_sort_field')) {
         $sort = $desc == false ? SORT_ASC : SORT_DESC;
         array_multisort($fieldArr, $sort, $array);
     }
+
 }
 
 
-if(!function_exists('m')){
-    
+if(!function_exists('m'))
+{
+
     /**
      * 获取表模型对象
-     * @param unknown $table
-     * @return Model
+     * @param string $table
+     * @param null $model
+     * @return null|\Upadd\Frame\Model
      */
-    function m($table){
+    function m($table = '',$model=null)
+    {
         if($table){
             $model = new \Upadd\Frame\Model();
             $model->setTableName($table);
-            return $model;
-        }    
+        }
+        return $model;
     }
-    
+
 }
 
 
-if(!function_exists('getMachineName')){
+if(!function_exists('getMachineName'))
+{
 
     /**
      * 返回机器名称
      * @return string
      */
-    function getMachineName(){
+    function getMachineName()
+    {
         $os = lode(" ", php_uname());
-        if('/'==DIRECTORY_SEPARATOR ){
+        if('/'==DIRECTORY_SEPARATOR )
+        {
             $os =  $os[1];
         }else{
             $os =  $os[2];
         }
         $osName = $os;
-        //strtolower($os);
         return $osName;
     }
 
 }
 
-if(!function_exists('msg')){
-
+if(!function_exists('msg'))
+{
     /**
      * 对外接口数据msg
      * @param int $code
@@ -375,13 +368,12 @@ if(!function_exists('msg')){
      * @param string $type or json
      */
     function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json'){
-       exit(json(array(
-           'code'=>$code,
-           'msg'=>$message,
-           'data'=>$data
-       )));
+        exit(json(array(
+            'code'=>$code,
+            'msg'=>$message,
+            'data'=>$data
+        )));
     }
-
 }
 
 
@@ -413,14 +405,13 @@ if ( ! function_exists('param'))
 }
 
 
-
-if(!function_exists('checkInfo')){
+if(!function_exists('jump')){
     /**
      * 验证信息
      * @param $url
      * @param $info
      */
-    function checkInfo($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
+    function jump($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
         $_view = new \Upadd\Bin\View\Templates();
         $_view->setDir(UPADD_HOST);
         $_view->setPath('Public/Html');
@@ -435,6 +426,21 @@ if(!function_exists('checkInfo')){
             exit;
         }
     }
-
-
 }
+
+if(! function_exists('jump_url')) {
+    /**
+     * 转跳
+     *
+     * @param string $url
+     */
+    function jump_url($url)
+    {
+        if (isset ($url)) {
+            header('Location:' . $url);
+            exit ();
+        }
+    }
+}
+
+

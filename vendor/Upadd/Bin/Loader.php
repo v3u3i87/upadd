@@ -24,7 +24,6 @@ class Loader
     public static function Run()
     {
         self::loadDir();
-        header('X-Powered-By:'.UPADD_VERSION);
         self::sessionStart();
         spl_autoload_register (function($className)
         {
@@ -131,16 +130,17 @@ class Loader
             }
             return true;
         }else{
-            is_exit(lang('run_is_name').'isRunMachineName()->is_numeric');
+            exit(lang('run_is_name').'isRunMachineName()->is_numeric');
         }
     }
 
 
 
     protected static function loadDir(){
+        header('X-Powered-By:'.UPADD_VERSION);
 
         if(!self::isRunMachineName()){
-            is_exit(json(array('code'=>10004,'msg'=>lang('loadRunConfig'),'data'=>array())));
+            msg(10004,lang('loadRunConfig'));
         }
 
         // 数据资源文件夹

@@ -16,6 +16,7 @@ return array(
     'autoload'=>array(
         //控制器
         "Up\\Action\\"=>'works/action/',
+        "Up\\Logic\\"=>'works/logic/',
 
     ),
 

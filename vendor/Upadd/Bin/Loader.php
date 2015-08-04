@@ -21,24 +21,21 @@ class Loader
      */
     public static $_autoload = array();
 
+
     public static function Run()
     {
         self::loadDir();
         self::sessionStart();
         spl_autoload_register (function($className)
         {
-            $autoload = self::getAutoload();
-            $className = lode("\\",$className);
-            $className =  end($className);
-            $_fileData = array();
-            foreach($autoload as $k=>$v){
-                $_filePath = UPADD_HOST.$v.$className.IS_EXP;
-                $_fileData[] = $_filePath;
+            $_filePath =  UPADD_HOST . str_replace('\\', '/', $className) . IS_EXP;
+            if(is_file($_filePath)){
+                require $_filePath;
             }
-            self::loadFile($_fileData);
         });
-        self::runTime();
+        self::runRequest();
     }
+
 
     /**
      * 获取命名空间规则
@@ -77,27 +74,20 @@ class Loader
 
 
     /**
-     * 加载文件
-     * @param array $_fileData
-     */
-    protected static function loadFile($_fileData=array()){
-        foreach($_fileData as $k=>$v){
-            if(file_exists($v))
-            {
-               return require ($v);
-            }
-        }
-    }
-
-    /**
      * 记录运行时间
+     * @pamer
      */
-    protected static function runTime()
+    protected static function runRequest()
     {
         if(IS_RUNTIME){
-            $endtime=microtime(true);
-            $total=$endtime-RUNTIME;
-            Log::write($total,'runTime.log');
+            $endtime = (microtime(true)) - RUNTIME;
+            $_header = getHeader();
+            Log::request(array(
+                'method'=>$_SERVER["REQUEST_METHOD"],
+                'header'=>$_header,
+                'param'=>$_REQUEST,
+                'run_time'=>$endtime,
+            ));
         }
     }
 
@@ -138,7 +128,6 @@ class Loader
 
     protected static function loadDir(){
         header('X-Powered-By:'.UPADD_VERSION);
-
         if(!self::isRunMachineName()){
             msg(10004,lang('loadRunConfig'));
         }

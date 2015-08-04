@@ -260,16 +260,11 @@ if(!function_exists('json')){
      * @param int $DataType
      * @return bool
      */
-    function json($data=null,$DataType=1){
-        if($data){
-            if(is_array($data)){
-                header('Content-type:application/json');
-                return json_encode($data);
-            }else{
-                return json_decode($data,$DataType);
-            }
+    function json($data=null,$DataType=true){
+        if(is_array($data)){
+            return json_encode($data);
         }else{
-            is_exit(lang('is_json'));
+            return json_decode($data,$DataType);
         }
     }
 }
@@ -391,6 +386,10 @@ if ( ! function_exists('param'))
             $default = $_GET[$k];
         }elseif(isset($_POST[$k])){
             $default = $_POST[$k];
+        }elseif(METHOD==='GET'){
+            $default =  $_GET;
+        }elseif(METHOD==='POST'){
+            $default =  $_POST;
         }
 
         if(is_array($check)){

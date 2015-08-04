@@ -35,3 +35,6 @@ defined ( 'LOG_PATH' ) or define ( 'LOG_PATH',  UPADD_HOST.'data/log/' );
 defined ( 'CONF_DIR' ) or define ( 'CONF_DIR',  UPADD_HOST.'config/');
 // 版本参数
 defined ( 'UPADD_VERSION' ) or define ( 'UPADD_VERSION', 'Upadd-0.3' );
+
+defined ( 'METHOD' ) or define ( 'METHOD', (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '') );
+

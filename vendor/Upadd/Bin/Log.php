@@ -35,7 +35,24 @@ class Log {
 			fclose ( $fh );
 		}
 	}
-	
+
+
+    /**
+     * 获取请求记录
+     * @param 内容 $cont
+     * @param 文件名称以及格式 $file
+     */
+    public static function request($cont, $fileName = 'request.logs') {
+        $cont['url'] = $_SERVER ['REQUEST_URI'];
+        $cont['time'] = date ( 'Y-m-d H:i:s' );
+        $info = json($cont) . "\r\r";
+        $file = self::isBak ( $fileName );
+        $fh = fopen ( $file, 'a+' );
+        fwrite ( $fh, $info );
+        fclose ( $fh );
+    }
+
+
 	/**
 	 * 验证文件大小
 	 *

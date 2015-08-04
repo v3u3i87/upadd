@@ -8,7 +8,11 @@
 
 use Upadd\Bin\Route;
 
-Route::get('/', 'Up\Action\Index@home');
+Route::get('/', 'works\action\IndexAction@home');
+
+Route::any('/main/aaa', 'works\action\NameAction@aaa');
+
+Route::get('/home/abc', 'works\action\IndexAction@abc');
 
 
 Route::dispatch();

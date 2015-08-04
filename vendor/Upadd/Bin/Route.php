@@ -51,16 +51,21 @@ class Route
      */
     public static function __callstatic($method, $params)
     {
+
        if(self::$prefix){
            self::$_url[] = $params[0];
            $url = self::$prefix.$params[0];
        }else{
            $url = $params[0];
        }
-        $callback = $params[1];
         self::$routes[$url] = $url;
         self::$methods[$url] = strtoupper($method);
-        self::$callbacks[$url] = $callback;
+        self::$callbacks[$url] = $params[1];
+//        p(array(
+//            self::$callbacks,
+//            self::$methods,
+//            self::$routes
+//        ),1);
     }
 
     public static function group($method,$_callback,$name=null){
@@ -121,21 +126,72 @@ class Route
         self::$halts = $flag;
     }
 
+
+    /**
+     * 处理路由请求参数
+     */
+    public static function setRewrite($_url=null){
+        if ($_url) {
+            foreach(self::$callbacks as $k=>$v){
+                if($k != '/'){
+                    //获取路由长度
+                    $_routeInt = strlen($k);
+                    $_urlInt = strlen($_url);
+                    $num = $_urlInt - $_routeInt;
+                    $param = substr($_url,-$num);
+                    $key =  substr($_url,0,-strlen($param));
+                    //有参数执行
+                    if($key && $key === $k){
+                        $val = preg_replace('/\/(\w+)\/([^\/]+)/', '\\1'.':'.'\\2'.',', $param);
+                        $val = self::setParam($val);
+                        return $k;
+                    //没参数执行
+                    }elseif($k === $_url)
+                    {
+                        return $k;
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 设置请求参数
+     * @param $spec
+     * @param null $value
+     * @return $this
+     */
+    public static function setParam($val)
+    {
+        $val = substr($val,0,-1);
+        $val = lode(',',$val);
+        $_data = array();
+        foreach($val as $k=>$v){
+            $tmpLode = lode(':',$v);
+            if(count($tmpLode) == 2){
+                list($_key,$value) = $tmpLode;
+                $_GET[$_key] = $value;
+            }
+        }
+    }
+
+
     public static function dispatch()
     {
         $_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        //请求方式
-        $method = $_SERVER['REQUEST_METHOD'];
-        $found_route = false;
-        $_Routes = null;
-        isset(self::$routes[$_url]) ? $_Routes = self::$routes[$_url] : msg(404,'不存在的地址');
+        $_Routes = '/';
+
+        if($_url != $_Routes){
+            $_Routes = self::setRewrite($_url);
+        }
+
         /**
          * 判断请求类型
          */
-        if (self::$methods[$_Routes] == $method)
+        if (self::$methods[$_Routes] == METHOD || self::$methods[$_Routes] === 'ANY')
         {
             $_callbacks = self::$callbacks[$_Routes];
-            $found_route = true;
             if(!is_object($_callbacks))
             {
                 //获取控制器对象
@@ -157,24 +213,13 @@ class Route
             }
         }
 
-        /**
-         * 运行错误如果路线不存在回调
-         */
-        if ($found_route == false) {
-            if (!self::$error_callback) {
-                self::$error_callback = function() {
-                   msg(404,'不存在的地址');
-                };
-            }
-            call_user_func(self::$error_callback);
-        }
-
     }
+
+
 
 
     public static function getAction(){
         $_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
         $_Routes = null;
         isset(self::$routes[$_url]) ? $_Routes = self::$routes[$_url] : msg(404,'不存在的地址');
         $_callbacks = self::$callbacks[$_Routes];

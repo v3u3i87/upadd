@@ -18,10 +18,14 @@ class IndexAction extends \Upadd\Frame\Action{
        echo 111;
     }
 
-
-
     public function abc(){
-        echo 333;
+        p($_GET,1);
+        Info::in();
+        $name = new NameAction();
+        $name->aaa();
     }
+
+
+
 
 }

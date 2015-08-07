@@ -15,10 +15,10 @@ use Exception;
 
 class UpaddException extends Exception {
 
-    public function __construct($message = "",$code = 1000, Exception $previous = null)
+    public function __construct($msg = '',$code = 10000, Exception $previous = null)
     {
         $code = intval($code);
-        parent::__construct($message, $code, $previous);
+        parent::__construct($msg, $code, $previous);
     }
 
 }

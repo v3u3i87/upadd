@@ -40,7 +40,9 @@ if ( ! function_exists('p'))
      * @param string $type
      *        	true as 1 为不断点执行
      */
-    function p($data, $type = null) {
+    function p($data, $type = null)
+    {
+        header ( 'Content-Type:text/html;charset=utf-8' );
         echo '<pre>';
         print_r ( $data );
         echo '</pre>';
@@ -59,6 +61,7 @@ if(! function_exists('vd')) {
      */
     function vd($data, $type = '')
     {
+        header ( 'Content-Type:text/html;charset=utf-8' );
         echo '<pre>';
         var_dump($data);
         echo '</pre>';
@@ -100,6 +103,19 @@ if(! function_exists('lang')) {
             }
         }
     }
+}
+
+
+if(!function_exists('equal')){
+
+    function is_equal($k,$key){
+        if($k === $key){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
 
 
@@ -363,6 +379,7 @@ if(!function_exists('msg'))
      * @param string $type or json
      */
     function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json'){
+        header('Content-type: application/json');
         exit(json(array(
             'code'=>$code,
             'msg'=>$message,
@@ -412,8 +429,8 @@ if(!function_exists('jump')){
      */
     function jump($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
         $_view = new \Upadd\Bin\View\Templates();
-        $_view->setDir(UPADD_HOST);
-        $_view->setPath('Public/Html');
+        $_view->setDir(VENDOR);
+        $_view->setPath('Html');
         if($info){
             $_view->val('name', '提示');
             if (empty($url)) {

@@ -28,11 +28,26 @@ class Loader
         self::sessionStart();
         spl_autoload_register (function($className)
         {
-            $_filePath =  UPADD_HOST . str_replace('\\', '/', $className) . IS_EXP;
+            //判断是否开启自定义
+            if(conf('start@is_autoload')){
+                $autoload  = self::getAutoload();
+                $className = lode("\\",$className);
+                $className =  end($className);
+                foreach($autoload as $k=>$v){
+                    $_filePath = UPADD_HOST.$v.$className.IS_EXP;
+                    if(is_file($_filePath)){
+                        break;
+                    }
+                }
+            }else{
+                $_filePath =  UPADD_HOST . str_replace('\\', '/', $className) . IS_EXP;
+            }
+
             if(is_file($_filePath)){
                 require $_filePath;
             }
         });
+
         self::runRequest();
     }
 

@@ -24,11 +24,11 @@ class Rbac
    public static function checkUser($action){
         $user_module = m('user_module');
         $model = $user_module->join(array('user_module'=>'a','user_operate'=>'b'))
-           ->where(" a.id=b.module_id AND a.mode=b.mode AND a.action_name='{$action[0]}' AND b.operate_name='{$action[1]}' ")->find('a.id');
+           ->where(" a.id=b.module_id AND a.mode=b.mode AND a.action_name='{$action[0]}' AND b.operate_name='{$action[1]}' ")->find('b.id');
         if($_SESSION['user'] && $model){
            $user = $_SESSION['user'];
            if(in_array($model['id'],$user['roles_data'])){
-                return 1;
+                return true;
            }else{
                return false;
            }

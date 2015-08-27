@@ -13,3 +13,4 @@ require '../vendor/Upadd/Upadd.conf.php';
 
 //加载路由
 require UPADD_HOST.'/bootstrap/routing.php';
+

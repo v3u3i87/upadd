@@ -8,10 +8,11 @@
 return array(
 
     'environment'=>array(
-        'local'=>array('RR-ZMQ'),
-        'dev'=>array('renrentest')
+        'local'=>array('RR-ZMQ','demo'),
+        'dev'=>array('renrentest','demo')
     ),
 
+    'is_autoload'=>true,
     //命名空间辐射关系
     'autoload'=>array(
         //控制器

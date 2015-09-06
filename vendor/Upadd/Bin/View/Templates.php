@@ -4,12 +4,14 @@ namespace Upadd\Bin\View;
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 20011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
+
+use Upadd\Bin\UpaddException;
 
 /**
  * 模板类
@@ -108,7 +110,7 @@ class Templates {
 		if (! empty ( $path )) {
 			$this->_path =  $path . '/';
 		} else {
-			exit ( "找不到模板路径" );
+            throw new UpaddException('找不到模板目录',404);
 		}
 	}
 
@@ -120,7 +122,7 @@ class Templates {
         if (! empty ( $dirPath )) {
             $this->_dir = UPADD_HOST . $dirPath . '/';
         } else {
-            exit ( "找不到模板路径" );
+            throw new UpaddException('找不到模板目录',404);
         }
     }
 
@@ -134,7 +136,7 @@ class Templates {
 		if (isset ( $key ) && ! empty ( $key )) {
 			$this->_keyArr [$key] = $value;
 		} else {
-			exit ( 'Please set your value!' );
+            throw new UpaddException('Please set your value!',404);
 		}
 	}
 	
@@ -165,12 +167,12 @@ class Templates {
 
 		// 判断模板是否存在
 		if (! file_exists ( $this->_htmlFile )) {
-			exit ( '模板文件不存在' . $this->_htmlFile );
+            throw new UpaddException('模板文件不存在' . $this->_htmlFile,404);
 		}
 		
 		// 赋值和判断读取
 		if (! $this->_fileVar = file_get_contents ( $this->_htmlFile )) {
-			exit ( '模板文件读取错误!' );
+            throw new UpaddException('模板文件读取错误' . $this->_htmlFile,404);
 		}
 
 
@@ -198,7 +200,7 @@ class Templates {
 
 
 		if (! file_put_contents ( $this->_compiled, $this->_fileVar )) {
-			exit ( '编译后的文件产生的错误!' );
+            throw new UpaddException('编译后的文件产生的错误' . $this->_htmlFile,404);
 		}
 	}
 	
@@ -224,7 +226,7 @@ class Templates {
 		// 设置总目录
 		if (! is_dir ( $path ) || ! is_writeable ( $path )) {
 			if (! mkdir ( $path, 0777 )) {
-				is_exit ( lang ( 'is_dir_html' ) );
+                throw new UpaddException(lang ( 'is_dir_html' ),404);
 			}
 		}
 	}

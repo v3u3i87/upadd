@@ -18,16 +18,17 @@ use Upadd\Bin\View\Templates;
 // 控制器
 class Action {
 
-	/**
-	 * 获取参数
-	 * @var unknown
-	 */
-	public $_u = array ();
 
-    public $_model = null;
-
+    /**
+     * 模板对象
+     * @var null|Templates
+     */
     public $_view = null;
 
+    /**
+     * 权限对象
+     * @var null
+     */
     public $_rbac = null;
 
 	public function __construct(){

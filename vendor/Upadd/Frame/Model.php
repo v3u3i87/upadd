@@ -5,7 +5,7 @@ namespace Upadd\Frame;
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 20011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
@@ -15,6 +15,8 @@ namespace Upadd\Frame;
 use Upadd\Bin\Verify;
 use Upadd\Bin\Log;
 use Upadd\Bin\PageData;
+use Upadd\Bin\UpaddException;
+
 
 class Model {
 
@@ -56,6 +58,12 @@ class Model {
     );
 
     /**
+     * 数据库对象静态变量
+     * @var null
+     */
+    private static $_dbStatic = null;
+
+    /**
      * 合并多表查询
      * @var null
      */
@@ -67,6 +75,12 @@ class Model {
      */
     public $_pageData = array();
 
+    /**
+     * 静态方法
+     * @var null
+     */
+    public static $_staticModel = null;
+
 
     public function __construct($db = null) {
         if ($this->_db === null ) {
@@ -75,7 +89,13 @@ class Model {
         }
         $this->db_prefix = $DBinfo ['prefix'];
         $this->setTableName($this->_table);
+
+        if(self::$_staticModel === null){
+            self::$_staticModel = new Model\StaticModel($this->_db,$this->_sql,$this->_table);
+        }
+
     }
+
 
 
     /**
@@ -84,23 +104,19 @@ class Model {
      * @param $DBinfo
      */
     private function DbType($type=null,$DBinfo){
-        if($type && $DBinfo){
-            switch($type){
+        switch($type){
 
-                case 'mysql' :
-                    $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
-                    break;
+            case 'mysql' :
+                $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
+                break;
 
-                case 'pdo_mysql':
-                    $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
-                    break;
+            case 'pdo_mysql':
+                $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
+                break;
 
-                default:
-                    is_exit("数据库连接类型没有选择");
-                    break;
-            }
-        }else{
-            is_exit("数据库连接类型没有选择");
+            default:
+                throw new UpaddException('数据库连接类型没有选择');
+                break;
         }
     }
 
@@ -131,6 +147,10 @@ class Model {
         return $_data;
     }
 
+
+
+
+
     /**
      * 单行查询
      * @param null $_field
@@ -155,7 +175,6 @@ class Model {
         }else{
             $this->_sql['join'][] = $this->db_prefix.$_table.' as ' . $as .' ,';
         }
-
         return $this;
     }
 
@@ -171,6 +190,9 @@ class Model {
         return $this;
     }
 
+    public static function get(){
+        return self::$_staticModel;
+    }
 
     /**
      * InWhere类型
@@ -191,7 +213,7 @@ class Model {
             }
             return $this;
         }else{
-            exit("缺少key或data的参数");
+            throw new UpaddException('缺少key或data的参数');
         }
     }
 
@@ -291,6 +313,7 @@ class Model {
         }
         return $Field;
     }
+
 
     /**
      * Where语句转

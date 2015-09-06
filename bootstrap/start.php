@@ -12,7 +12,7 @@ return array(
         'dev'=>array('renrentest','demo')
     ),
 
-    'is_autoload'=>true,
+    'is_autoload'=>false,
     //命名空间辐射关系
     'autoload'=>array(
         //控制器

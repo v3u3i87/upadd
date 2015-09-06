@@ -3,22 +3,22 @@
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 20011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
-namespace Upadd\Bin;
+namespace Upadd\Frame\Model;
 
-use Exception;
+use Upadd\Bin\Verify;
+use Upadd\Bin\Log;
+use Upadd\Bin\PageData;
+use Upadd\Bin\UpaddException;
 
-class UpaddException extends Exception {
 
-    public function __construct($msg = '', $code = 10000,Exception $previous = null)
-    {
-        $code = intval($code);
-        parent::__construct($msg, $code, $previous);
-    }
+
+class ObjectModel{
+
 
 }

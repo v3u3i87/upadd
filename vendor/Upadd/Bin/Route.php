@@ -4,7 +4,7 @@
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 20011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
@@ -26,6 +26,8 @@ class Route
 
     public static function __callstatic($method, $params)
     {
+       $url = '';
+
        if(self::$prefix){
            $url = self::$prefix.$params[0];
        }else{
@@ -174,7 +176,7 @@ class Route
             $controller->setViewAction($_actionName);
             $controller->$functuion();
         } catch( UpaddException $e ) {
-            vd($e->getMessage());
+            print_r($e->getMessage());
         }
     }
 

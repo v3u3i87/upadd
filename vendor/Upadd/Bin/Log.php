@@ -3,13 +3,15 @@
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 20011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
 namespace Upadd\Bin;
+
+use Upadd\Bin\UpaddException;
 
 /**
  * 日记处理类
@@ -43,7 +45,10 @@ class Log {
      * @param 文件名称以及格式 $file
      */
     public static function request($cont, $fileName = 'request.logs') {
-        $cont['url'] = $_SERVER ['REQUEST_URI'];
+        $cont['url'] = '';
+        if(isset($_SERVER ['REQUEST_URI'])) {
+            $cont['url'] = $_SERVER ['REQUEST_URI'];
+        }
         $cont['time'] = date ( 'Y-m-d H:i:s' );
         $info = json($cont) . "\r\r";
         $file = self::isBak ( $fileName );
@@ -67,7 +72,7 @@ class Log {
 		}
 		
 		$size = filesize ( $log );
-		if ($size <= 1024 * 1024) {
+		if ($size <= 1099511627776) {
 			return $log;
 		}
 		
@@ -112,7 +117,7 @@ class Log {
 		// 设置总目录
 		if (! is_dir ( $path ) || ! is_writeable ( $path )) {
 			if (! mkdir ( $path, 0777 )) {
-				is_exit ( lang ( 'is_dir_log' ) );
+                throw new UpaddException(lang ( 'is_dir_log' ),404);
 			}
 		}
 	}

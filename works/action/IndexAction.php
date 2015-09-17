@@ -16,8 +16,8 @@ class IndexAction extends BaseAction{
 
     public function home(){
         $_msg = m('msg');
-        $all = $_msg::get()->all();
-        p($all);
+        $_msg->select();
+        $_msg->printSql();
     }
 
     public function abc(){

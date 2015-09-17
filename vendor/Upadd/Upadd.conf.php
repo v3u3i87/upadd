@@ -9,7 +9,7 @@
 	+----------------------------------------------------------------------
 	| Author: Richard.z <v3u3i87@gmail.com>
  **/
-if (version_compare ( PHP_VERSION, '5.3.0', '<' ))	die ( 'require PHP > 5.3.0 !' );
+if (version_compare ( PHP_VERSION, '5.4.0', '<' ))	die ( 'require PHP > 5.3.0 !' );
 // 设置编码
 header ( 'Content-Type:text/html;charset=utf-8' );
 // 设置时区

@@ -26,8 +26,6 @@ return array(
     'Upadd\\Frame\\Action' => $vendorDir . '/Upadd/Frame/Action.php',
     'Upadd\\Frame\\Check' => $vendorDir . '/Upadd/Frame/Check.php',
     'Upadd\\Frame\\Model' => $vendorDir . '/Upadd/Frame/Model.php',
-    'Upadd\\Frame\\Model\\ObjectModel' => $vendorDir . '/Upadd/Frame/Model/ObjectModel.php',
-    'Upadd\\Frame\\Model\\StaticModel' => $vendorDir . '/Upadd/Frame/Model/StaticModel.php',
     'Whoops\\Exception\\ErrorException' => $vendorDir . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
     'Whoops\\Exception\\Formatter' => $vendorDir . '/filp/whoops/src/Whoops/Exception/Formatter.php',
     'Whoops\\Exception\\Frame' => $vendorDir . '/filp/whoops/src/Whoops/Exception/Frame.php',

@@ -17,7 +17,6 @@ use Upadd\Bin\Log;
 use Upadd\Bin\PageData;
 use Upadd\Bin\UpaddException;
 
-
 class Model {
 
     /**
@@ -26,6 +25,12 @@ class Model {
      * @var unknown
      */
     protected $_table = null;
+
+    /**
+     * 主键或关键字
+     * @var null
+     */
+    protected $_primaryKey = null;
 
     /**
      * 数据库对象
@@ -75,12 +80,6 @@ class Model {
      */
     public $_pageData = array();
 
-    /**
-     * 静态方法
-     * @var null
-     */
-    public static $_staticModel = null;
-
 
     public function __construct($db = null) {
         if ($this->_db === null ) {
@@ -89,10 +88,6 @@ class Model {
         }
         $this->db_prefix = $DBinfo ['prefix'];
         $this->setTableName($this->_table);
-
-        if(self::$_staticModel === null){
-            self::$_staticModel = new Model\StaticModel($this->_db,$this->_sql,$this->_table);
-        }
 
     }
 
@@ -149,8 +144,6 @@ class Model {
 
 
 
-
-
     /**
      * 单行查询
      * @param null $_field
@@ -159,6 +152,7 @@ class Model {
     public function find($_field=null){
         return $this->_db->find(' SELECT '. $this->lodeField($_field) . $this->mergeSql() );
     }
+
 
     /**
      *  多表查询
@@ -179,7 +173,6 @@ class Model {
     }
 
 
-
     /**
      * where判断
      * @param data $_where as array|null|string
@@ -190,9 +183,6 @@ class Model {
         return $this;
     }
 
-    public static function get(){
-        return self::$_staticModel;
-    }
 
     /**
      * InWhere类型
@@ -271,7 +261,6 @@ class Model {
                 $this->_mergeJoin = $this->_sql['join'];
             }
             $this->_mergeJoin = substr ( $this->_mergeJoin, 0, - 1 );
-            //Log::write($this->_mergeJoin ,'model_sql.log');
             unset($this->_sql['join']);
         }
     }

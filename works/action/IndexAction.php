@@ -15,22 +15,11 @@ class IndexAction extends BaseAction{
 
 
     public function home(){
-        $_msg = m('msg');
-        $_msg->select();
-        $_msg->printSql();
+        $this->_view->path('aa.html');
     }
 
     public function abc(){
-        p($_GET,1);
-        $nid = param('nid','');
-        $asdads = param('asdads','');
-        echo $asdads;
-        echo '<br />';
-        echo $nid;
-        echo '<br />';
-        Info::in();
-        $name = new NameAction();
-        $name->aaa();
+        $this->_view->path('aaa.html');
     }
 
 

@@ -19,8 +19,7 @@ class Loader
      * 自动加载对外拓展对象
      * @var array
      */
-    public static $_autoload = array();
-
+    private static $_autoload = array();
 
     public static function Run()
     {
@@ -70,7 +69,7 @@ class Loader
      * 设置加载的命名空间规则
      * @param $_autoloadArray
      */
-    public static function setAutoload($_autoloadArray)
+    private static function setAutoload($_autoloadArray)
     {
         if($_autoloadArray){
             self::$_autoload = $_autoloadArray;
@@ -80,7 +79,7 @@ class Loader
     /**
      * 判断是否开启 session
      */
-    public static function sessionStart(){
+    private static function sessionStart(){
         $state = conf('conf@session_start');
         if($state) {
             session_start();
@@ -92,7 +91,7 @@ class Loader
      * 记录运行时间
      * @pamer
      */
-    protected static function runRequest()
+    private static function runRequest()
     {
         if(IS_RUNTIME){
             $endtime = (microtime(true)) - RUNTIME;
@@ -111,7 +110,7 @@ class Loader
      * 判断运行环境
      * @return bool
      */
-    protected static function isRunMachineName(){
+    private static function isRunMachineName(){
         $env = conf('start@environment');
         //merge in config array
         $oneEnv = array_merge_one($env);

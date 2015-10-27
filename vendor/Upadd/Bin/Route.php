@@ -26,14 +26,12 @@ class Route
 
     public static function __callstatic($method, $params)
     {
-       $url = '';
-
-       if(self::$prefix){
-           $url = self::$prefix.$params[0];
-       }else{
-           $url = $params[0];
-       }
-
+        $url = '';
+        if(self::$prefix){
+            $url = self::$prefix.$params[0];
+        }else{
+            $url = $params[0];
+        }
         self::$_resou[sha1($url)] = array(
             'methods'=>strtoupper($method),
             'callbacks'=>$params[1],
@@ -146,19 +144,15 @@ class Route
             $obj = self::$_resou[$_key];
             $_methods = $obj['methods'];
             $_callbacks = $obj['callbacks'];
-            if($_methods == METHOD || $_methods == 'ANY'){
-                //获取控制器对象
-                $_objAction = explode('@',$_callbacks);
-                //判断控制器
-                if(count($_objAction) < 2){
-                    throw new UpaddException('The controller set wrong..');
-                }
-                return $_objAction;
-            }else{
-                throw new UpaddException('Request model error..');
+            //获取控制器对象
+            $_objAction = explode('@',$_callbacks);
+            //判断控制器
+            if(count($_objAction) < 2){
+                throw new UpaddException('The controller set wrong..');
             }
+            return $_objAction;
         }else{
-            jump('网页不存在','/');
+            throw new UpaddException('路径不存在..');
         }
     }
 
@@ -176,7 +170,7 @@ class Route
             $controller->setViewAction($_actionName);
             $controller->$functuion();
         } catch( UpaddException $e ) {
-            print_r($e->getMessage());
+            echo $e->getMessage();
         }
     }
 

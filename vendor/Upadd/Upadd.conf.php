@@ -12,8 +12,10 @@
 if (version_compare ( PHP_VERSION, '5.4.0', '<' ))	die ( 'require PHP > 5.3.0 !' );
 // 设置编码
 header ( 'Content-Type:text/html;charset=utf-8' );
+
 // 设置时区
 date_default_timezone_set ( 'Asia/Shanghai' );
+
 // set root dir
 if(UP_RUN_MODE) {
     define ('UPADD_HOST', substr(dirname(__FILE__), 0, -12));

@@ -9,7 +9,7 @@
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
 **/
-namespace Upadd\Bin;
+namespace Upadd\Bin\Tool;
 
 class PageData {
     /**

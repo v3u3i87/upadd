@@ -9,9 +9,10 @@
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
-namespace Upadd\Bin;
+namespace Upadd\Bin\Tool;
 
 use Upadd\Bin\UpaddException;
+use Upadd\Bin\Config\Config;
 
 /**
  * 日记处理类
@@ -104,8 +105,9 @@ class Log {
 	 * @return string
 	 */
 	private static function getPath() {
-		self::checkPath ( LOG_PATH );
-		return LOG_PATH;
+        $logPath = Config::get('sys@LOG_PATH');
+		self::checkPath ( $logPath );
+		return $logPath;
 	}
 	
 	/**
@@ -114,6 +116,8 @@ class Log {
 	 * @param unknown $path        	
 	 */
 	private static function checkPath($path) {
+//        echo $path;
+//        exit;
 		// 设置总目录
 		if (! is_dir ( $path ) || ! is_writeable ( $path )) {
 			if (! mkdir ( $path, 0777 )) {

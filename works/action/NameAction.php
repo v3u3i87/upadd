@@ -14,10 +14,6 @@ class NameAction extends \Upadd\Frame\Action{
 
     public function aaa(){
 
-        if(isset($_GET['abc'])){
-            echo $_GET['abc'];
-        }
-        //phpinfo();
         echo 6666666666;
     }
 

@@ -10,16 +10,24 @@ namespace works\action;
 
 use works\logic\Info;
 use works\action\NameAction;
+use Upadd\Bin\Config\Config;
+
 
 class IndexAction extends BaseAction{
 
 
     public function home(){
-        $this->_view->path('aa.html');
+        echo 'home';
     }
 
+
     public function abc(){
-        $this->_view->path('aaa.html');
+       echo 'hi.abc';
+    }
+
+
+    public function info(){
+        echo 'home.info';
     }
 
 

@@ -16,12 +16,10 @@ if ( ! function_exists('getHeader'))
     /**
      * 获取头信息
      */
-    function getHeader()
+    function getHeader($headers = array())
     {
-        foreach ($_SERVER as $name => $value)
-        {
-            if (substr($name, 0, 5) == 'HTTP_')
-            {
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
@@ -40,7 +38,7 @@ if ( ! function_exists('p'))
      * @param string $type
      *        	true as 1 为不断点执行
      */
-    function p($data, $type = null)
+    function p($data=array(), $type = null)
     {
         header ( 'Content-Type:text/html;charset=utf-8' );
         echo '<pre>';
@@ -70,19 +68,6 @@ if(! function_exists('vd')) {
 
 }
 
-if (! function_exists('is_exit')) {
-    /**
-     * 断点停止提示
-     *
-     * @param string $info
-     */
-    function is_exit($info = null)
-    {
-        if (!empty ($info)) {
-            exit ($info);
-        }
-    }
-}
 
 if(! function_exists('lang')) {
     /**
@@ -96,15 +81,14 @@ if(! function_exists('lang')) {
         if ($key) {
             // 程序语言包
             if (defined('APP_LANG')) {
-                $lang = require UPADD_HOST .VENDOR. '/Lang/' . APP_LANG . IS_EXP;
+                $lang = require UPADD_HOST .VENDOR. '/Lang/' . APP_LANG .'.php';
                 return $lang [$key];
             } else {
-                is_exit('Sorry, you have not set the language pack!');
+                exit('Sorry, you have not set the language pack!');
             }
         }
     }
 }
-
 
 if(!function_exists('equal')){
 
@@ -117,8 +101,6 @@ if(!function_exists('equal')){
     }
 
 }
-
-
 
 if(! function_exists('lode')) {
     /**
@@ -144,17 +126,19 @@ if(! function_exists('lode')) {
 if(!function_exists('array_merge_one')) {
     /**
      * 多维数组合并成一维数组
-     *
-     * @param unknown $a
-     * @return unknown
+     * @param array $data
+     * @return array
      */
-    function array_merge_one($data)
+    function array_merge_one($data=array())
     {
-        static $one;
-        foreach ($data as $v) {
-            is_array($v) ? array_merge_one($v) : $one [] = $v;
+        if($data) {
+            static $one;
+            foreach ($data as $v) {
+                is_array($v) ? array_merge_one($v) : $one [] = $v;
+            }
+            return $one;
         }
-        return $one;
+        return array();
     }
 }
 
@@ -184,77 +168,12 @@ if(!function_exists('conf')) {
      * @param string $val
      * @return string
      */
-    function conf($name)
+    function conf($key)
     {
-        $name = lode('@', $name);
-        if (count($name) < 2) {
-                is_exit(lang('is_conf_no'));
-        }
-
-        $file = null;
-        if ($name[0] == 'start') {
-            $file = UPADD_HOST . 'bootstrap/' . $name [0] . IS_EXP;
-        } else {
-            $isEnv = load_conf();
-            if($isEnv){
-                $file = CONF_DIR . $isEnv . '/' .$name [0] . IS_EXP;
-            }else{
-                $file = CONF_DIR . $name [0] . IS_EXP;
-            }
-        }
-
-        if (is_file($file)) {
-            $conf = require $file;
-            $key = $conf [$name [1]];
-            return $key;
-        }
+       return \Upadd\Bin\Config::get($key);
     }
 }
 
-
-if(!function_exists('load_conf')){
-
-    /**
-     * 加载配置文件
-     * @return Ambigous <NULL, unknown>|boolean
-     */
-    function load_conf(){
-        $name = lode('@', 'start@environment');
-        $file = UPADD_HOST . 'bootstrap/' . $name [0] . IS_EXP;
-        $env = null;
-        if(is_file($file)){
-            $conf = require $file;
-            $env = $conf [$name [1]];
-        }else{
-            is_exit(lang('run_is_name'));
-        }
-        
-        if($env) {
-            $osName = getMachineName();
-            foreach ($env as $k => $v) {
-                // 不是数字类型执行
-                if (!is_numeric($k)) {
-                    // 执行环境是否合法的匹配
-                    if ($v) {
-                        if(in_array($osName,$v)){
-                            return $k;
-                            break;
-                        }
-                    } else {
-                        return false;
-                    }
-                } else{
-                    return false;
-                }
-            } // End if to numeric
-            
-        }else{
-            is_exit('没有填写环境配置,无法读取配置文件');
-        }
-        
-    }
-
-}
 
 if(!function_exists('is_json')){
     /**
@@ -262,9 +181,12 @@ if(!function_exists('is_json')){
      * @param null $string
      * @return bool
      */
-    function is_json($string = null) {
-        json_decode($string);
-        return (json_last_error() == JSON_ERROR_NONE);
+    function is_json(string $string = null)
+    {
+        if($string = json_decode($string)){
+            return true;
+        }
+        return false;
     }
 }
 
@@ -273,14 +195,14 @@ if(!function_exists('json')){
     /**
      * 对json进行编码或解码
      * @param null $data
-     * @param int $DataType
-     * @return bool
+     * @param bool $type
+     * @return json/array
      */
-    function json($data=null,$DataType=true){
+    function json($data=null,$type=true){
         if(is_array($data)){
             return json_encode($data);
         }else{
-            return json_decode($data,$DataType);
+            return json_decode($data,$type);
         }
     }
 }
@@ -307,16 +229,14 @@ if(!function_exists('array_sort_field'))
 {
     /**
      * 根据某字段多维数组排序
-     *
      * @param unknown $array
      * @param unknown $field
      * @param string $desc
      */
-    function array_sort_field(&$array, $field, $desc = false)
+    function array_sort_field(array $array, $field, $desc = false)
     {
         $fieldArr = array();
         foreach ($array as $k => $v) {
-
             $fieldArr [$k] = $v [$field];
         }
         $sort = $desc == false ? SORT_ASC : SORT_DESC;
@@ -421,13 +341,13 @@ if ( ! function_exists('param'))
 }
 
 
-if(!function_exists('jump')){
+if(!function_exists('jump_view')){
     /**
      * 验证信息
      * @param $url
      * @param $info
      */
-    function jump($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
+    function jump_view($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
         $_view = new \Upadd\Bin\View\Templates();
         $_view->setDir(VENDOR);
         $_view->setPath('Html');
@@ -444,19 +364,54 @@ if(!function_exists('jump')){
     }
 }
 
-if(! function_exists('jump_url')) {
+if(! function_exists('jump')) {
     /**
      * 转跳
-     *
-     * @param string $url
+     * @param $url
      */
-    function jump_url($url)
+    function jump($url)
     {
-        if (isset ($url)) {
+        if ($url) {
             header('Location:' . $url);
             exit ();
         }
     }
 }
 
+if(! function_exists('getArgs')) {
 
+    /**
+     * 获取CLI变量
+     * @param $argv
+     * @return array
+     */
+    function getArgs($argv)
+    {
+        array_shift($argv);
+        $out = array();
+        foreach ($argv as $arg) {
+            if (substr($arg, 0, 2) == '--') {
+                $eqPos = strpos($arg, '=');
+                if ($eqPos === false) {
+                    $key = substr($arg, 2);
+                    $out[$key] = isset($out[$key]) ? $out[$key] : true;
+                } else {
+                    $key = substr($arg, 2, $eqPos - 2);
+                    $out[$key] = substr($arg, $eqPos + 1);
+                }
+            } else {
+                exit('you input parameters have a problem' . "\r\n" . 'exit the program...' . "\r\n" . 'If you have questions, can contact me.' . "\r\n" . 'my email: v3u3i87@gmail.com' . "\r\n");
+            }
+        }
+        return $out;
+    }
+
+}
+
+if(!function_exists('host'))
+{
+    function host(){
+        return UPADD_HOST;
+    }
+
+}

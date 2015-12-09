@@ -10,16 +10,15 @@
 return array(
 
 
-
     'db'=>array(
         'type'=>'mysql',
         'host'=>'127.0.0.1',
-        'user'=>'xcvu',
-        'pass'=>'maoqiang',
-        'name'=>'renrenfenqi_pro',
+        'user'=>'root',
+        'pass'=>'123456',
+        'name'=>'upadd',
         'port'=>3306,
         'charset'=>'UTF8',
-        'prefix'=>'ecs_',
+        'prefix'=>'up_',
     )
 
 );

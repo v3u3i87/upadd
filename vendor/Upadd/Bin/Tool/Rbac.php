@@ -6,7 +6,7 @@
  * Time: 13:19
  */
 
-namespace Upadd\Bin;
+namespace Upadd\Bin\Tool;
 
 class Rbac
 {

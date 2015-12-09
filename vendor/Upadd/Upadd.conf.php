@@ -1,13 +1,13 @@
 <?php
 /**
-	+----------------------------------------------------------------------
-	| UPADD [ Can be better to Up add]
-	+----------------------------------------------------------------------
-	| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
-	+----------------------------------------------------------------------
-	| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-	+----------------------------------------------------------------------
-	| Author: Richard.z <v3u3i87@gmail.com>
++----------------------------------------------------------------------
+| UPADD [ Can be better to Up add]
++----------------------------------------------------------------------
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
++----------------------------------------------------------------------
+| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
++----------------------------------------------------------------------
+| Author: Richard.z <v3u3i87@gmail.com>
  **/
 if (version_compare ( PHP_VERSION, '5.4.0', '<' ))	die ( 'require PHP > 5.3.0 !' );
 // 设置编码
@@ -32,7 +32,6 @@ use Upadd\Bin\Http\Request;
 use Upadd\Bin\Http\Route;
 use Upadd\Bin\Config\Configuration;
 //use Upadd\Bin\Factory;
-//Factory::setInstance('Route');
 
 $app = new \Upadd\Bin\Application();
 
@@ -42,7 +41,6 @@ $app->work(array(
     'Route'=>new Route,
 ),function() use ($app)
 {
-//use Upadd\Bin\Http\Route;
 
     $route = $app->_work['Route'];
 

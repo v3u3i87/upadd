@@ -1,6 +1,6 @@
 <?php
 
-$route->get('/', 'works\action\Info\ZmqAction@info');
+$route->get('/', 'works\action\IndexAction@home');
 
 $route->get('/test',function(){
     phpinfo();

@@ -1,7 +1,7 @@
 <?php
 namespace Upadd\Bin\Db;
 
-use Upadd\Bin\Log;
+use Upadd\Bin\Tool\Log;
 
 class LinkPdoMysql implements Db{
 

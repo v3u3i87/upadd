@@ -50,7 +50,6 @@ class Request{
 
     public function setRouteMode(){
         $Route = $this->_work['Route'];
-        //导入URL资源
         $_pathUlr = $this->getUrlHash($Route->_resou);
         if(isset($Route->_resou[$_pathUlr])){
             $this->_routing = $Route->_resou[$_pathUlr];
@@ -164,7 +163,7 @@ class Request{
                 $controller = new $_class();
                 //设置模板控制器
                 $controller->setViewAction($_class);
-                $controller->$functuion();
+                return $controller->$functuion();
             }else{
                 throw new UpaddException($_class.',There is no Action');
             }

@@ -75,24 +75,18 @@ class Route extends Request{
      * @param null $method
      */
     public function get($getUrl=null,$method=null){
-        $url = '';
         if($this->prefix){
-            $url = $this->prefix.$getUrl;
-        }else{
-            $url = $getUrl;
+            $getUrl = $this->prefix.$getUrl;
         }
-        $this->setResou($url,$method,'GET');
+        $this->setResou($getUrl,$method,'GET');
     }
 
 
     public function post($getUrl=null,$method=null){
-        $url = '';
         if($this->prefix){
-            $url = $this->prefix.$getUrl;
-        }else{
-            $url = $getUrl;
+            $getUrl = $this->prefix.$getUrl;
         }
-        $this->setResou($url,$method,'POST');
+        $this->setResou($getUrl,$method,'POST');
     }
 
 
@@ -111,11 +105,6 @@ class Route extends Request{
             'type'=>$type
         );
     }
-
-
-
-
-
 
 
 }

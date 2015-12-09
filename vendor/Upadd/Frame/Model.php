@@ -12,10 +12,12 @@ namespace Upadd\Frame;
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
 
-use Upadd\Bin\Verify;
-use Upadd\Bin\Log;
-use Upadd\Bin\PageData;
+use Upadd\Bin\Tool\Verify;
+use Upadd\Bin\Tool\Log;
+use Upadd\Bin\Tool\PageData;
+use Upadd\Bin\Config\Config;
 use Upadd\Bin\UpaddException;
+
 
 class Model {
 
@@ -83,14 +85,12 @@ class Model {
 
     public function __construct($db = null) {
         if ($this->_db === null ) {
-            $DBinfo = conf ( 'db@db' );
+            $DBinfo = Config::get('database@db');
             $this->DbType($DBinfo['type'],$DBinfo);
         }
         $this->db_prefix = $DBinfo ['prefix'];
         $this->setTableName($this->_table);
-
     }
-
 
 
     /**

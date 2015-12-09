@@ -28,15 +28,13 @@ class Log {
 	 * @param 文件名称以及格式 $file        	
 	 */
 	public static function write($cont, $fileName) {
-		if (APP_IS_LOG) {
-			$info = 'URL:' . $_SERVER ['REQUEST_URI'] . "\r\n";
-			$info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
-			$info .= 'Info:' . $cont . "\r\r\r";
-			$file = self::isBak ( $fileName );
-			$fh = fopen ( $file, 'a+' );
-			fwrite ( $fh, $info );
-			fclose ( $fh );
-		}
+        $info = 'URL:' . $_SERVER ['REQUEST_URI'] . "\r\n";
+        $info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
+        $info .= 'Info:' . $cont . "\r\r\r";
+        $file = self::isBak ( $fileName );
+        $fh = fopen ( $file, 'a+' );
+        fwrite ( $fh, $info );
+        fclose ( $fh );
 	}
 
 

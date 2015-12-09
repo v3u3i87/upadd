@@ -1,20 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zmq
- * Date: 2015/8/4
- * Time: 11:50
- */
 
 namespace works\model;
 
+class InfoMo extends \Upadd\Frame\Model{
 
-class InfoMo{
+    public $_table = 'ad';
 
-
-    static function info(){
-        echo 'info/user';
+    public function info(){
+        return $this->select();
     }
+
 
 
 

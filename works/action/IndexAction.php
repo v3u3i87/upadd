@@ -11,13 +11,15 @@ namespace works\action;
 use works\logic\Info;
 use works\action\NameAction;
 use Upadd\Bin\Config\Config;
+use works\model\InfoMo;
 
 
 class IndexAction extends BaseAction{
 
 
     public function home(){
-        echo 'home';
+//        $InfoMo = new InfoMo();
+        p(InfoMo::info());
     }
 
 
@@ -27,7 +29,7 @@ class IndexAction extends BaseAction{
 
 
     public function info(){
-        echo 'home.info';
+        echo 'info';
     }
 
 

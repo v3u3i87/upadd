@@ -12,7 +12,7 @@
 namespace Upadd\Bin\Tool;
 
 use Upadd\Bin\UpaddException;
-use Upadd\Bin\Config\Config;
+use Upadd\Bin\Config\GetConfiguration as Config;
 
 /**
  * 日记处理类

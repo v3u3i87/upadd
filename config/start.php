@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zmq
- * Date: 2015/4/10
- * Time: 17:05
- */
+
 return array(
 
     'environment'=>array(
@@ -23,7 +18,14 @@ return array(
     ),
 
     //CLI模式下命名空间
-    'cli_action_autoload'=>'works\\action\\'
+    'cli_action_autoload'=>'works\\action\\',
+
+    //设置别名
+    'alias'=>array(
+        'Routes'=>'Upadd\Bin\Package\Routes',
+//        'Config'=>'Upadd\Bin\Config\GetConfiguration'
+    ),
+
 
 
 

@@ -6,11 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Upadd\\Bin\\Alias' => $vendorDir . '/Upadd/Bin/Alias.php',
     'Upadd\\Bin\\Application' => $vendorDir . '/Upadd/Bin/Application.php',
     'Upadd\\Bin\\Cache\\Cache' => $vendorDir . '/Upadd/Bin/Cache/Cache.php',
     'Upadd\\Bin\\Cache\\Mem\\Mem' => $vendorDir . '/Upadd/Bin/Cache/Mem.php',
-    'Upadd\\Bin\\Config\\Config' => $vendorDir . '/Upadd/Bin/Config/Config.php',
     'Upadd\\Bin\\Config\\Configuration' => $vendorDir . '/Upadd/Bin/Config/Configuration.php',
+    'Upadd\\Bin\\Config\\GetConfiguration' => $vendorDir . '/Upadd/Bin/Config/GetConfiguration.php',
     'Upadd\\Bin\\Db\\Db' => $vendorDir . '/Upadd/Bin/Db/Db.php',
     'Upadd\\Bin\\Db\\LinkPdoMysql' => $vendorDir . '/Upadd/Bin/Db/LinkPdoMysql.php',
     'Upadd\\Bin\\Db\\Mysql' => $vendorDir . '/Upadd/Bin/Db/Mysql.php',
@@ -18,10 +19,13 @@ return array(
     'Upadd\\Bin\\Http\\Request' => $vendorDir . '/Upadd/Bin/Http/Request.php',
     'Upadd\\Bin\\Http\\Route' => $vendorDir . '/Upadd/Bin/Http/Route.php',
     'Upadd\\Bin\\Loader' => $vendorDir . '/Upadd/Bin/Loader.php',
-    'Upadd\\Bin\\Security' => $vendorDir . '/Upadd/Bin/Security.php',
+    'Upadd\\Bin\\Package\\Config' => $vendorDir . '/Upadd/Bin/Package/Config.php',
+    'Upadd\\Bin\\Package\\Routes' => $vendorDir . '/Upadd/Bin/Package/Routes.php',
     'Upadd\\Bin\\Tool\\Log' => $vendorDir . '/Upadd/Bin/Tool/Log.php',
     'Upadd\\Bin\\Tool\\PageData' => $vendorDir . '/Upadd/Bin/Tool/PageData.php',
     'Upadd\\Bin\\Tool\\Rbac' => $vendorDir . '/Upadd/Bin/Tool/Rbac.php',
+    'Upadd\\Bin\\Tool\\Security' => $vendorDir . '/Upadd/Bin/Tool/Security.php',
+    'Upadd\\Bin\\Tool\\Session' => $vendorDir . '/Upadd/Bin/Tool/Session.php',
     'Upadd\\Bin\\Tool\\Verify' => $vendorDir . '/Upadd/Bin/Tool/Verify.php',
     'Upadd\\Bin\\UpaddException' => $vendorDir . '/Upadd/Bin/UpaddException.php',
     'Upadd\\Bin\\View\\Templates' => $vendorDir . '/Upadd/Bin/View/Templates.php',

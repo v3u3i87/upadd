@@ -1,49 +1,53 @@
 <?php
-/**
- * About:Richard.z
- * Email:v3u3i87@gmail.com
- * Blog:https://www.zmq.cc
- * Date: 15/12/8
- * Time: 16:36
- * Name:
- */
+
 namespace Upadd\Bin;
 
-class Factory{
+abstract class Factory{
 
     public static $instance = array();
 
-    public static function setInstance($name=null){
-        if(is_array($name)){
-            static::$instance = array_merge(static::$instance,$name);
-        }else{
-            static::$instance[] = $name;
-        }
+    /**
+     * 导入项目
+     * @param $_work
+     */
+    public static function Import($_work){
+        static::$instance = $_work;
     }
+
+
+
+    public static function getName(){
+        if(isset(static::$instance[static::getClassObj()])){
+            return static::$instance[static::getClassObj()];
+        }
+        return static::getClassObj();
+    }
+
 
     public static function __callStatic($method, $args)
     {
-        $instance = static::$instance;
-        p($instance);
+        $action = static::getName();
+//        vd($action,1);
+
         switch (count($args))
         {
             case 0:
-                return $instance->$method();
+                return $action->$method();
 
             case 1:
-                return $instance->$method($args[0]);
+                return $action->$method($args[0]);
 
             case 2:
-                return $instance->$method($args[0], $args[1]);
+                return $action->$method($args[0], $args[1]);
 
             case 3:
-                return $instance->$method($args[0], $args[1], $args[2]);
+                return $action->$method($args[0], $args[1], $args[2]);
 
             case 4:
-                return $instance->$method($args[0], $args[1], $args[2], $args[3]);
+                return $action->$method($args[0], $args[1], $args[2], $args[3]);
 
             default:
-                return call_user_func_array(array($instance, $method), $args);
+                return call_user_func_array(array($action, $method), $args);
         }
     }
 

@@ -10,7 +10,7 @@
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
 
-namespace Upadd\Bin;
+namespace Upadd\Bin\Tool;
 
 /**
  * 安全检查函数

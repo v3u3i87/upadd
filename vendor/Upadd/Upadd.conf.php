@@ -27,22 +27,24 @@ if(APP_RUN_MODE) {
 // 函数库
 require UPADD_HOST . VENDOR .'/Public/help.php';
 
-
-use Upadd\Bin\Http\Request;
-use Upadd\Bin\Http\Route;
-use Upadd\Bin\Config\Configuration;
-//use Upadd\Bin\Factory;
+use Upadd\Bin\Factory;
 
 $app = new \Upadd\Bin\Application();
 
-$app->work(array(
-    'Request'=>new Request,
-    'Configuration'=>new Configuration,
-    'Route'=>new Route,
-),function() use ($app)
-{
+$app->getWork(array(
+    'Request'=>new \Upadd\Bin\Http\Request,
+    'Configuration'=>new \Upadd\Bin\Config\Configuration,
+    'Route'=>new \Upadd\Bin\Http\Route,
+));
 
-    $route = $app->_work['Route'];
+Factory::Import($app->_work);
+
+$app->getConfig();
+
+$app->getAlias()->run();
+
+$app->work(function() use ($app)
+{
 
     $_hostConfigPath = host().'config';
 
@@ -63,7 +65,5 @@ $app->work(array(
      */
     $extend = $_hostConfigPath.'/extend.php';
     if(file_exists($extend)) require $extend;
-
-
 
 },isset($argv) ? $argv : array());

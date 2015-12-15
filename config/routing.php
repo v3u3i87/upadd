@@ -1,20 +1,20 @@
 <?php
 
-$route->get('/', 'works\action\IndexAction@home');
+Routes::get('/', 'works\action\IndexAction@home');
 
-$route->get('/test',function(){
+Routes::get('/test',function(){
     phpinfo();
 });
 
-$route->group(array('prefix' => '/user','filters'=>'info'),function() use ($route) {
+Routes::group(array('prefix' => '/user','filters'=>'info'),function() {
 
-    $route->get('/info','works\action\IndexAction@info');
+    Routes::get('/info','works\action\IndexAction@info');
 
 });
 
 
-$route->group(array('prefix' => '/name','filters'=>'test'),function() use ($route) {
+Routes::group(array('prefix' => '/name','filters'=>'test'),function() {
 
-    $route->get('/aaa','works\action\NameAction@aaa');
+    Routes::get('/aaa','works\action\NameAction@aaa');
 
 });

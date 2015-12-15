@@ -1,6 +1,6 @@
 <?php
 
-$route->filters('test',function(){
+Routes::filters('test',function(){
 
     if(false){
         echo '嘻嘻';
@@ -12,7 +12,7 @@ $route->filters('test',function(){
 });
 
 
-$route->filters('info',function(){
+Routes::filters('info',function(){
 
     echo '需要思考的实现';
     echo '<br />';

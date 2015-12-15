@@ -12,8 +12,8 @@
 namespace Upadd\Bin;
 
 use Upadd\Bin\Tool\Log;
+use Upadd\Bin\Config\GetConfiguration as Config;
 
-use Upadd\Bin\Config\Config;
 
 class Loader
 {
@@ -131,8 +131,9 @@ class Loader
         }
     }
 
-
-
+    /**
+     * 初始化判断目录文件
+     */
     protected static function loadDir(){
         header('X-Powered-By:'.Config::get('sys@UPADD_VERSION'));
         if(!self::isRunMachineName()){

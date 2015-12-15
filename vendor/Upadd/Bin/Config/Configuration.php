@@ -6,25 +6,21 @@ class Configuration{
 
     public $_config = array();
 
-    /**
-     * 配置文件
-     * @var array
-     */
-    public $profiles = array('config','start','database','');
-
     public $start = array();
 
     //电脑名称
     public $hostName = null;
 
+    public $_evn = null;
+
     public function getConfigLoad(){
         $this->start = $this->getConfLoad();
         $this->hostName = gethostname();
         $evn = $this->start['environment'];
-        $evnNmae = $this->getEvnName($evn);
+        $this->_evn = $this->getEvnName($evn);
         $configPath = UPADD_HOST.'config';
-        if($evnNmae){
-            $config = $this->getConfigName($configPath.'/'.$evnNmae);
+        if($this->_evn ){
+            $config = $this->getConfigName($configPath.'/'.$this->_evn );
             if($config){
                 $this->_config = $config;
             }

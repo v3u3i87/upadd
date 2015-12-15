@@ -13,14 +13,14 @@ namespace Upadd\Bin\Config;
 
 use Upadd\Bin\Application;
 
-class Config extends Application{
+class GetConfiguration extends Application{
 
 
     /**
      * 获取数据
      * @param $key
      */
-    public static function get($key){
+    public static function get($key=''){
         try{
             if(list($_key,$val) = lode('@',$key)){
                 if(isset(static::$_config[$_key][$val])) {
@@ -32,5 +32,8 @@ class Config extends Application{
             p($e->getMessage());
         }
     }
+
+
+
 
 }

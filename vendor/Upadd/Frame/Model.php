@@ -15,7 +15,7 @@ namespace Upadd\Frame;
 use Upadd\Bin\Tool\Verify;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\Tool\PageData;
-use Upadd\Bin\Config\Config;
+use Config;
 use Upadd\Bin\UpaddException;
 
 

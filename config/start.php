@@ -20,10 +20,13 @@ return array(
     //CLI模式下命名空间
     'cli_action_autoload'=>'works\\action\\',
 
-    //设置别名
+    /**
+     * 定义工厂包别名,全局可使用
+     * use Config;
+     */
     'alias'=>array(
         'Routes'=>'Upadd\Bin\Package\Routes',
-//        'Config'=>'Upadd\Bin\Config\GetConfiguration'
+        'Config'=>'Upadd\Bin\Package\Config'
     ),
 
 

@@ -30,7 +30,7 @@ return array(
     'IMG_PATH'=>UPADD_HOST.'data/upload/',
     'HTML_TAG'=>true,
     'HTML_IS_CACHE'=>false,
-    'LOG_PATH'=>UPADD_HOST.'data/log/',
+    'log_path'=>UPADD_HOST.'data/log/',
     'CONF_DIR'=>UPADD_HOST.'config/',
     'UPADD_VERSION'=>'Upadd-0.5',
     'METHOD'=> (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : ''),

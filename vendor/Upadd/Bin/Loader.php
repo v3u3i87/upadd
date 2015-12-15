@@ -12,8 +12,7 @@
 namespace Upadd\Bin;
 
 use Upadd\Bin\Tool\Log;
-use Upadd\Bin\Config\GetConfiguration as Config;
-
+use Config;
 
 class Loader
 {

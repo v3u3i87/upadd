@@ -23,7 +23,6 @@ if(APP_RUN_MODE) {
     define ('UPADD_HOST', substr(dirname(__FILE__), 0, -6));
 }
 
-
 // 函数库
 require UPADD_HOST . VENDOR .'/Public/help.php';
 
@@ -35,6 +34,7 @@ $app->getWork(array(
     'Request'=>new \Upadd\Bin\Http\Request,
     'Configuration'=>new \Upadd\Bin\Config\Configuration,
     'Route'=>new \Upadd\Bin\Http\Route,
+    'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
 ));
 
 Factory::Import($app->_work);

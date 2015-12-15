@@ -170,7 +170,7 @@ if(!function_exists('conf')) {
      */
     function conf($key)
     {
-       return \Upadd\Bin\Config::get($key);
+       return \Config::get($key);
     }
 }
 
@@ -181,7 +181,7 @@ if(!function_exists('is_json')){
      * @param null $string
      * @return bool
      */
-    function is_json(string $string = null)
+    function is_json($string = null)
     {
         if($string = json_decode($string)){
             return true;

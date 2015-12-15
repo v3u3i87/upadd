@@ -26,8 +26,8 @@ abstract class Factory{
 
     public static function __callStatic($method, $args)
     {
+
         $action = static::getName();
-//        vd($action,1);
 
         switch (count($args))
         {

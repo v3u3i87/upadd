@@ -138,27 +138,29 @@ class Loader
         if(!self::isRunMachineName()){
             msg(10004,lang('loadRunConfig'));
         }
-        $DATA_DIR = Config::get('sys@DATA_DIR');
+
+        $_data_dir = Config::get('sys@data_dir');
 
         // 数据资源文件夹
-        if (! is_dir ( $DATA_DIR )){
-            is_dirName ( $DATA_DIR );
+        if (! is_dir ( $_data_dir )){
+            is_dirName ( $_data_dir );
         }
 
         // 日记目录
-        if( ! is_dir($DATA_DIR . 'log')){
-            is_dirName ( $DATA_DIR . 'log' );
+        if( ! is_dir($_data_dir . 'log')){
+            is_dirName ( $_data_dir . 'log' );
         }
 
         //创建编译文件夹
-        if(! is_dir($DATA_DIR.'compiled')){
-            is_dirName($DATA_DIR.'compiled');
+        if(! is_dir($_data_dir.'compiled')){
+            is_dirName($_data_dir.'compiled');
         }
 
         //创建缓存文件夹
-        if(! is_dir($DATA_DIR.'cache')){
-            is_dirName($DATA_DIR.'cache');
+        if(! is_dir($_data_dir.'cache')){
+            is_dirName($_data_dir.'cache');
         }
+
 
     }
 

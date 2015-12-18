@@ -14,11 +14,6 @@ namespace Upadd\Bin\Tool;
 use Upadd\Bin\UpaddException;
 use Config;
 
-/**
- * 日记处理类
- * 静态方法调用DataLog::write('内容',预创建的文件名称)
- * @author Richard.z
- */
 class Log {
 	
 	/**

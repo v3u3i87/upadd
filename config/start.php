@@ -26,11 +26,9 @@ return array(
      */
     'alias'=>array(
         'Routes'=>'Upadd\Bin\Package\Routes',
-        'Config'=>'Upadd\Bin\Package\Config'
+        'Config'=>'Upadd\Bin\Package\Config',
+        'Session'=>'Upadd\Bin\Package\Session',
     ),
-
-
-
 
 
 

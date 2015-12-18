@@ -170,7 +170,7 @@ if(!function_exists('conf')) {
      */
     function conf($key)
     {
-       return \Config::get($key);
+       return \Upadd\Bin\Config\Configuration::get($key);
     }
 }
 

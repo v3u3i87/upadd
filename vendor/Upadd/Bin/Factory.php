@@ -6,6 +6,7 @@ abstract class Factory{
 
     public static $instance = array();
 
+
     /**
      * 导入项目
      * @param $_work
@@ -15,9 +16,14 @@ abstract class Factory{
     }
 
 
-
-    public static function getName(){
-        if(isset(static::$instance[static::getClassObj()])){
+    /**
+     * 获取名称
+     * @return mixed
+     */
+    public static function getName()
+    {
+        if(isset(static::$instance[static::getClassObj()]))
+        {
             return static::$instance[static::getClassObj()];
         }
         return static::getClassObj();

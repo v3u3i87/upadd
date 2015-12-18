@@ -13,12 +13,14 @@ class Configuration{
 
     public $_evn = null;
 
+    public static $_configData = array();
+
     public function getConfigLoad(){
         $this->start = $this->getConfLoad();
         $this->hostName = gethostname();
         $evn = $this->start['environment'];
         $this->_evn = $this->getEvnName($evn);
-        $configPath = UPADD_HOST.'config';
+        $configPath = host().'config';
         if($this->_evn ){
             $config = $this->getConfigName($configPath.'/'.$this->_evn );
             if($config){
@@ -29,6 +31,7 @@ class Configuration{
         }
         $this->_config['start'] = $this->start;
         $this->_config['sys'] = $this->sysConfig();
+        static::$_configData = $this->_config;
         return $this->_config;
     }
 
@@ -61,7 +64,7 @@ class Configuration{
             if($fileNmae){
                 $file = $fileNmae;
             }
-            $file = UPADD_HOST.'config/'.$file;
+            $file = host().'config/'.$file;
             if(file_exists($file)) return require $file;
         }catch (\Exception $e){
             p($e->getMessage());
@@ -85,10 +88,18 @@ class Configuration{
         return false;
     }
 
-
     //系统配置文件
     protected function sysConfig(){
-        return require UPADD_HOST.VENDOR.'/Public/config.php';
+        return require host().VENDOR.'/Public/config.php';
+    }
+
+    public static function get($key){
+        if(list($_key,$val) = lode('@',$key)){
+            if(isset(static::$_configData[$_key][$val])) {
+                return static::$_configData[$_key][$val];
+            }
+        }
+        return false;
     }
 
 }

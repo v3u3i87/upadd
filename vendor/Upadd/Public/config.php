@@ -24,7 +24,7 @@ return array(
     'IS_FRAME'=>'Frame/',
     'IS_EXPAND'=>'Expand/',
     //数据文件夹目录
-    'DATA_DIR'=>UPADD_HOST.'data/',
+    'data_dir'=>UPADD_HOST.'data/',
     'HTML_COMPILED_DIR'=>UPADD_HOST.'data/compiled/',
     'HTML_CACHE_DIR'=>UPADD_HOST.'data/cache/',
     'IMG_PATH'=>UPADD_HOST.'data/upload/',

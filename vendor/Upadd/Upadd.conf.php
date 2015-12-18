@@ -28,25 +28,54 @@ require UPADD_HOST . VENDOR .'/Public/help.php';
 
 use Upadd\Bin\Factory;
 
+/**
+ * 实例化APP
+ */
 $app = new \Upadd\Bin\Application();
 
+/**
+ * 设置配置文件
+ */
+$app->getConfig();
+
+
+/**
+ * 设置Session
+ */
+$app->setSession();
+
+
+/**
+ * 实例化模块
+ */
 $app->getWork(array(
-    'Request'=>new \Upadd\Bin\Http\Request,
-    'Configuration'=>new \Upadd\Bin\Config\Configuration,
-    'Route'=>new \Upadd\Bin\Http\Route,
     'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
+    'Request'=>new \Upadd\Bin\Http\Request,
+    'Route'=>new \Upadd\Bin\Http\Route,
+    'getSession'=>\Upadd\Bin\Session\getSession::init(),
 ));
 
 Factory::Import($app->_work);
 
-$app->getConfig();
-
+/**
+ * 载入别名
+ */
 $app->getAlias()->run();
 
+
+/**
+ * 开始工作
+ */
 $app->work(function() use ($app)
 {
 
     $_hostConfigPath = host().'config';
+
+    /**
+     * 扩展文件
+     */
+    $extend = $_hostConfigPath.'/extend.php';
+    if(file_exists($extend)) require $extend;
 
     /**
      * 路由配置
@@ -60,10 +89,6 @@ $app->work(function() use ($app)
     $filters = $_hostConfigPath.'/filters.php';
     if(file_exists($filters)) require $filters;
 
-    /**
-     * 扩展文件
-     */
-    $extend = $_hostConfigPath.'/extend.php';
-    if(file_exists($extend)) require $extend;
+
 
 },isset($argv) ? $argv : array());

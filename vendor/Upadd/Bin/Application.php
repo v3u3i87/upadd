@@ -1,9 +1,11 @@
 <?php
 namespace Upadd\Bin;
 
+use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Loader;
 use Upadd\Bin\UpaddException;
 use Upadd\Bin\Alias;
+use Upadd\Bin\Session\SessionFile;
 
 class Application{
 
@@ -36,11 +38,15 @@ class Application{
      * 获取配置文件
      */
     public function getConfig(){
-        return static::$_config = $this->_work['Configuration']->getConfigLoad();
+        $this->_work['Configuration'] = new Configuration();
+        return (static::$_config = $this->_work['Configuration']->getConfigLoad());
     }
 
-
-
+    /**
+     * 获取别名
+     * @return \Upadd\Bin\Alias
+     * @throws \Upadd\Bin\UpaddException
+     */
     public function getAlias(){
         return (new Alias($this->setAlias()));
     }
@@ -56,5 +62,24 @@ class Application{
         }
         throw new UpaddException('别名设置未加载..');
     }
+
+
+    /**
+     * 设置 $seeion
+     * @return bool
+     */
+    public function setSession(){
+        $seeion = new SessionFile();
+        session_set_save_handler(
+            array($seeion ,'open'),
+            array($seeion ,'close'),
+            array($seeion ,'read'),
+            array($seeion ,'write'),
+            array($seeion ,'destroy'),
+            array($seeion ,'gc')
+        );
+        session_start();
+    }
+
 
 }

@@ -15,9 +15,7 @@ namespace Upadd\Frame;
 use Upadd\Bin\Tool\Verify;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\Tool\PageData;
-use Config;
 use Upadd\Bin\UpaddException;
-
 
 class Model {
 
@@ -53,22 +51,7 @@ class Model {
      * 拼凑SQL语句
      * @var array
      */
-    protected $_sql = array(
-        'from'=>'',
-        'join'=>'',
-        'where'=>'',
-        'in_where'=>'',
-        'not_where'=>'',
-        'like'=>'',
-        'order'=>'',
-        'limit'=>''
-    );
-
-    /**
-     * 数据库对象静态变量
-     * @var null
-     */
-    private static $_dbStatic = null;
+    protected $_sql = array('from'=>'','join'=>'', 'where'=>'','in_where'=>'','not_where'=>'','like'=>'','order'=>'','limit'=>'');
 
     /**
      * 合并多表查询
@@ -82,10 +65,14 @@ class Model {
      */
     public $_pageData = array();
 
-
+    /**
+     * 初始化
+     * Model constructor.
+     * @param null $db
+     */
     public function __construct($db = null) {
         if ($this->_db === null ) {
-            $DBinfo = Config::get('database@db');
+            $DBinfo = conf('database@db');
             $this->DbType($DBinfo['type'],$DBinfo);
         }
         $this->db_prefix = $DBinfo ['prefix'];
@@ -99,19 +86,12 @@ class Model {
      * @param $DBinfo
      */
     private function DbType($type=null,$DBinfo){
-        switch($type){
-
-            case 'mysql' :
-                $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
-                break;
-
-            case 'pdo_mysql':
-                $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
-                break;
-
-            default:
-                throw new UpaddException('数据库连接类型没有选择');
-                break;
+        if($type =='mysql'){
+            $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
+        }elseif($type=='pdo_mysql'){
+            $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
+        }else{
+            throw new UpaddException('数据库连接类型没有选择');
         }
     }
 

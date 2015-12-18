@@ -11,7 +11,7 @@ class InfoMo extends BaseModel{
         return $this->select();
     }
 
-        
+
 
 
 

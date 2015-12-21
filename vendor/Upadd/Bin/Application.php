@@ -117,7 +117,6 @@ class Application{
         if(isset(static::$_config['start']['alias'])){
             return static::$_config['start']['alias'];
         }
-        throw new UpaddException('别名设置未加载..');
     }
 
 

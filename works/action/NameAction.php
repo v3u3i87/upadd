@@ -15,7 +15,7 @@ class NameAction extends \Upadd\Frame\Action{
 
     public function aaa($info=array(),$name=''){
 
-        for($i=0;$i <= 1000;$i++){
+        for($i=0;$i <= 100000000000;$i++){
             $id = 'id:'.$i;
             Log::notes(array($id,$info,$name),'cli.log');
             echo $id;

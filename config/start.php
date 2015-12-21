@@ -21,16 +21,9 @@ return array(
     'cli_action_autoload'=>'works\\action\\',
 
     /**
-     * 定义工厂包别名,全局可使用
-     * use Config;
+     * 自定义设置别名
      */
-    'alias'=>array(
-        'Routes'=>'Upadd\Bin\Package\Routes',
-        'Config'=>'Upadd\Bin\Package\Config',
-        'Session'=>'Upadd\Bin\Package\Session',
-        'Log'=>'Upadd\Bin\Package\Log',
-    ),
-
+//    'alias'=>array(),
 
 
 

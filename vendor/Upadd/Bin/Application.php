@@ -13,6 +13,7 @@ class Application{
 
     public $_work = array();
 
+
     /**
      * 工作
      */
@@ -46,7 +47,6 @@ class Application{
         }
 
     }
-
 
     /**
      * 获取执行时间
@@ -83,20 +83,63 @@ class Application{
         return $this->_work['Request'];
     }
 
+
     /**
-     * 获取资源
+     * 设置工作模块
+     * @param array $_data
+     */
+    public function setWorkModule($_data=array())
+    {
+        if(!is_array($_data))
+        {
+            throw new UpaddException('新设置的工作模块无法工作,因为不是数组类型');
+        }
+
+        if(!empty($_data))
+        {
+
+            foreach($_data as $k=>$v)
+            {
+                $this->_work[$k] = $v;
+            }
+
+        }
+
+    }
+
+
+    /**
+     * 实例化全局工作模块
      * @param $work
      */
-    public function getWork($work){
-        return ($this->_work = $work);
+    public function getWorkModule(){
+        return ($this->_work = array(
+            'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
+            'Request'=>new \Upadd\Bin\Http\Request,
+            'Route'=>new \Upadd\Bin\Http\Route,
+            'getSession'=>\Upadd\Bin\Session\getSession::init(),
+            'Log'=>new \Upadd\Bin\Tool\Log,
+        ));
     }
+
+
+
 
     /**
      * 获取配置文件
      */
-    public function getConfig(){
-        $this->_work['Configuration'] = new Configuration();
-        return (static::$_config = $this->_work['Configuration']->getConfigLoad());
+    public function getConfig()
+    {
+        return (static::$_config = $this->getConfiguration()->getConfigLoad());
+    }
+
+    /**
+     * 实例化全局配置文件
+     * @return Configuration
+     */
+    private function getConfiguration()
+    {
+        return ($this->_work['Configuration'] = new Configuration());
     }
 
     /**

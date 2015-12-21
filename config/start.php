@@ -23,7 +23,7 @@ return array(
     /**
      * 自定义设置别名
      */
-//    'alias'=>array(),
+//    'alias'=>array('Info'=>'works\Package\Info'),
 
 
 

@@ -41,13 +41,7 @@ $app->getConfig();
 /**
  * 实例化模块
  */
-$app->getWork(array(
-    'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
-    'Request'=>new \Upadd\Bin\Http\Request,
-    'Route'=>new \Upadd\Bin\Http\Route,
-    'getSession'=>\Upadd\Bin\Session\getSession::init(),
-    'Log'=>new \Upadd\Bin\Tool\Log,
-));
+$app->getWorkModule();
 
 Factory::Import($app->_work);
 

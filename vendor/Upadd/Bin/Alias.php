@@ -44,6 +44,7 @@ class Alias{
              */
             foreach ($this->_aliasData as $alias => $name)
             {
+
                 $alias = class_alias($name,$alias);
 
                 if(!$alias)

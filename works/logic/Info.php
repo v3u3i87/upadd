@@ -8,17 +8,12 @@
 
 namespace works\logic;
 
-use works\logic\Name;
-use works\model\UserMo;
-
 class Info{
 
-    static function in(){
+
+    public function in(){
         echo 11111;
         echo '<br />';
-        Name::haha();
-        echo '<br />';
-        UserMo::info();
     }
 
 

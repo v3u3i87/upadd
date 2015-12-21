@@ -6,3 +6,9 @@ if(APP_DEBUG) {
     $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
     $whoops->register();
 }
+
+//测试用咧
+//$app->setWorkModule(array(
+//    'Info'=>new \works\logic\Info,
+//));
+

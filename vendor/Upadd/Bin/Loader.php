@@ -27,10 +27,16 @@ class Loader
     public static function Run()
     {
         self::loadDir();
+
         spl_autoload_register (function($className)
         {
-            //判断是否开启自定义
-            if(Config::get('start@is_autoload')){
+
+            /**
+             * 判断是否开启自定义
+             * 默认不开启
+             */
+            if(Config::get('start@is_autoload'))
+            {
                 $autoload  = self::getAutoload();
                 $className = lode("\\",$className);
                 $className =  end($className);
@@ -44,9 +50,14 @@ class Loader
                 $_filePath =  UPADD_HOST . str_replace('\\', '/', $className).'.php';
             }
 
-            if(is_file($_filePath)){
+            if(is_file($_filePath))
+            {
                 require $_filePath;
+
+            }else{
+                throw new UpaddException($_filePath.'文件不存在..');
             }
+
         });
 
     }

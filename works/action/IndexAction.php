@@ -2,17 +2,21 @@
 
 namespace works\action;
 
-use works\logic\Info;
-use works\model\InfoMo;
 use Config;
 use Session;
 use Log;
+
+
+use works\model\InfoMo;
 
 class IndexAction extends BaseAction{
 
     public function home(){
         echo 'home';
         Log::notes(array(12,3,4),'test.log');
+
+        $info = new InfoMo();
+        p($info->abc());
         exit;
 //        p($_SESSION);
 //        Session::del();

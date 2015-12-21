@@ -38,13 +38,6 @@ $app = new \Upadd\Bin\Application();
  */
 $app->getConfig();
 
-
-/**
- * 设置Session
- */
-$app->setSession();
-
-
 /**
  * 实例化模块
  */
@@ -53,6 +46,7 @@ $app->getWork(array(
     'Request'=>new \Upadd\Bin\Http\Request,
     'Route'=>new \Upadd\Bin\Http\Route,
     'getSession'=>\Upadd\Bin\Session\getSession::init(),
+    'Log'=>new \Upadd\Bin\Tool\Log,
 ));
 
 Factory::Import($app->_work);
@@ -61,7 +55,6 @@ Factory::Import($app->_work);
  * 载入别名
  */
 $app->getAlias()->run();
-
 
 /**
  * 开始工作
@@ -88,7 +81,5 @@ $app->work(function() use ($app)
      */
     $filters = $_hostConfigPath.'/filters.php';
     if(file_exists($filters)) require $filters;
-
-
 
 },isset($argv) ? $argv : array());

@@ -28,6 +28,7 @@ return array(
         'Routes'=>'Upadd\Bin\Package\Routes',
         'Config'=>'Upadd\Bin\Package\Config',
         'Session'=>'Upadd\Bin\Package\Session',
+        'Log'=>'Upadd\Bin\Package\Log',
     ),
 
 

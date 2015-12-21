@@ -3,16 +3,17 @@
 namespace works\action;
 
 use works\logic\Info;
-use works\action\NameAction;
 use works\model\InfoMo;
 use Config;
 use Session;
+use Log;
 
 class IndexAction extends BaseAction{
 
     public function home(){
-        $info = new InfoMo();
-
+        echo 'home';
+        Log::notes(array(12,3,4),'test.log');
+        exit;
 //        p($_SESSION);
 //        Session::del();
 //        exit;

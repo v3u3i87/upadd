@@ -415,3 +415,21 @@ if(!function_exists('host'))
     }
 
 }
+
+if(!function_exists('is_run_evn')){
+    /**
+     * 判断运行环境
+     * @return bool
+     */
+    function is_run_evn()
+    {
+        if(php_sapi_name() === 'cli')
+        {
+            return false;
+        }elseif(PHP_SAPI === 'cli'){
+            return false;
+        }else{
+            return true;
+        }
+    }
+}

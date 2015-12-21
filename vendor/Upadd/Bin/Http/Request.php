@@ -13,52 +13,86 @@ namespace Upadd\Bin\Http;
 
 use Upadd\Bin\UpaddException;
 
+use Config;
+
 class Request{
 
+    /**
+     * 命令行数据
+     * @var array
+     */
     public $_cliData = array();
 
+    /**
+     * 请求容器
+     * @var array
+     */
     public $_routing = array();
 
-    public $methods = null;
-
+    /**
+     * 实例化对象
+     * @var null
+     */
     public $_work = null;
+
+    /**
+     * 控制器
+     * @var null
+     */
+    public $_action = null;
+
+    /**
+     * 方法
+     * @var null
+     */
+    public $_method = null;
 
 
     /**
      * 入口
      * @param $argv
      */
-    public function init($_work,$argv){
+    public function getInit($_work,$argv){
         $this->_work = $_work;
-        if($this->is_run_evn()){
-            $this->setRouteMode();
-        }else{
-            $this->_cliData = getArgs($argv);
-            $this->setCliMethods();
-        }
+        $this->_cliData = getArgs($argv);
     }
 
 
-    public function setCliMethods(){
-        $start = $this->_work['Configuration']->_config['start'];
-        $cli_action_autoload = $start['cli_action_autoload'];
+    /**
+     * 命令行模式
+     */
+    public function setCli(){
+        $cli_action_autoload = Config::get('start@cli_action_autoload');
         if(isset($this->_cliData['u']) && isset($this->_cliData['p'])) {
-            $this->methods = $cli_action_autoload . $this->_cliData['u'] . 'Action' . '@' . $this->_cliData['p'];
+            $this->getAction($cli_action_autoload . $this->_cliData['u'] . 'Action' . '@' . $this->_cliData['p']);
         }
-        $this->run();
+        unset($this->_cliData['u']);
+        unset($this->_cliData['p']);
+        return $this->Instantiation();
+
     }
 
-    public function setRouteMode(){
+    /**
+     * http模式
+     * @throws UpaddException
+     */
+    public function setCgi()
+    {
         $Route = $this->_work['Route'];
         $_pathUlr = $this->getUrlHash($Route->_resou);
-        if(isset($Route->_resou[$_pathUlr])){
+        if(isset($Route->_resou[$_pathUlr]))
+        {
             $this->_routing = $Route->_resou[$_pathUlr];
-            if(is_callable($this->_routing['callbacks'])){
-                call_user_func_array($this->_routing['callbacks'],func_get_args());
-            }else{
-                $this->methods = $this->_routing['methods'];
-                $this->run();
+
+            if(is_callable($this->_routing['callbacks']))
+            {
+                return call_user_func_array($this->_routing['callbacks'],func_get_args());
             }
+
+            $this->getAction($this->_routing['methods']);
+
+            return $this->Instantiation();
+
         }else{
             throw new UpaddException('RouteMode error');
         }
@@ -69,29 +103,17 @@ class Request{
      * 获取加密后的URL
      * @return string
      */
-    public function getUrlHash($_resou){
+    public function getUrlHash($_resou)
+    {
         $_pathUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        if($_pathUrl == '/') {
+        if($_pathUrl == '/')
+        {
             return sha1('/');
         }else{
             return sha1($this->setRewrite($_pathUrl,$_resou));
         }
     }
 
-
-    /**
-     * 判断PHP执行环境
-     * @return bool
-     */
-    public function is_run_evn(){
-        if(php_sapi_name() === 'cli'){
-            return false;
-        }elseif(PHP_SAPI === 'cli'){
-            return false;
-        }else{
-            return true;
-        }
-    }
 
 
     /**
@@ -146,29 +168,38 @@ class Request{
      * 获取控制器
      * @throws UpaddException
      */
-    public function getAction(){
-        if($_objAction = explode('@',$this->methods)){
-            return $_objAction;
+    public function getAction($methods){
+        if($_objAction = explode('@',$methods)){
+            return list($this->_action, $this->_method) = $_objAction;
         }
-        throw new UpaddException('The controller set wrong..');
+        throw new UpaddException('The Action set wrong..');
     }
 
+
+
     /**
-     * 运行控制器
+     * 实例化
      */
-    public function run(){
+    public function Instantiation()
+    {
         try {
-            list($_class,$functuion) = $this->getAction();
-            if(class_exists($_class)){
-                $controller = new $_class();
-                //设置模板控制器
-                $controller->setViewAction($_class);
-                return $controller->$functuion();
+
+            if(class_exists($this->_action))
+            {
+                $class = new $this->_action();
+                $method = $this->_method;
+                if(!is_run_evn()){
+                    return call_user_func_array(array($class,$method),$this->_cliData);
+                }
+
+                return call_user_func_array(array($class,$method),func_get_args());
+
             }else{
-                throw new UpaddException($_class.',There is no Action');
+                throw new UpaddException($this->_action.',There is no Action');
             }
+
         } catch( UpaddException $e ) {
-            if($this->is_run_evn()){
+            if(is_run_evn()){
                 p($e->getMessage());
             }else{
                 print_r($e->getMessage());
@@ -177,6 +208,5 @@ class Request{
     }
 
 
-    public function analysis_parameters(){}
 
 }

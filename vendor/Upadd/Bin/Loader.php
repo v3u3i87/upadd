@@ -24,7 +24,7 @@ class Loader
 
     private $_config = array();
 
-    public function Run()
+    public static function Run()
     {
         self::loadDir();
         spl_autoload_register (function($className)
@@ -49,7 +49,6 @@ class Loader
             }
         });
 
-        self::runRequest();
     }
 
 
@@ -78,23 +77,6 @@ class Loader
         }
     }
 
-    /**
-     * 记录运行时间
-     * @pamer
-     */
-    private static function runRequest()
-    {
-        if(Config::get('sys@IS_RUNTIME')){
-            $endtime = (microtime(true)) - RUNTIME;
-            $_header = getHeader();
-            Log::request(array(
-                'method'=>(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli'),
-                'header'=>$_header,
-                'param'=>$_REQUEST,
-                'run_time'=>$endtime,
-            ));
-        }
-    }
 
 
     /**

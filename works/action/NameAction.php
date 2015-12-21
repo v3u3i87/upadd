@@ -8,13 +8,20 @@
 
 namespace works\action;
 
+use Log;
 
 class NameAction extends \Upadd\Frame\Action{
 
 
-    public function aaa(){
+    public function aaa($info=array(),$name=''){
 
-        echo 6666666666;
+        for($i=0;$i <= 1000;$i++){
+            $id = 'id:'.$i;
+            Log::notes(array($id,$info,$name),'cli.log');
+            echo $id;
+            echo "\n";
+        }
+
     }
 
 

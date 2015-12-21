@@ -20,6 +20,7 @@ return array(
     'Upadd\\Bin\\Http\\Route' => $vendorDir . '/Upadd/Bin/Http/Route.php',
     'Upadd\\Bin\\Loader' => $vendorDir . '/Upadd/Bin/Loader.php',
     'Upadd\\Bin\\Package\\Config' => $vendorDir . '/Upadd/Bin/Package/Config.php',
+    'Upadd\\Bin\\Package\\Log' => $vendorDir . '/Upadd/Bin/Package/Log.php',
     'Upadd\\Bin\\Package\\Routes' => $vendorDir . '/Upadd/Bin/Package/Routes.php',
     'Upadd\\Bin\\Package\\Session' => $vendorDir . '/Upadd/Bin/Package/Session.php',
     'Upadd\\Bin\\Session\\SessionFile' => $vendorDir . '/Upadd/Bin/Session/SessionFile.php',

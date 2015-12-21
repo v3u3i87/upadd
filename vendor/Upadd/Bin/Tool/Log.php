@@ -11,19 +11,36 @@
  **/
 namespace Upadd\Bin\Tool;
 
-use Upadd\Bin\UpaddException;
+
 use Config;
+use Upadd\Bin\UpaddException;
 
 class Log {
-	
+
+
+	/**
+	 * 全局笔记
+	 * @param array $cont
+	 * @param string $fileName
+	 */
+	public function notes($cont=array(),$fileName='notes.logs'){
+		$info = json($cont) . "\r\n";
+		$info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
+		$file = self::isBak ( $fileName );
+		$fh = fopen ( $file, 'a+' );
+		fwrite ( $fh, $info );
+		fclose ( $fh );
+	}
+
+
+
 	/**
 	 * 启用记录
-	 *
 	 * @param 内容 $cont        	
 	 * @param 文件名称以及格式 $file        	
 	 */
 	public static function write($cont, $fileName) {
-        $info = 'URL:' . $_SERVER ['REQUEST_URI'] . "\r\n";
+        $info = 'URL:' . self::getHttpUrl() . "\r\n";
         $info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
         $info .= 'Info:' . $cont . "\r\r\r";
         $file = self::isBak ( $fileName );
@@ -33,16 +50,14 @@ class Log {
 	}
 
 
+
     /**
      * 获取请求记录
      * @param 内容 $cont
      * @param 文件名称以及格式 $file
      */
     public static function request($cont, $fileName = 'request.logs') {
-        $cont['url'] = '';
-        if(isset($_SERVER ['REQUEST_URI'])) {
-            $cont['url'] = $_SERVER ['REQUEST_URI'];
-        }
+        $cont['url'] = self::getHttpUrl();
         $cont['time'] = date ( 'Y-m-d H:i:s' );
         $info = json($cont) . "\r\r";
         $file = self::isBak ( $fileName );
@@ -58,34 +73,45 @@ class Log {
 	 * @param unknown $file        	
 	 * @return string
 	 */
-	private static function isBak($file) {
+	private static function isBak($file)
+	{
 		$log = self::getPath () . $file;
-		if (! file_exists ( $log )) {
+		if (! file_exists ( $log ))
+		{
 			touch ( $log );
 			return $log;
 		}
 		
 		$size = filesize ( $log );
-		if ($size <= 1099511627776) {
+		/**
+		 * 判断是否大于1G
+		 */
+		if ($size <= 1099511627776)
+		{
 			return $log;
 		}
 		
 		// 如果不存在就创建
-		if (! self::bak ( $file )) {
+		if (! self::bak ( $file ))
+		{
 			return $log;
+
 		} else {
 			touch ( $log );
 			return $log;
 		}
+
 	} // end is bak
-	
+
+
+
 	/**
 	 * 执行备份
-	 *
 	 * @param unknown $file        	
 	 * @return boolean
 	 */
-	private static function bak($file) {
+	private static function bak($file)
+	{
 		$log = self::getPath () . $file;
 		$bak = self::getPath () . date ( 'Y-m-d_H-i-s' ) . '_' . $file . '_' . mt_rand ( 1, 9999 ) . '.log';
 		return rename ( $log, $bak );
@@ -97,7 +123,8 @@ class Log {
 	 * @param string $path        	
 	 * @return string
 	 */
-	private static function getPath() {
+	private static function getPath()
+	{
         $logPath = Config::get('sys@log_path');
 		self::checkPath ( $logPath );
 		return $logPath;
@@ -108,17 +135,31 @@ class Log {
 	 *
 	 * @param unknown $path        	
 	 */
-	private static function checkPath($path) {
-//        echo $path;
-//        exit;
-		// 设置总目录
-		if (! is_dir ( $path ) || ! is_writeable ( $path )) {
-			if (! mkdir ( $path, 0777 )) {
-                throw new UpaddException(lang ( 'is_dir_log' ),404);
+	private static function checkPath($path)
+	{
+		//设置总目录
+		if (!is_dir($path) || !is_writeable($path))
+		{
+			if (! mkdir ( $path, 0777 ))
+			{
+                throw new UpaddException('日记目录异常',404);
 			}
 		}
 	}
 
+	/**
+	 * 获取访问路径
+	 * @return string
+	 */
+	protected static function getHttpUrl()
+	{
+		if(is_run_evn())
+		{
+			if(isset($_SERVER ['REQUEST_URI'])) return $_SERVER ['REQUEST_URI'];
+		}else{
+			return 'cli';
+		}
+	}
 
 
 

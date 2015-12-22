@@ -186,13 +186,31 @@ class Request{
 
             if(class_exists($this->_action))
             {
+                /**
+                 * 实例化控制器
+                 */
                 $class = new $this->_action();
+
+                /**
+                 * 获取方法
+                 */
                 $method = $this->_method;
-                if(!is_run_evn()){
-                    return call_user_func_array(array($class,$method),$this->_cliData);
+                
+                $tmpData = null;
+
+                if(is_run_evn())
+                {
+                    /**
+                     * 设置模板目录
+                     */
+                    $class->setViewAction($this->_action);
+
+                    $tmpData = func_get_args();
+                }else{
+                    $tmpData = $this->_cliData;
                 }
 
-                return call_user_func_array(array($class,$method),func_get_args());
+                return call_user_func_array(array($class,$method),$tmpData);
 
             }else{
                 throw new UpaddException($this->_action.',There is no Action');

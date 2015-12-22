@@ -2,10 +2,10 @@
 
 namespace works\model;
 
-class InfoMo extends BaseModel{
+class Demo extends BaseModel{
 
     //设置数据库名称
-    public $_table = 'ad';
+    public $_table = 'demo';
 
     public function abc(){
         return $this->select();

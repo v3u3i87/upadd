@@ -115,11 +115,13 @@ if(! function_exists('lode')) {
      */
     function lode($type, $data)
     {
+        $val = null;
         if (is_string($data)) {
-            return explode($type, $data);
+            $val = explode($type, $data);
         } elseif (is_array($data)) {
-            return implode($type, $data);
+            $val = implode($type, $data);
         }
+        return $val;
     }
 }
 

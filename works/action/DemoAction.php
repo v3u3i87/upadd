@@ -1,31 +1,28 @@
 <?php
-
 namespace works\action;
-
 use Config;
 use Session;
-use Log;
 
-
-use works\model\InfoMo;
-
-class IndexAction extends BaseAction{
+class DemoAction extends BaseAction{
 
     public function home(){
-        echo 'home';
-        Log::notes(array(12,3,4),'test.log');
+        $this->val('name','测试,121212');
+        $this->val('info',array(1,2,3,5,6));
+        $this->view('demo.html');
+    }
 
-        $info = new InfoMo();
-        p($info->abc());
-        exit;
+    /**
+     * session 使用Demo
+     */
+    public function sessionDemo(){
 //        p($_SESSION);
 //        Session::del();
 //        exit;
 
-          //设置参数
+        //设置参数
 //        Session::set('info',array(2,3,4,6));
 
-          //递增数据
+        //递增数据
 //        Session::add('info',$info->abc());
 
         //获取数据
@@ -33,16 +30,15 @@ class IndexAction extends BaseAction{
 
         //断点打印
 //        p($info);
-
-    }
-
-    public function abc(){
-        p(Session::get('info'));
     }
 
 
     public function info(){
         echo 'info';
+    }
+
+    public function name(){
+        echo 'name';
     }
 
 

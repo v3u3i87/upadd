@@ -32,6 +32,7 @@ return array(
     'Upadd\\Bin\\Tool\\Session' => $vendorDir . '/Upadd/Bin/Tool/Session.php',
     'Upadd\\Bin\\Tool\\Verify' => $vendorDir . '/Upadd/Bin/Tool/Verify.php',
     'Upadd\\Bin\\UpaddException' => $vendorDir . '/Upadd/Bin/UpaddException.php',
+    'Upadd\\Bin\\View\\Tag' => $vendorDir . '/Upadd/Bin/View/Tag.php',
     'Upadd\\Bin\\View\\Templates' => $vendorDir . '/Upadd/Bin/View/Templates.php',
     'Upadd\\Frame\\Action' => $vendorDir . '/Upadd/Frame/Action.php',
     'Upadd\\Frame\\Check' => $vendorDir . '/Upadd/Frame/Check.php',

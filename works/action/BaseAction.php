@@ -8,14 +8,6 @@
 
 namespace works\action;
 
-class BaseAction extends \Upadd\Frame\Action{
+use Upadd\Frame\Action;
 
-    public function __construct(){
-        parent::__construct();
-    }
-
-
-
-
-
-}
+class BaseAction extends Action{}

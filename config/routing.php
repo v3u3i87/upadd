@@ -1,6 +1,6 @@
 <?php
 
-Routes::get('/', 'works\action\IndexAction@home');
+Routes::get('/', 'works\action\DemoAction@home');
 
 Routes::get('/test',function(){
     $info = Session::get('info');
@@ -9,13 +9,13 @@ Routes::get('/test',function(){
 
 Routes::group(array('prefix' => '/user','filters'=>'info'),function() {
 
-    Routes::get('/info','works\action\IndexAction@info');
+    Routes::get('/info','works\action\DemoAction@info');
 
 });
 
 
-Routes::group(array('prefix' => '/name','filters'=>'test'),function() {
+Routes::group(array('prefix' => '/name'),function() {
 
-    Routes::get('/aaa','works\action\NameAction@aaa');
+    Routes::get('/info','works\action\DemoAction@name');
 
 });

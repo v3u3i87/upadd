@@ -23,12 +23,14 @@ class Alias{
      * 定义工厂包别名,全局可使用
      * use Config;
      */
-    public function aliasList(){
+    public function aliasList()
+    {
         return array(
             'Routes'=>'Upadd\Bin\Package\Routes',
             'Config'=>'Upadd\Bin\Package\Config',
             'Session'=>'Upadd\Bin\Package\Session',
             'Log'=>'Upadd\Bin\Package\Log',
+            'Data'=>'Upadd\Bin\Package\Data',
         );
     }
 

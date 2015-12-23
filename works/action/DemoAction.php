@@ -1,11 +1,21 @@
 <?php
 namespace works\action;
+
 use Config;
 use Session;
+use Data;
+
 
 class DemoAction extends BaseAction{
 
     public function home(){
+        $name = Data::get('name',false);
+        $zmq = Data::get('zmq');
+        /**
+         * 获取所有的请求数据get ,post
+         */
+        $all = Data::all();
+
         $this->val('name','测试,121212');
         $this->val('info',array(1,2,3,5,6));
         $this->view('demo.html');

@@ -119,6 +119,7 @@ class Application{
             'Route'=>new \Upadd\Bin\Http\Route,
             'getSession'=>\Upadd\Bin\Session\getSession::init(),
             'Log'=>new \Upadd\Bin\Tool\Log,
+            'Data'=>new \Upadd\Bin\Http\Data,
         ));
     }
 
@@ -160,6 +161,7 @@ class Application{
         if(isset(static::$_config['start']['alias'])){
             return static::$_config['start']['alias'];
         }
+        return false;
     }
 
 

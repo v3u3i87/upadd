@@ -195,7 +195,7 @@ class Request{
                  * 获取方法
                  */
                 $method = $this->_method;
-                
+
                 $tmpData = null;
 
                 if(is_run_evn())

@@ -43,6 +43,9 @@ $app->getConfig();
  */
 $app->getWorkModule();
 
+/**
+ * 导入实例化模块
+ */
 Factory::Import($app->_work);
 
 /**

@@ -31,6 +31,7 @@ class Alias{
             'Session'=>'Upadd\Bin\Package\Session',
             'Log'=>'Upadd\Bin\Package\Log',
             'Data'=>'Upadd\Bin\Package\Data',
+            'Model'=>'Upadd\Frame\Model',
         );
     }
 

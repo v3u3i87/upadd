@@ -4,13 +4,22 @@ namespace works\action;
 use Config;
 use Session;
 use Data;
+use works\model\Demo;
 
 
 class DemoAction extends BaseAction{
 
     public function home(){
+
+        p(Demo::where(array('type'=>1))->limit(5)->get(array('id','title','type')));
+
+//        $demo = new Demo();
+//        p($demo->abc());
+
         $name = Data::get('name',false);
         $zmq = Data::get('zmq');
+
+
         /**
          * 获取所有的请求数据get ,post
          */

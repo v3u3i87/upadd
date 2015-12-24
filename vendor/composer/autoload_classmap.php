@@ -39,6 +39,7 @@ return array(
     'Upadd\\Frame\\Action' => $vendorDir . '/Upadd/Frame/Action.php',
     'Upadd\\Frame\\Check' => $vendorDir . '/Upadd/Frame/Check.php',
     'Upadd\\Frame\\Model' => $vendorDir . '/Upadd/Frame/Model.php',
+    'Upadd\\Frame\\Query' => $vendorDir . '/Upadd/Frame/Query.php',
     'Whoops\\Module' => $vendorDir . '/filp/whoops/src/deprecated/Zend/Module.php',
     'Whoops\\Provider\\Zend\\ExceptionStrategy' => $vendorDir . '/filp/whoops/src/deprecated/Zend/ExceptionStrategy.php',
     'Whoops\\Provider\\Zend\\RouteNotFoundStrategy' => $vendorDir . '/filp/whoops/src/deprecated/Zend/RouteNotFoundStrategy.php',

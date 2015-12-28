@@ -1,14 +1,14 @@
 <?php
 /**
- +----------------------------------------------------------------------
- | UPADD [ Can be better to Up add]
- +----------------------------------------------------------------------
- | Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
- +----------------------------------------------------------------------
- | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
- +----------------------------------------------------------------------
- | Author: Richard.z <v3u3i87@gmail.com>
- | FileName:Upadd函数库
++----------------------------------------------------------------------
+| UPADD [ Can be better to Up add]
++----------------------------------------------------------------------
+| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
++----------------------------------------------------------------------
+| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
++----------------------------------------------------------------------
+| Author: Richard.z <v3u3i87@gmail.com>
+| FileName:Upadd函数库
  **/
 
 if ( ! function_exists('getHeader'))
@@ -149,17 +149,17 @@ if(!function_exists('array_merge_one')) {
 /**
  * 序列化函数
  *
- * @param 序列化的数据 $data        	
+ * @param 序列化的数据 $data
  * @param 类型 $type
  *        	as true 序列化 | false 反序列化
  * @return string|mixed
  */
 function setSequence($data, $type) {
-	if ($type) {
-		return serialize ( $data );
-	} elseif (! $type) {
-		return unserialize ( $data );
-	}
+    if ($type) {
+        return serialize ( $data );
+    } elseif (! $type) {
+        return unserialize ( $data );
+    }
 }
 
 
@@ -172,7 +172,7 @@ if(!function_exists('conf')) {
      */
     function conf($key)
     {
-       return \Upadd\Bin\Config\Configuration::get($key);
+        return \Upadd\Bin\Config\Configuration::get($key);
     }
 }
 
@@ -193,7 +193,7 @@ if(!function_exists('is_json')){
 }
 
 if(!function_exists('json')){
-    
+
     /**
      * 对json进行编码或解码
      * @param null $data
@@ -246,28 +246,6 @@ if(!function_exists('array_sort_field'))
     }
 
 }
-
-
-if(!function_exists('m'))
-{
-
-    /**
-     * 获取表模型对象
-     * @param string $table
-     * @param null $model
-     * @return null|\Upadd\Frame\Model
-     */
-    function m($table = '',$model=null)
-    {
-        if($table){
-            $model = new \Upadd\Frame\Model();
-            $model->setTableName($table);
-        }
-        return $model;
-    }
-
-}
-
 
 if(!function_exists('getMachineName'))
 {
@@ -400,5 +378,55 @@ if(!function_exists('is_run_evn')){
         }else{
             return true;
         }
+    }
+
+}
+
+
+if(!function_exists('getClient_id')){
+
+    /**
+     * 获取客户端ID
+     * @param null $_ip
+     * @return null
+     */
+    function getClient_id($_ip = null)
+    {
+
+        if(isset($_SERVER['HTTP_CLIENT_IP'])
+            || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+            || isset($_SERVER['REMOTE_ADDR']))
+        {
+
+            if (!empty($_SERVER['HTTP_CLIENT_IP']))
+            {
+                //check ip from share internet
+                $_ip = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+            {
+                //to check ip is pass from PRoxy
+                $_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $_ip = $_SERVER['REMOTE_ADDR'];
+            }
+
+        }
+
+        return $_ip;
+    }
+
+}
+
+if(!function_exists('get_hash'))
+{
+
+    function get_hash($key='upadd')
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()+-';
+        //Random 5 times
+        $random = $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)];
+        $content = uniqid() . $random;
+        $content.=$key;
+        return sha1($content);
     }
 }

@@ -5,7 +5,7 @@ namespace Upadd\Frame;
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2016 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
@@ -26,6 +26,12 @@ abstract class Model {
     protected $_table = null;
 
     /**
+     * 表前缀
+     * @var null
+     */
+    protected $db_prefix = null;
+
+    /**
      * 主键或关键字
      * @var null
      */
@@ -38,14 +44,12 @@ abstract class Model {
      */
     private $_db;
 
-
-    public $_query = null;
-
     /**
-     * 临时保存数据
-     * @var array
+     * 查询SQL对象
+     * @var null
      */
-    protected $_data = array();
+    protected $_query = null;
+
 
     /**
      * 初始化
@@ -75,16 +79,17 @@ abstract class Model {
      * @param null $type
      * @param $DBinfo
      */
-    private function DbType($type=null,$DBinfo){
-        if($type =='mysql'){
+    private function DbType($type=null,$DBinfo)
+    {
+        if($type =='mysql')
+        {
             $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
         }elseif($type=='pdo_mysql'){
             $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
         }else{
             throw new UpaddException('数据库连接类型没有选择');
         }
-
-        $this->_query = new Query($this->_db,$this->getTableName(),$this->_primaryKey,$this->_data,$this->db_prefix);
+        $this->_query = new Query($this->_db,$this->getTableName(),$this->_primaryKey,$this->db_prefix);
     }
 
 
@@ -92,8 +97,10 @@ abstract class Model {
      * 设置表名称
      * @param $table
      */
-    public function setTableName($table) {
-        if ($this->_table !== $this->db_prefix . $table) {
+    public function setTableName($table)
+    {
+        if ($this->_table !== $this->db_prefix . $table)
+        {
             $this->_table = $this->db_prefix . $table;
         }
     }
@@ -102,36 +109,54 @@ abstract class Model {
      * 获取表名
      * @return unknown
      */
-    public function getTableName(){
+    public function getTableName()
+    {
         return $this->_table;
     }
 
-    public function __get($key) {
-        if (array_key_exists ( $key, $this->_data )) {
-            return $this->_data [$key];
+    /**
+     * 获取为止参数
+     * @param $key
+     * @return null
+     */
+    public function __get($key)
+    {
+        if (array_key_exists ( $key, $this->_query->parameter ))
+        {
+            return $this->_query->parameter[$key];
         } else {
             return null;
         }
     }
 
+    /**
+     * 设置未知的参数
+     * @param $key
+     * @param $value
+     */
+    public function __set($key, $value)
+    {
+        $this->_query->parameter [$key] = $value;
+    }
 
-    public function __set($key, $value) {
-        $this->_data [$key] = $value;
+    /**
+     * 获取设置的参数
+     * @return mixed
+     */
+    public function getData()
+    {
+        return $this->_query->getData();
     }
 
 
-    public function getData(){
-        return $this->_data;
-    }
-
-    public function __call($name, $arguments)
+    public function __call($name, $parameters)
     {
         /**
          * 实例化自己
          */
         $instance = $this;
 
-        return call_user_func_array(array($instance->_query, $name), $arguments);
+        return call_user_func_array(array($instance->_query, $name), $parameters);
     }
 
 

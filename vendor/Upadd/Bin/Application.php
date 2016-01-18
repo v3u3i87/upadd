@@ -13,7 +13,6 @@ class Application{
 
     public $_work = array();
 
-
     /**
      * 工作
      */
@@ -36,13 +35,14 @@ class Application{
         {
             if(is_callable($callable))
             {
-                call_user_func_array($callable,func_get_args());
+                 call_user_func_array($callable,func_get_args());
             }
+
             $this->setSession();
             $this->runRequest();
-            $this->request()->setCgi();
+            $this->request()->run_cgi();
         }else{
-            $this->request()->setCli();
+            $this->request()->run_cli();
             $this->getTimeConsuming();
         }
 
@@ -51,7 +51,8 @@ class Application{
     /**
      * 获取执行时间
      */
-    private function getTimeConsuming(){
+    private function getTimeConsuming()
+    {
         echo "\n";
         $endtime = (microtime(true)) - RUNTIME;
         echo 'Time consuming '.round($endtime,3).' second';
@@ -70,16 +71,17 @@ class Application{
         Log::request(array(
             'method'=>(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli'),
             'header'=>$_header,
-            'param'=>$_REQUEST,
             'run_time'=>$endtime,
+            'param'=>$_REQUEST,
         ));
     }
 
     /**
-     *
+     * 获取请求对象
      * @return mixed
      */
-    public function request(){
+    public function request()
+    {
         return $this->_work['Request'];
     }
 
@@ -112,7 +114,8 @@ class Application{
      * 实例化全局工作模块
      * @param $work
      */
-    public function getWorkModule(){
+    public function getWorkModule()
+    {
         return ($this->_work = array(
             'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
             'Request'=>new \Upadd\Bin\Http\Request,
@@ -122,9 +125,6 @@ class Application{
             'Data'=>new \Upadd\Bin\Http\Data,
         ));
     }
-
-
-
 
     /**
      * 获取配置文件
@@ -148,7 +148,8 @@ class Application{
      * @return \Upadd\Bin\Alias
      * @throws \Upadd\Bin\UpaddException
      */
-    public function getAlias(){
+    public function getAlias()
+    {
         return (new Alias($this->setAlias()));
     }
 
@@ -157,8 +158,10 @@ class Application{
      * @return mixed
      * @throws \Upadd\Bin\UpaddException
      */
-    public function setAlias(){
-        if(isset(static::$_config['start']['alias'])){
+    public function setAlias()
+    {
+        if(isset(static::$_config['start']['alias']))
+        {
             return static::$_config['start']['alias'];
         }
         return false;
@@ -169,7 +172,8 @@ class Application{
      * 设置 $seeion
      * @return bool
      */
-    public function setSession(){
+    public function setSession()
+    {
         $seeion = new \Upadd\Bin\Session\SessionFile();
         session_set_save_handler(
             array($seeion ,'open'),

@@ -49,10 +49,12 @@ class Request{
 
 
     /**
-     * 入口
+     * 获取实例化工作对象
+     * @param $_work
      * @param $argv
      */
-    public function getInit($_work,$argv){
+    public function getInit($_work,$argv)
+    {
         $this->_work = $_work;
         $this->_cliData = getArgs($argv);
     }
@@ -61,29 +63,27 @@ class Request{
     /**
      * 命令行模式
      */
-    public function setCli(){
+    public function run_cli()
+    {
         $cli_action_autoload = Config::get('start@cli_action_autoload');
-        if(isset($this->_cliData['u']) && isset($this->_cliData['p'])) {
+        if(isset($this->_cliData['u']) && isset($this->_cliData['p']))
+        {
             $this->getAction($cli_action_autoload . $this->_cliData['u'] . 'Action' . '@' . $this->_cliData['p']);
         }
         unset($this->_cliData['u']);
         unset($this->_cliData['p']);
         return $this->Instantiation();
-
     }
 
     /**
      * http模式
      * @throws UpaddException
      */
-    public function setCgi()
+    public function run_cgi()
     {
-        $Route = $this->_work['Route'];
-        $_pathUlr = $this->getUrlHash($Route->_resou);
-        if(isset($Route->_resou[$_pathUlr]))
+        $this->_routing = $this->getRoute()->getResou();
+        if($this->_routing)
         {
-            $this->_routing = $Route->_resou[$_pathUlr];
-
             if(is_callable($this->_routing['callbacks']))
             {
                 return call_user_func_array($this->_routing['callbacks'],func_get_args());
@@ -92,7 +92,6 @@ class Request{
             $this->getAction($this->_routing['methods']);
 
             return $this->Instantiation();
-
         }else{
             throw new UpaddException('RouteMode error');
         }
@@ -100,29 +99,35 @@ class Request{
 
 
     /**
-     * 获取加密后的URL
-     * @return string
+     * 获取当前的URL
+     * @return mixed
      */
-    public function getUrlHash($_resou)
+    public function getPathUrl()
     {
-        $_pathUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        if($_pathUrl == '/')
-        {
-            return sha1('/');
-        }else{
-            return sha1($this->setRewrite($_pathUrl,$_resou));
-        }
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
 
+    /**
+     * 设置URL哈希加密
+     * @return string
+     */
+    public function setUrlHash()
+    {
+        return sha1($this->getPathUrl());
+    }
 
 
     /**
      * 处理路由请求参数
      */
-    public function setRewrite($_url=null,$_resou=array()){
-        if(is_array($_resou)) {
-            foreach ($_resou as $k => $v) {
-                if ($v['url'] != '/') {
+    public function setRewrite($_url=null,$_resou=array())
+    {
+        if(is_array($_resou))
+        {
+            foreach ($_resou as $k => $v)
+            {
+                if ($v['url'] != '/')
+                {
                     //获取路由长度
                     $_routeInt = strlen($v['url']);
                     $_urlInt = strlen($_url);
@@ -130,12 +135,14 @@ class Request{
                     $param = substr($_url, -$num);
                     $key = substr($_url, 0, -strlen($param));
                     //有参数执行
-                    if ($key && $key === $v['url']) {
+                    if ($key && $key === $v['url'])
+                    {
                         $val = preg_replace('/\/(\w+)\/([^\/]+)/', '\\1' . ':' . '\\2' . ',', $param);
-                        $this->getParam($val);
+                        $this->setGetParam($val);
                         return $v['url'];
                         //没参数执行
-                    } elseif ($v['url'] === $_url) {
+                    } elseif ($v['url'] === $_url)
+                    {
                         return $v['url'];
                     }
                 }
@@ -150,12 +157,13 @@ class Request{
      * @param null $value
      * @return $this
      */
-    private function getParam($val)
+    private function setGetParam($val)
     {
         $val = substr($val,0,-1);
         $val = lode(',',$val);
         $_data = array();
-        foreach($val as $k=>$v){
+        foreach($val as $k=>$v)
+        {
             $tmpLode = lode(':',$v);
             if(count($tmpLode) == 2){
                 list($_key,$value) = $tmpLode;
@@ -165,11 +173,29 @@ class Request{
     }
 
     /**
+     * 获取路由
+     * @return mixed
+     * @throws UpaddException
+     */
+    public function getRoute()
+    {
+        if(isset($this->_work['Route']))
+        {
+            return $this->_work['Route'];
+        }
+        throw new UpaddException('请求获取路由失败');
+    }
+
+    /**
      * 获取控制器
      * @throws UpaddException
      */
-    public function getAction($methods){
-        if($_objAction = explode('@',$methods)){
+    public function getAction($methods)
+    {
+        if($_objAction = explode('@',$methods))
+        {
+            //路由设置控制器
+            $this->getRoute()->setAction($_objAction[0],$_objAction[1]);
             return list($this->_action, $this->_method) = $_objAction;
         }
         throw new UpaddException('The Action set wrong..');

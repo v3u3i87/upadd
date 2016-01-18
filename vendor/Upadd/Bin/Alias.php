@@ -57,7 +57,8 @@ class Alias{
 
             }
 
-        }catch(UpaddException $e){
+        }catch(UpaddException $e)
+        {
             echo $e->getMessage();
         }
     }

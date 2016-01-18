@@ -11,10 +11,9 @@ class DemoAction extends BaseAction{
 
     public function home(){
 
-        p(Demo::where(array('type'=>1))->limit(5)->get(array('id','title','type')));
+        $list = Demo::where(array('type'=>1))->limit(3)->get(array('id','title','type'));
 
-//        $demo = new Demo();
-//        p($demo->abc());
+        p($list);
 
         $name = Data::get('name',false);
         $zmq = Data::get('zmq');

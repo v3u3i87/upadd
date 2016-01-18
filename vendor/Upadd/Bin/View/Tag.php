@@ -41,7 +41,8 @@ class Tag{
         /**
          * 判断是否加载前端域名
          */
-        if(Config::get('tag@is_front_domain')){
+        if(Config::get('tag@is_front_domain'))
+        {
             $this->front_domain = Config::get('tag@front_domain');
         }
 
@@ -127,7 +128,8 @@ class Tag{
      * 公共目录的CSS
      * @return string
      */
-    public function public_css(){
+    public function public_css()
+    {
         $css = $this->front_domain."$1";
         return "<link rel=\"stylesheet\" href=\"{$css}\">";
     }

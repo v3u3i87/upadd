@@ -18,7 +18,7 @@ interface Db {
      * @param $sql
      * @return mixed
      */
-	 public function select($sql);
+	 public function select();
 	
 	/**
 	 * 获取下条自增ID
@@ -26,14 +26,14 @@ interface Db {
 	 * @param unknown $sql        	
 	 * @return multitype:multitype:
 	 */
-    public function getNextId($sql);
+    public function getNextId();
 	
 	/**
 	 * 获取表总行数
 	 *
 	 * @param unknown $sql        	
 	 */
-    public function getTotal($sql);
+    public function getTotal();
 	
 	/**
 	 * 获取表字段 并返回索引数组
@@ -43,46 +43,40 @@ interface Db {
 	 * @param string $t        	
 	 * @return multitype:
 	 */
-    public function getField($sql = null);
+    public function getField();
 	
 	/**
 	 * 返回当前新增ID
 	 *
 	 * @return number
 	 */
-	public function getId($sql = null);
+	public function getId();
 	
 	/**
 	 * 对外提供SQL语句查询
 	 *
 	 * @param unknown $sql        	
 	 */
-	public function sql($sql);
-	
-	/**
-	 * 释放结果集
-	 *
-	 * @param unknown $sql        	
-	 */
-	 public function out($sql);
-	
+	public function sql($sql=null);
+
+
 	/**
 	 * 单条查询
 	 *
 	 * @param unknown $sql        	
 	 */
-    public function find($sql);
+    public function find();
 	
 	/**
 	 * 提交SQL
 	 */
-	public function query($sql);
+	public function query();
 	
 	/**
 	 * 记录SQL
 	 * @param unknown $sql        	
 	 */
-	public function log($sql);
+	public function log();
 
     /**
      * 开启事务
@@ -104,10 +98,10 @@ interface Db {
 
     /**
      * 返回一条SQL语句
-     * @param $type as exit or
+     * @param $status as exit or
      * @return mixed
      */
-    public function printSql($type);
+    public function printSql($status);
 
 
 

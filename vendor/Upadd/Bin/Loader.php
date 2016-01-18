@@ -40,11 +40,10 @@ class Loader
                 $autoload  = self::getAutoload();
                 $className = lode("\\",$className);
                 $className =  end($className);
-                foreach($autoload as $k=>$v){
+                foreach($autoload as $k=>$v)
+                {
                     $_filePath = UPADD_HOST.$v.$className.'.php';
-                    if(is_file($_filePath)){
-                        break;
-                    }
+                    if(is_file($_filePath)) break;
                 }
             }else{
                 $_filePath =  UPADD_HOST . str_replace('\\', '/', $className).'.php';

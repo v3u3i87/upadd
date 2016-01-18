@@ -6,21 +6,9 @@ use Upadd\Bin\Tool\Verify;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\Tool\PageData;
 use Upadd\Bin\UpaddException;
+use Upadd\Frame\ProcessingSql;
 
-class Query{
-
-    /**
-     * 表名
-     *
-     * @var unknown
-     */
-    protected $_table = null;
-
-    /**
-     * 主键或关键字
-     * @var null
-     */
-    protected $_primaryKey = null;
+class Query extends ProcessingSql{
 
     /**
      * 数据库对象
@@ -30,43 +18,17 @@ class Query{
     private $_db;
 
     /**
-     * 表前
-     *
-     * @var unknown
-     */
-    protected $db_prefix;
-
-    /**
-     * 拼凑SQL语句
-     * @var array
-     */
-    protected $_sql = array('from'=>'','join'=>'', 'where'=>'','in_where'=>'','not_where'=>'','like'=>'','order'=>'','limit'=>'');
-
-    /**
-     * 合并多表查询
-     * @var null
-     */
-    public $_mergeJoin = null;
-
-    /**
      * 分页参数
      * @var array
      */
     public $_pageData = array();
 
 
-    /**
-     * 临时保存数据
-     * @var array
-     */
-    protected $_data = array();
-
-    public function __construct(Db $db,$_table,$_primaryKey,$data,$db_prefix)
+    public function __construct(Db $db,$_table,$_primaryKey,$db_prefix)
     {
         $this->_db = $db;
         $this->_table = $_table;
         $this->_primaryKey = $_primaryKey;
-        $this->_data = $data;
         $this->db_prefix = $db_prefix;
     }
 
@@ -76,9 +38,11 @@ class Query{
      * @return array 有分页
      */
     public function get($_field=null){
-        $sql = ' SELECT ' . $this->lodeField($_field) . $this->mergeSql();
-        $_data = $this->_db->select($sql);
-        if(count($this->_pageData) > 0){
+        $this->joint_field($_field);
+        $this->_db->_sql = ' SELECT ' . $this->mergeSqlLogic();
+        $_data = $this->_db->select();
+        if(count($this->_pageData) > 0)
+        {
             $this->_pageData['data'] = $_data;
             $_data = $this->_pageData;
         }
@@ -91,26 +55,39 @@ class Query{
      * @param null $_field
      * @return mixed
      */
-    public function find($_field=null){
-        return $this->_db->find(' SELECT '. $this->lodeField($_field) . $this->mergeSql());
+    public function find($_field=null)
+    {
+        $this->joint_field($_field);
+        $this->_db->_sql = ' SELECT '. $this->mergeSqlLogic();
+        return $this->_db->find();
     }
 
+    /**
+     * 通过主键查询
+     * @param $value
+     * @param null $_field
+     * @return mixed
+     */
+    public function findByPk($value,$_field=null)
+    {
+        $this->where(array($this->_primaryKey=>$value));
+        return $this->find($_field);
+    }
 
     /**
      *  多表查询
      * @param null $_table
      * @return $this
      */
-    public function join($_table=null,$as=null){
-        if(is_array($_table)){
-            $name = '';
-            foreach($_table as $k=>$v){
-                $name .= $this->db_prefix.$k.' as ' . $v .' ,';
-            }
-            $this->_sql['join'] =  $name;
-        }else{
-            $this->_sql['join'][] = $this->db_prefix.$_table.' as ' . $as .' ,';
+    public function join($_table=array())
+    {
+        if(empty($_table)) return false;
+        $name = '';
+        foreach($_table as $k=>$v)
+        {
+            $name .= $this->db_prefix.$k.' as ' . $v .' ,';
         }
+        $this->_join =  $name;
         return $this;
     }
 
@@ -120,8 +97,9 @@ class Query{
      * @param data $_where as array|null|string
      * @return $this
      */
-    public function where($_where=null){
-        $this->_sql['where'] = $this->lodeWhere($_where);
+    public function where($_where=null)
+    {
+        $this->joint_where($_where);
         return $this;
     }
 
@@ -133,15 +111,15 @@ class Query{
      * @param string $type
      * @return $this
      */
-    public function in_where($key,$data,$type='IN'){
+    public function in_where($key,$data=array()){
         if($key && $data) {
             if(is_array($data)){
                 $data = lode(',',$data);
             }
-            if ($this->_sql['where']) {
-                $this->_sql['in_where'] = ' AND ' . $key ." {$type} ({$data}) ";
+            if ($this->_where) {
+                $this->_in_where = ' AND '.'`'.$key.'``'. " IN ({$data}) ";
             } else {
-                $this->_sql['in_where'] = ' WHERE ' . $key ." {$type} ({$data}) ";
+                $this->_in_where = ' WHERE '.'`'.$key.'``'. " IN ({$data}) ";
             }
             return $this;
         }else{
@@ -151,19 +129,69 @@ class Query{
 
 
     /**
+     *
+     * @param $key
+     * @param array $data
+     * @return $this
+     * @throws UpaddException
+     */
+    public function not_where($key,$data=null){
+        if($key && $data) {
+            if(is_array($data)){
+                $data = lode(',',$data);
+            }
+            if ($this->_where) {
+                $this->_not_in_where = ' AND '.'`'.$key.'``'. " NOT IN ({$data}) ";
+            } else {
+                $this->_not_in_where = ' WHERE '.'`'.$key.'``'. " NOT IN ({$data}) ";
+            }
+            return $this;
+        }else{
+            throw new UpaddException('缺少key或data的参数');
+        }
+    }
+
+    /**
+     * 去重统计
+     * @param $key
+     * @return $this
+     */
+    public function count_distinct($key,$field=null)
+    {
+        if($key){
+            $tmp = null;
+            if($field)
+            {
+                $tmp = ','."`$field`";
+            }
+            $sql = " COUNT(distinct `{$key}`) as conut ";
+            if($tmp)
+            {
+                $sql.=$tmp;
+            }
+            $this->joint_field($sql);
+            $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic();
+            return $this->_db->getTotal();
+        }
+    }
+
+    /**
      * 排序
      * @param unknown $sort
      * @return string
      */
-    public function sort($sort, $by = 1) {
-        if ($by) {
-            $this->_sql['order'] =  " ORDER BY {$sort} DESC";
+    public function sort($sort, $by = true)
+    {
+        if ($by)
+        {
+            $this->_sort =  " ORDER BY `{$sort}` DESC";
         } else {
-            $this->_sql['order'] =  " ORDER BY {$sort} ASC";
+            $this->_sort =  " ORDER BY `{$sort}` ASC";
         }
         return $this;
     }
 
+    
     /**
      * 模糊查询
      * @param unknown $key
@@ -171,104 +199,10 @@ class Query{
      * @return \Upadd\Frame\Model
      */
     public function like($key,$_field=null){
-        $this->_sql['like']  = $key .' LIKE '." '%{$_field}%' ";
+        $this->_like = $key .' LIKE '." '%{$_field}%' ";
         return $this;
     }
 
-
-    /**
-     * 合并SQL语句
-     * @return array|string
-     */
-    private function mergeSql($type = null){
-        $this->is_mergeJoin();
-
-        if($this->_mergeJoin){
-            $this->_sql['from']  = ' FROM '.$this->_mergeJoin;
-        }else{
-            $this->_sql['from']  = ' FROM '.$this->_table;
-        }
-        return $this->is_mergeTypeSql($type);
-    }
-
-
-    /**
-     * 判断多表查询
-     */
-    protected function is_mergeJoin(){
-        if(isset($this->_sql['join']) && empty($this->_mergeJoin)){
-            if(is_array($this->_sql['join'])) {
-                $this->_mergeJoin = lode(' ', $this->_sql['join']);
-            }else{
-                $this->_mergeJoin = $this->_sql['join'];
-            }
-            $this->_mergeJoin = substr ( $this->_mergeJoin, 0, - 1 );
-            unset($this->_sql['join']);
-        }
-    }
-
-    /**
-     * 判断合并类型
-     * @param $type
-     * @return array|string
-     */
-    private function is_mergeTypeSql($type){
-        $lode = '';
-        if($type){
-            if($type === 'from'){
-                $lode = $this->_sql['from'];
-                if($this->_sql['where']){
-                    $lode.= $this->_sql['where'];
-                }
-            }
-        }else{
-            $lode = lode(' ',array_filter($this->_sql));
-        }
-        return $lode;
-    }
-
-
-    /**
-     * 查询字段
-     * @param null $_field
-     * @return array|null|string
-     */
-    private function lodeField($_field=null){
-        $Field = '';
-        if (Verify::IsNullString ( $_field )) {
-            $Field = ' * ';
-        } elseif (Verify::isArr ( $_field )) {
-            $Field = lode ( ',', $_field );
-        } elseif (is_string ( $_field )) {
-            $Field = $_field;
-        }
-        return $Field;
-    }
-
-
-    /**
-     * Where语句转
-     * @param null $where in type string or array
-     * @return string
-     */
-    private function lodeWhere($where=null,$_inWhere = ''){
-        // 拼接WHERE
-        $where !== null ? $_inWhere = ' WHERE ' : null;
-        // 数组的方式
-        if (Verify::isArr ( $where )) {
-            foreach ( $where as $k => $v ) {
-                $_inWhere .= $k . "='{$v}'" . ' AND ';
-            }
-            $_inWhere = substr ( $_inWhere, 0, - 4 );
-        }
-
-        // 字符串方式
-        if (is_string ( $where )) {
-            $_inWhere .= $where;
-        }
-
-        return $_inWhere;
-    }
 
     /**
      * 构造分页参数
@@ -280,8 +214,9 @@ class Query{
         $getTotal  = $this->getTotal();
         $page = new PageData($getTotal,$pagesize);
         $pageArr = $page->show();
-        if(isset($pageArr['limit'])){
-            $this->_sql['limit'] = $pageArr['limit'];
+        if(isset($pageArr['limit']))
+        {
+            $this->setLimit($pageArr['limit']);
             unset($pageArr['limit']);
             $this->_pageData = $pageArr;
         }
@@ -302,63 +237,107 @@ class Query{
         }
         $field = implode ( ',', $field );
         $value = implode ( "','", $value );
-        $_sql = "INSERT INTO {$this->_table} ($field) VALUES ('$value')";
-        if($this->_db->sql ( $_sql )){
+        $this->_db->_sql = "INSERT INTO {$this->_table} ($field) VALUES ('$value')";
+        if($this->_db->sql())
+        {
             return $this->getId();
         }
         return false;
     }
 
     /**
-     * 修改
+     * 保存数据
      * @param unknown $_data
      * @param unknown $where
      */
-    public function save($_data, $where) {
-        if (is_array ( $_data )) {
-            $_editdata = '';
-            foreach ( $_data as $k => $v ) {
-                $_editdata .= " $k='$v',";
-            }
-            $_editdata = substr ( $_editdata, 0, - 1 );
+    public function save($_data=array(), $where=null)
+    {
+        if(is_array($_data) && !empty($where))
+        {
+            return $this->update($_data,$where);
         }
-        $_where = $this->lodeWhere($where);
-        $_sql = "UPDATE {$this->_table} SET {$_editdata}  {$_where} ";
-        return $this->_db->sql ( $_sql );
+
+        if($this->parameter && empty($_data) && empty($this->_where))
+        {
+            return $this->add($this->parameter);
+        }
+
+        if($this->_where && $this->parameter)
+        {
+            return $this->update($this->parameter,$this->_where);
+        }
+        return false;
+    }
+
+    public function update($_data, $where)
+    {
+        if (!is_array ( $_data )) return false;
+
+        $_editdata = '';
+        foreach ( $_data as $k => $v )
+        {
+            $_editdata .= " $k='$v',";
+        }
+        $_editdata = substr ( $_editdata, 0, - 1 );
+        $_where = $this->joint_where($where);
+        $this->_db->_sql = "UPDATE {$this->_table} SET {$_editdata}  WHERE {$_where} ";
+        return $this->_db->sql();
+    }
+
+    /**
+     * 批量添加
+     * @param array $all
+     * @return array|bool
+     */
+    public function addAll($all=array())
+    {
+        if($all){
+            $keyID = array();
+            foreach($all as $k=>$v)
+            {
+                $keyID [] = $this->add($v);
+            }
+            return $keyID;
+        }
+        return false;
     }
 
     /**
      * 删除信息
      * @param string $where
      */
-    public function del($where = null) {
-        $_where = $this->lodeWhere($where);
-        $_sql = "DELETE FROM {$this->_table} {$_where} ";
-        return $this->_db->sql ( $_sql );
+    public function del($where = null)
+    {
+        $_where = $this->joint_where($where);
+        $this->_db->_sql = " DELETE FROM {$this->_table} WHERE {$_where} ";
+        return $this->_db->sql();
     }
 
 
     /**
      * 返回当前新增ID
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->_db->getId ();
     }
 
     /**
      * 获取表字段
      */
-    public function getField() {
-        $sql = "SHOW COLUMNS FROM {$this->_table}";
-        return $this->_db->getField ( $sql );
+    public function getField()
+    {
+        $this->_db->_sql = "SHOW COLUMNS FROM {$this->_table}";
+        return $this->_db->getField ();
     }
 
     /**
      * 获取下条自增ID
      */
-    public function getNextId() {
-        $_sql = "SHOW TABLE STATUS LIKE '{$this->_table}'";
-        return $this->_db->getNextId ( $_sql );
+    public function getNextId()
+    {
+        $this->_db->_sql = "SHOW TABLE STATUS LIKE `{$this->_table}` ";
+        return $this->_db->getNextId ();
     }
 
 
@@ -366,21 +345,41 @@ class Query{
      * 锁表 Mysql in MyISAM
      * @param number $type as true in 1 WRITE  && false in 0 READ
      */
-    public function lock($type = 1){
+    public function lock($type = 1)
+    {
         if($type){
-            $sql = "LOCK TABLES `{$this->_table}` WRITE";
+            $this->_db->_sql = "LOCK TABLES `{$this->_table}` WRITE";
         }else{
-            $sql = "LOCK TABLES `{$this->_table}` READ";
+            $this->_db->_sql = "LOCK TABLES `{$this->_table}` READ";
         }
-        return $this->_db->sql ( $sql );
+        return $this->_db->sql();
     }
 
     /**
      * 解锁 Mysql in MyISAM
      */
-    public function unlock(){
-        $sql = " UNLOCK TABLES ";
-        return $this->_db->sql ( $sql );
+    public function unlock()
+    {
+        $this->_db->_sql = " UNLOCK TABLES ";
+        return $this->_db->sql ();
+    }
+
+    /**
+     * 获取当前查询条件表总数
+     */
+    public function getTotal()
+    {
+        $this->joint_field('COUNT(*) as conut ');
+        $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic();
+        return $this->_db->getTotal();
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->parameter;
     }
 
 
@@ -389,8 +388,9 @@ class Query{
      * @param int $type
      * @return mixed
      */
-    public function printSql($type=1){
-        return $this->_db->printSql($type);
+    public function printSql($status=true)
+    {
+        return $this->_db->printSql($status);
     }
 
 
@@ -398,7 +398,8 @@ class Query{
      * 开启事务
      * @return mixed
      */
-    public function begin(){
+    public function begin()
+    {
         return $this->_db->begin();
     }
 
@@ -406,7 +407,8 @@ class Query{
      * 提交事务并结束
      * @return mixed
      */
-    public function commit(){
+    public function commit()
+    {
         return $this->_db->commit();
     }
 
@@ -414,20 +416,9 @@ class Query{
      * 回滚事务
      * @return mixed
      */
-    public function rollback(){
+    public function rollback()
+    {
         return $this->_db->rollBack();
     }
-
-
-    /**
-     * 获取当前查询条件表总数
-     */
-    public function getTotal(){
-        $sql = 'SELECT COUNT(*) as conut '.$this->mergeSql('from');
-        return $this->_db->getTotal ( $sql );
-    }
-
-
-
 
 }

@@ -2,10 +2,7 @@
 
 Routes::get('/', 'works\action\DemoAction@home');
 
-Routes::get('/test',function(){
-    $info = Session::get('info');
-    vd($info);
-});
+Routes::get('/faq','works\action\FaqAction@main');
 
 Routes::group(array('prefix' => '/user','filters'=>'info'),function() {
 

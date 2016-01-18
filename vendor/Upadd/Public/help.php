@@ -332,22 +332,23 @@ if(! function_exists('getArgs')) {
      * @param $argv
      * @return array
      */
-    function getArgs($argv)
+    function getArgs($argv,$out = array())
     {
-        array_shift($argv);
-        $out = array();
-        foreach ($argv as $arg) {
-            if (substr($arg, 0, 2) == '--') {
-                $eqPos = strpos($arg, '=');
-                if ($eqPos === false) {
-                    $key = substr($arg, 2);
-                    $out[$key] = isset($out[$key]) ? $out[$key] : true;
+        if(!empty($argv)) {
+            array_shift($argv);
+            foreach ($argv as $arg) {
+                if (substr($arg, 0, 2) == '--') {
+                    $eqPos = strpos($arg, '=');
+                    if ($eqPos === false) {
+                        $key = substr($arg, 2);
+                        $out[$key] = isset($out[$key]) ? $out[$key] : true;
+                    } else {
+                        $key = substr($arg, 2, $eqPos - 2);
+                        $out[$key] = substr($arg, $eqPos + 1);
+                    }
                 } else {
-                    $key = substr($arg, 2, $eqPos - 2);
-                    $out[$key] = substr($arg, $eqPos + 1);
+                    exit('you input parameters have a problem' . "\r\n" . 'exit the program...' . "\r\n" . 'If you have questions, can contact me.' . "\r\n" . 'my email: v3u3i87@gmail.com' . "\r\n");
                 }
-            } else {
-                exit('you input parameters have a problem' . "\r\n" . 'exit the program...' . "\r\n" . 'If you have questions, can contact me.' . "\r\n" . 'my email: v3u3i87@gmail.com' . "\r\n");
             }
         }
         return $out;
@@ -381,7 +382,6 @@ if(!function_exists('is_run_evn')){
     }
 
 }
-
 
 if(!function_exists('getClient_id')){
 

@@ -2,10 +2,6 @@
 
 namespace Upadd\Bin\Http;
 
-use Upadd\Bin\UpaddException;
-
-use Config;
-
 class Data{
 
     public $_setData = array();
@@ -23,8 +19,10 @@ class Data{
     /**
      * 设置POST参数
      */
-    private function setPost(){
-        if(count($_POST) >= 1){
+    private function setPost()
+    {
+        if(count($_POST) >= 1)
+        {
             $this->_setData = array_merge($this->_setData,$_POST);
         }
     }
@@ -32,8 +30,10 @@ class Data{
     /**
      * 设置GET参数
      */
-    private function setGet(){
-        if(count($_GET) >= 1){
+    private function setGet()
+    {
+        if(count($_GET) >= 1)
+        {
             $this->_setData = array_merge($this->_setData,$_GET);
         }
     }
@@ -41,8 +41,10 @@ class Data{
     /**
      * 设置文件
      */
-    private function setFiles(){
-        if(count($_FILES) >= 1){
+    private function setFiles()
+    {
+        if(count($_FILES) >= 1)
+        {
             $this->_setData = array_merge($this->_setData,$_FILES);
         }
     }
@@ -72,14 +74,10 @@ class Data{
      * 返回所有的请求数据
      * @return array
      */
-    public function all(){
+    public function all()
+    {
        return $this->_setData;
     }
-
-
-
-
-
 
 
 }

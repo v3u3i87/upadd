@@ -111,7 +111,7 @@ class Tag{
             $this->public_css(),
             $this->js(),
             $this->public_js(),
-            '<?php include host()."$1"; ?>'
+            '<?php include host()."works/view/$1"; ?>'
         ), $this->_file ));
     }
 
@@ -140,7 +140,7 @@ class Tag{
      */
     public function js(){
         $js = $this->front_domain.'/resou/js/'."$1";
-        return "<script type=\"text/javascript\" href=\"{$js}\"></script>";
+        return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
     }
 
 
@@ -150,7 +150,7 @@ class Tag{
      */
     public function public_js(){
         $js = $this->front_domain."$1";
-        return "<script type=\"text/javascript\" href=\"{$js}\"></script>";
+        return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
     }
 
 

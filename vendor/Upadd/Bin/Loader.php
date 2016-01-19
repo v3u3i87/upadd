@@ -13,6 +13,7 @@ namespace Upadd\Bin;
 
 use Upadd\Bin\Tool\Log;
 use Config;
+use Upadd\Bin\UpaddException;
 
 class Loader
 {
@@ -93,16 +94,19 @@ class Loader
      * 判断运行环境
      * @return bool
      */
-    private static function isRunMachineName(){
+    private static function isRunMachineName()
+    {
         $env = Config::get('start@environment');
         //merge in config array
         $oneEnv = array_merge_one($env);
         $osName = getMachineName();
-        if(in_array($osName,$oneEnv)){
+        if(in_array($osName,$oneEnv))
+        {
             $configDir = Config::get('sys@CONF_DIR');
             // 总目录
             is_dirName($configDir);
-            foreach ($env as $k => $v) {
+            foreach ($env as $k => $v)
+            {
                 // 不是数字类型执行
                 if (!is_numeric($k)) {
                     // 创建配置目录
@@ -118,16 +122,18 @@ class Loader
             }
             return true;
         }else{
-            exit(lang('run_is_name').'isRunMachineName()->is_numeric');
+           throw new UpaddException(lang('run_is_name'));
         }
     }
 
     /**
      * 初始化判断目录文件
      */
-    protected static function loadDir(){
+    protected static function loadDir()
+    {
         header('X-Powered-By:'.Config::get('sys@UPADD_VERSION'));
-        if(!self::isRunMachineName()){
+        if(!self::isRunMachineName())
+        {
             msg(10004,lang('loadRunConfig'));
         }
 

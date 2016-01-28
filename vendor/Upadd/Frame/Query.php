@@ -269,6 +269,12 @@ class Query extends ProcessingSql{
         return false;
     }
 
+    /**
+     * 修改数据
+     * @param $_data
+     * @param $where
+     * @return bool
+     */
     public function update($_data, $where)
     {
         if (!is_array ( $_data )) return false;

@@ -220,7 +220,7 @@ if(!function_exists('is_dirName'))
         // 设置总目录
         if (!is_dir($dirName) || !is_writeable($dirName)) {
             if (!mkdir($dirName, 0777)) {
-                is_exit($dirName . lang('is_dir'));
+                exit($dirName . lang('is_dir'));
             }
         }
     }
@@ -278,7 +278,8 @@ if(!function_exists('msg'))
      * @param array $data
      * @param string $type or json
      */
-    function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json'){
+    function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json')
+    {
         header('Content-type: application/json');
         exit(json(array(
             'code'=>$code,
@@ -294,7 +295,8 @@ if(!function_exists('jump_view')){
      * @param $url
      * @param $info
      */
-    function jump_view($info='注意异常,请尽快联系开发者!',$url='',$html='error.html'){
+    function jump_view($info='注意异常,请尽快联系开发者!',$url='',$html='error.html')
+    {
         $_view = new \Upadd\Bin\View\Templates();
         $_view->setDir(VENDOR);
         $_view->setPath('Html');
@@ -319,7 +321,7 @@ if(! function_exists('jump')) {
     function jump($url)
     {
         if ($url) {
-            header('Location:' . $url);
+            header('Location: ' . $url);
             exit ();
         }
     }
@@ -417,9 +419,28 @@ if(!function_exists('getClient_id')){
 
 }
 
+if(!function_exists('verificationCode'))
+{
+    /**
+     * 随机生成6位验证码
+     * @param int $num 默认是6位
+     * @return string
+     */
+    function verificationCode($num=6)
+    {
+        return substr(str_shuffle('1234567890'),0,$num);
+    }
+}
+
+
 if(!function_exists('get_hash'))
 {
 
+    /**
+     * 生产哈希加密
+     * @param string $key
+     * @return string
+     */
     function get_hash($key='upadd')
     {
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()+-';

@@ -6,6 +6,7 @@ use Upadd\Bin\Loader;
 use Upadd\Bin\UpaddException;
 use Upadd\Bin\Alias;
 use Upadd\Bin\Tool\Log;
+use Config;
 
 class Application{
 
@@ -174,16 +175,19 @@ class Application{
      */
     public function setSession()
     {
-        $seeion = new \Upadd\Bin\Session\SessionFile();
-        session_set_save_handler(
-            array($seeion ,'open'),
-            array($seeion ,'close'),
-            array($seeion ,'read'),
-            array($seeion ,'write'),
-            array($seeion ,'destroy'),
-            array($seeion ,'gc')
-        );
-        session_start();
+        if(Config::get('start@is_session'))
+        {
+            $seeion = new \Upadd\Bin\Session\SessionFile();
+            session_set_save_handler(
+                array($seeion ,'open'),
+                array($seeion ,'close'),
+                array($seeion ,'read'),
+                array($seeion ,'write'),
+                array($seeion ,'destroy'),
+                array($seeion ,'gc')
+            );
+            session_start();
+        }
     }
 
 

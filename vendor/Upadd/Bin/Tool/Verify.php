@@ -364,7 +364,6 @@ class Verify {
 	
 	/**
 	 * 检查action名称的安全性
-	 *
 	 * @return bool
 	 */
 	static public function _checkActionName($action) {

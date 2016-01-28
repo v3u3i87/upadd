@@ -158,19 +158,19 @@ class ProcessingSql{
      */
     protected function mergeSqlLogic()
     {
-        $sql = $this->_field;
-        $sql.= ' FROM ';
+        $sql[] = $this->_field;
+        $sql[] = 'FROM';
         if($this->_join)
         {
-            $sql.= substr ( $this->_join, 0, - 1 );
+            $sql[]= substr ( $this->_join, 0, - 1 );
         }else{
-            $sql.= "`$this->_table`";
+            $sql[]= "`$this->_table`";
         }
 
         //判断
         if($this->_where)
         {
-            $sql.= ' WHERE ' .$this->_where;
+            $sql[]= ' WHERE ' .$this->_where;
         }
 
         //模糊搜索
@@ -178,24 +178,25 @@ class ProcessingSql{
         {
             if($this->_where)
             {
-                $sql.= ' AND '.$this->_like;
+                $sql[]= ' AND '.$this->_like;
             }else{
-                $sql.= ' WHERE ' .$this->_like;
+                $sql[]= ' WHERE ' .$this->_like;
             }
         }
 
         //排序
         if($this->_sort)
         {
-            $sql.= $this->_sort;
+            $sql[]= $this->_sort;
         }
 
         //分页
         if($this->_limit)
         {
-            $sql.= $this->_limit;
+            $sql[]= $this->_limit;
         }
-        return $sql;
+
+        return implode(' ',$sql);
     }
 
 

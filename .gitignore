@@ -3,3 +3,5 @@
 .project
 .idea
 data
+*~
+.DS_Store

@@ -199,7 +199,7 @@ class Query extends ProcessingSql{
      * @return \Upadd\Frame\Model
      */
     public function like($key,$_field=null){
-        $this->_like = $key .' LIKE '." '%{$_field}%' ";
+        $this->_like = $key .' LIKE '." '{$_field}' ";
         return $this;
     }
 

@@ -173,6 +173,18 @@ class ProcessingSql{
             $sql[]= ' WHERE ' .$this->_where;
         }
 
+        if($this->_in_where)
+        {
+            $sql[] = $this->_in_where;
+        }
+
+
+        if($this->_not_in_where)
+        {
+            $sql[] = $this->_not_in_where;
+        }
+
+
         //模糊搜索
         if($this->_like)
         {

@@ -11,6 +11,8 @@
 **/
 namespace Upadd\Bin\Tool;
 
+use Data;
+
 class PageData {
     /**
      * 总记录
@@ -48,75 +50,110 @@ class PageData {
     private $_bothnum;
 
     //构造方法初始化
-    public function __construct($_total, $_pagesize) {
+    public function __construct($_total, $_pagesize)
+    {
         $this->_total = $_total ? $_total : 1;
         $this->_pagesize = $_pagesize;
         $this->_pagenum = ceil($this->_total / $this->_pagesize);
-        $this->_page = $this->SetPage();
-        $this->_limit = "LIMIT ".($this->_page-1)*$this->_pagesize.",$this->_pagesize";
+        $this->getPageNumeber();
+        $this->_limit = $this->setLimit();
         $this->_bothnum = 2;
     }
 
-    //获取当前页码
-    private function SetPage() {
-        if (!empty($_GET['page'])) {
-            if ($_GET['page'] > 0) {
-                if ($_GET['page'] > $this->_pagenum) {
-                    return $this->_pagenum;
-                } else {
-                    return $_GET['page'];
-                }
-            } else {
-                return 1;
-            }
-        } else {
-            return 1;
-        }
+    /**
+     * 设置limit
+     * @return string
+     */
+    public function setLimit()
+    {
+        $tmp = 'LIMIT ';
+        $tmp.= ($this->_page-1)*$this->_pagesize;
+        return $tmp.= ",$this->_pagesize";
     }
 
-    //上一页
-    private function Prev() {
-        if ($this->_page == 1) {
+
+    /**
+     * 设置当前的页面码
+     * @return float|int
+     */
+    private function setPage()
+    {
+        $pageNumeber = (int) Data::get('page',1);
+
+        if ( $pageNumeber > $this->_pagenum)
+        {
+            return $this->_pagenum;
+        }
+        return $pageNumeber;
+    }
+
+    /**
+     * 获取PAGE数量
+     */
+    protected function getPageNumeber()
+    {
+        $this->_page = $this->setPage();
+    }
+
+    /**
+     * 上一页
+     * @return float|int
+     */
+    private function prev()
+    {
+        if ($this->_page == 1)
+        {
             return $this->_page;
         }
         return $this->_page-1;
     }
 
 
-    //下一页
-    private function Next() {
-        if ($this->_page == $this->_pagenum) {
+    /**
+     * 下一页
+     * @return float|int
+     */
+    private function next()
+    {
+        if ($this->_page == $this->_pagenum)
+        {
             return $this->_page;
         }
         return $this->_page+1;
     }
 
-    //尾页
-    private function Last() {
-        if ($this->_pagenum - $this->_page > $this->_bothnum) {
+    /**
+     * 尾页
+     * @return float
+     */
+    private function last()
+    {
+        if ($this->_pagenum - $this->_page > $this->_bothnum)
+        {
            return $this->_pagenum;
         }
+        return 1;
     }
 
 
-    public function show(){
-        $info = array(
+    public function show()
+    {
+        $info['limit'] = $this->_limit;
+        $info['data'] =  array(
             //当前页
             'current'=>$this->_page,
             //上一页
-            'prev'=>$this->Prev(),
+            'prev'=>$this->prev(),
             //下一页
-            'next'=>$this->Next(),
+            'next'=>$this->next(),
             //末尾页
-            'last'=>$this->Last(),
+            'last'=>$this->last(),
             //总数
             'total'=>$this->_total,
             //默认条数
             'per_page'=>$this->_pagesize,
-            //分页数
-            'limit'=> $this->_limit
         );
-      return $info;
+        return $info;
     }
 
 }

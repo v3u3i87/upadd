@@ -41,7 +41,7 @@ class Query extends ProcessingSql{
         $this->joint_field($_field);
         $this->_db->_sql = ' SELECT ' . $this->mergeSqlLogic();
         $_data = $this->_db->select();
-        if(count($this->_pageData) > 0)
+        if(count($this->_pageData) > 0 && $_data)
         {
             $this->_pageData['data'] = $_data;
             $_data = $this->_pageData;
@@ -68,7 +68,7 @@ class Query extends ProcessingSql{
      * @param null $_field
      * @return mixed
      */
-    public function findByPk($value,$_field=null)
+    public function first($value,$_field=null)
     {
         $this->where(array($this->_primaryKey=>$value));
         return $this->find($_field);
@@ -111,22 +111,25 @@ class Query extends ProcessingSql{
      * @param string $type
      * @return $this
      */
-    public function in_where($key,$data=array()){
-        if($key && $data) {
-            if(is_array($data)){
+    public function in_where($key,$data=array())
+    {
+        if($key && $data)
+        {
+            if(is_array($data))
+            {
                 $data = lode(',',$data);
             }
-            if ($this->_where) {
-                $this->_in_where = ' AND '.'`'.$key.'``'. " IN ({$data}) ";
+            if ($this->_where)
+            {
+                $this->_in_where = ' AND '.'`'.$key.'`'. " IN ({$data}) ";
             } else {
-                $this->_in_where = ' WHERE '.'`'.$key.'``'. " IN ({$data}) ";
+                $this->_in_where = ' WHERE '.'`'.$key.'`'. " IN ({$data}) ";
             }
             return $this;
         }else{
             throw new UpaddException('缺少key或data的参数');
         }
     }
-
 
     /**
      *
@@ -141,9 +144,9 @@ class Query extends ProcessingSql{
                 $data = lode(',',$data);
             }
             if ($this->_where) {
-                $this->_not_in_where = ' AND '.'`'.$key.'``'. " NOT IN ({$data}) ";
+                $this->_not_in_where = ' AND '.'`'.$key.'`'. " NOT IN ({$data}) ";
             } else {
-                $this->_not_in_where = ' WHERE '.'`'.$key.'``'. " NOT IN ({$data}) ";
+                $this->_not_in_where = ' WHERE '.'`'.$key.'`'. " NOT IN ({$data}) ";
             }
             return $this;
         }else{
@@ -158,7 +161,8 @@ class Query extends ProcessingSql{
      */
     public function count_distinct($key,$field=null)
     {
-        if($key){
+        if($key)
+        {
             $tmp = null;
             if($field)
             {
@@ -169,7 +173,6 @@ class Query extends ProcessingSql{
             {
                 $sql.=$tmp;
             }
-            $this->joint_field($sql);
             $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic();
             return $this->_db->getTotal();
         }
@@ -209,17 +212,14 @@ class Query extends ProcessingSql{
      * @param int $pagesize
      * @return $this
      */
-    public function limit($pagesize=10){
+    public function page($pagesize=10)
+    {
         //查询条件
         $getTotal  = $this->getTotal();
         $page = new PageData($getTotal,$pagesize);
         $pageArr = $page->show();
-        if(isset($pageArr['limit']))
-        {
-            $this->setLimit($pageArr['limit']);
-            unset($pageArr['limit']);
-            $this->_pageData = $pageArr;
-        }
+        $this->setLimit($pageArr['limit']);
+        $this->_pageData = $pageArr['data'];
         return $this;
     }
 

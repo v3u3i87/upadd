@@ -81,7 +81,7 @@ class Upload {
         $fileArray = lode('.', $this->_name);
         $fileAttr =  $fileArray[count($fileArray)-1];
         //设置文件新名称
-        $newName = md5(date('YmdHis')).date('YmdHis').mt_rand(100, 1000).'.'.$fileAttr;
+        $newName = md5(date('YmdHis')).mt_rand(3, 999).'.'.$fileAttr;
         //返回的是文件目录，不含有根目录
         $this->_linkPath = $this->_linkDir.$newName;
         return $this->_today.$newName;

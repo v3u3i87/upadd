@@ -138,27 +138,35 @@ class Loader
         }
 
         $_data_dir = Config::get('sys@data_dir');
-
+        
         // 数据资源文件夹
-        if (! is_dir ( $_data_dir )){
+        if (! is_dir ( $_data_dir ))
+        {
             is_dirName ( $_data_dir );
         }
 
         // 日记目录
-        if( ! is_dir($_data_dir . 'log')){
+        if( ! is_dir($_data_dir . 'log'))
+        {
             is_dirName ( $_data_dir . 'log' );
         }
 
         //创建编译文件夹
-        if(! is_dir($_data_dir.'compiled')){
+        if(! is_dir($_data_dir.'compiled'))
+        {
             is_dirName($_data_dir.'compiled');
         }
 
         //创建缓存文件夹
-        if(! is_dir($_data_dir.'cache')){
+        if(! is_dir($_data_dir.'cache'))
+        {
             is_dirName($_data_dir.'cache');
         }
 
+        //上传文件目录
+        if(! is_dir($_data_dir.'upload')){
+            is_dirName($_data_dir.'upload');
+        }
 
     }
 

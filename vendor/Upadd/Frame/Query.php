@@ -5,8 +5,8 @@ use Upadd\Bin\Db\Db;
 use Upadd\Bin\Tool\Verify;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\Tool\PageData;
-use Upadd\Bin\UpaddException;
 use Upadd\Frame\ProcessingSql;
+use Upadd\Bin\UpaddException;
 
 class Query extends ProcessingSql{
 
@@ -223,6 +223,25 @@ class Query extends ProcessingSql{
         return $this;
     }
 
+    /**
+     * 查询条数
+     * @param null $param in array,string
+     * @return $this
+     */
+    public function limit($param=null)
+    {
+        $tmp = 'LIMIT ';
+        if(is_array($param)){
+            $tmp.= lode(',',$param);
+
+        }elseif(is_string($param)){
+            $tmp.= $param;
+        }else{
+            throw new UpaddException('limit()参数错误');
+        }
+        $this->setLimit($tmp);
+        return $this;
+    }
 
     /**
      * 新增

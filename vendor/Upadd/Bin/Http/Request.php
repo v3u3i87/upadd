@@ -14,6 +14,7 @@ namespace Upadd\Bin\Http;
 use Upadd\Bin\UpaddException;
 
 use Config;
+use Data;
 
 class Request{
 
@@ -66,12 +67,13 @@ class Request{
     public function run_cli()
     {
         $cli_action_autoload = Config::get('start@cli_action_autoload');
-        if(isset($this->_cliData['u']) && isset($this->_cliData['p']))
+        if(array_key_exists('u',$this->_cliData) && array_key_exists('p',$this->_cliData))
         {
             $this->getAction($cli_action_autoload . $this->_cliData['u'] . 'Action' . '@' . $this->_cliData['p']);
         }
         unset($this->_cliData['u']);
         unset($this->_cliData['p']);
+        Data::accept($this->_cliData);
         return $this->Instantiation();
     }
 

@@ -79,5 +79,16 @@ class Data{
        return $this->_setData;
     }
 
+    /**
+     * 接受数据
+     * @param array $data
+     */
+    public function accept($data=[])
+    {
+        if(count($data) >= 1)
+        {
+           return ($this->_setData = array_merge($this->_setData,$data));
+        }
+    }
 
 }

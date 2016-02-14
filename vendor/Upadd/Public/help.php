@@ -327,7 +327,8 @@ if(! function_exists('jump')) {
     }
 }
 
-if(! function_exists('getArgs')) {
+if(! function_exists('getArgs'))
+{
 
     /**
      * 获取CLI变量
@@ -336,7 +337,8 @@ if(! function_exists('getArgs')) {
      */
     function getArgs($argv,$out = array())
     {
-        if(!empty($argv)) {
+        if(!empty($argv))
+        {
             array_shift($argv);
             foreach ($argv as $arg) {
                 if (substr($arg, 0, 2) == '--') {

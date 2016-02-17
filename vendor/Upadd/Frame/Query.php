@@ -121,9 +121,9 @@ class Query extends ProcessingSql{
             }
             if ($this->_where)
             {
-                $this->_in_where = ' AND '.'`'.$key.'`'. " IN ({$data}) ";
+                $this->_in_where = " AND `{$key}` IN ({$data}) ";
             } else {
-                $this->_in_where = ' WHERE '.'`'.$key.'`'. " IN ({$data}) ";
+                $this->_in_where = " WHERE `{$key}` IN ({$data}) ";
             }
             return $this;
         }else{
@@ -144,9 +144,9 @@ class Query extends ProcessingSql{
                 $data = lode(',',$data);
             }
             if ($this->_where) {
-                $this->_not_in_where = ' AND '.'`'.$key.'`'. " NOT IN ({$data}) ";
+                $this->_not_in_where = " AND `{$key}`  NOT IN ({$data}) ";
             } else {
-                $this->_not_in_where = ' WHERE '.'`'.$key.'`'. " NOT IN ({$data}) ";
+                $this->_not_in_where = " WHERE `{$key}`  NOT IN ({$data}) ";
             }
             return $this;
         }else{
@@ -166,9 +166,9 @@ class Query extends ProcessingSql{
             $tmp = null;
             if($field)
             {
-                $tmp = ','."`$field`";
+                $tmp = ", `{$field}` ";
             }
-            $sql = " COUNT(distinct `{$key}`) as conut ";
+            $sql = " COUNT(distinct `{$key}`) AS `conut` ";
             if($tmp)
             {
                 $sql.=$tmp;

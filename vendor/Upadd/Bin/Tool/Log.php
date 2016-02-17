@@ -23,14 +23,25 @@ class Log {
 	 * @param array $cont
 	 * @param string $fileName
 	 */
-	public function notes($cont=array(),$fileName='notes.logs'){
-		$info = json($cont) . "\r\n";
+	public function notes($cont=array(),$fileName='notes.logs')
+    {
+
+        if(is_array($cont) || is_object($cont))
+        {
+            $info = json($cont) . "\r\n";
+        }elseif(is_string($cont))
+        {
+            $info = $cont . "\r\n";
+        }
+
 		$info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
 		$file = self::isBak ( $fileName );
 		$fh = fopen ( $file, 'a+' );
 		fwrite ( $fh, $info );
 		fclose ( $fh );
 	}
+
+
 
 
 

@@ -73,9 +73,7 @@ abstract class Cache {
 	
 	/**
 	 * 删除对应key所代表的值
-	 *
-	 * @param
-	 *        	$key
+	 * @param $key
 	 * @return boolean
 	 */
 	abstract public function delete($key);

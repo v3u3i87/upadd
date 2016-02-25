@@ -53,7 +53,7 @@ class Log {
 	public static function write($cont, $fileName) {
         $info = 'URL:' . self::getHttpUrl() . "\r\n";
         $info .= 'Time: ' . date ( "Y-m-d H:i:s" ) . "\r\n";
-        $info .= 'Info:' . $cont . "\r\r\r";
+        $info .= $cont . "\r\r\r";
         $file = self::isBak ( $fileName );
         $fh = fopen ( $file, 'a+' );
         fwrite ( $fh, $info );

@@ -120,10 +120,13 @@ class LinkPdoMysql implements Db{
         {
             $this->_sql = $sql;
         }
+        $this->log($this->_sql);
+
         if($this->_linkID->exec( $this->_sql ))
         {
             return true;
         }
+
         throw new UpaddException("sql:".$this->_sql.$this->error());
     }
 

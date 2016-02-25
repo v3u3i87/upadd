@@ -301,7 +301,7 @@ class Query extends ProcessingSql{
         $_editdata = '';
         foreach ( $_data as $k => $v )
         {
-            $_editdata .= " $k='$v',";
+            $_editdata .= " `$k`='$v',";
         }
         $_editdata = substr ( $_editdata, 0, - 1 );
         $_where = $this->joint_where($where);

@@ -38,13 +38,13 @@ class Tag{
          */
         $this->_KeyArr = $_KeyArr;
 
-        //临时变量
-        $front_domain = '';
-
         /**
          * 判断是否加载前端域名
          */
-        if($front_domain = Config::get('tag@is_front_domain')) $this->front_domain = $front_domain;
+        if(Config::get('tag@is_front_domain'))
+        {
+            $this->front_domain = Config::get('tag@front_domain');
+        }
 
 
     }

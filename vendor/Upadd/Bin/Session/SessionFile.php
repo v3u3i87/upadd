@@ -10,24 +10,28 @@
 
 namespace Upadd\Bin\Session;
 
+use Upadd\Bin\UpaddException;
 class SessionFile{
 
     public $_save_path = null;
 
     public $_session_name = null;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->is_dir();
         $new_is_path  = session_save_path($this->_save_path);
-        if(!$new_is_path){
+        if(!$new_is_path)
+        {
             ini_set('session.save_path',$this->_save_path);
         }
     }
 
-
-    public function is_dir(){
+    public function is_dir()
+    {
         $this->_save_path =  host() .'data/session';
-        if(!is_dir($this->_save_path)){
+        if(!is_dir($this->_save_path))
+        {
             is_dirName($this->_save_path);
         }
     }
@@ -40,7 +44,6 @@ class SessionFile{
         $this->_save_path = $save_path;
         //定义session名称
         $this->_session_name = $session_name;
-
         return true;
     }
 
@@ -50,16 +53,21 @@ class SessionFile{
         return true;
     }
 
-    //定义读取函数
-    public function read($id='')
+    /**
+     * 读取数据
+     * @param null $id
+     * @return null|string
+     */
+    public function read($id=null)
     {
-        $file = $this->getSessFile($id);
+        $file = $this->getFile($id);
         if(!is_readable($file))
         {
-            exit('不可读取');
+            throw  new UpaddException('不可读取');
         }
         //打开文件
-        if ($fp = fopen($file, "r"))
+        $fp = fopen($file, "r");
+        if ($fp)
         {
             if($sess_data = @fread($fp, filesize($file)))
             {
@@ -72,12 +80,18 @@ class SessionFile{
         return null;
     }
 
-    //定义写入函数
+    /**
+     * 写入数据
+     * @param $id
+     * @param $sess_data
+     * @return bool|int
+     */
     public function write($id,$sess_data)
     {
-        $file = $this->getSessFile($id);
+        $file = $this->getFile($id);
         //打开文件
-        if ($fp = fopen($file,"w"))
+        $fp = fopen($file,"w");
+        if ($fp)
         {
             //执行写操作
             return (fwrite($fp, $sess_data));
@@ -85,10 +99,14 @@ class SessionFile{
         return false;
     }
 
-    //定义注销函数
+    /**
+     * 注销函数
+     * @param $id
+     * @return bool
+     */
     public function destroy($id)
     {
-        $file = $this->getSessFile($id);
+        $file = $this->getFile($id);
         if($file)
         {
             //删除session文件
@@ -98,13 +116,16 @@ class SessionFile{
 
 
     /**
+     * 获取文件
      * @param $id
      * @return bool|string
      */
-    public function getSessFile($id=''){
+    public function getFile($id=null)
+    {
         //设置文件路径
-        $sess_file = $this->_save_path .'/sess_'.session_id();
-        if(file_exists($sess_file)) {
+        $sess_file = $this->_save_path .'/sess_'.$id;
+        if(file_exists($sess_file))
+        {
             return $sess_file;
         }else{
             //新建文件命令
@@ -117,7 +138,7 @@ class SessionFile{
     //定义过期函数
     function gc($maxlifetime)
     {
-        return true;            //直接返回真值
+        return true;
     }
 
 

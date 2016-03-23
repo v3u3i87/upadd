@@ -218,8 +218,10 @@ if(!function_exists('is_dirName'))
     function is_dirName($dirName)
     {
         // 设置总目录
-        if (!is_dir($dirName) || !is_writeable($dirName)) {
-            if (!mkdir($dirName, 0777)) {
+        if (!is_dir($dirName) || !is_writeable($dirName))
+        {
+            if (!mkdir($dirName, 0777))
+            {
                 exit($dirName . lang('is_dir'));
             }
         }
@@ -321,7 +323,8 @@ if(! function_exists('jump')) {
     function jump($url)
     {
         if ($url) {
-            header('Location: ' . $url);
+            header("HTTP/1.1 301 Moved Permanently");
+            header("Location:{$url}");
             exit ();
         }
     }

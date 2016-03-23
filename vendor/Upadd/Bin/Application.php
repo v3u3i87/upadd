@@ -38,8 +38,6 @@ class Application{
             {
                  call_user_func_array($callable,func_get_args());
             }
-
-            $this->setSession();
             $this->runRequest();
             $this->request()->run_cgi();
         }else{
@@ -170,23 +168,36 @@ class Application{
 
 
     /**
-     * 设置 $seeion
+     * 获取Session配置状态
+     * @return mixed
+     */
+    private function getSessionStatus()
+    {
+        return static::$_config['start']['is_session'];
+    }
+
+    /**
+     * 设置 session
      * @return bool
      */
     public function setSession()
     {
-        if(Config::get('start@is_session'))
+        if(is_run_evn())
         {
-            $seeion = new \Upadd\Bin\Session\SessionFile();
-            session_set_save_handler(
-                array($seeion ,'open'),
-                array($seeion ,'close'),
-                array($seeion ,'read'),
-                array($seeion ,'write'),
-                array($seeion ,'destroy'),
-                array($seeion ,'gc')
-            );
-            session_start();
+            if ($this->getSessionStatus())
+            {
+                $seeion = new \Upadd\Bin\Session\SessionFile();
+                session_set_save_handler(
+                    array($seeion, 'open'),
+                    array($seeion, 'close'),
+                    array($seeion, 'read'),
+                    array($seeion, 'write'),
+                    array($seeion, 'destroy'),
+                    array($seeion, 'gc')
+                );
+                register_shutdown_function('session_write_close');
+                session_start();
+            }
         }
     }
 

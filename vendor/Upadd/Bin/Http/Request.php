@@ -15,6 +15,7 @@ use Upadd\Bin\UpaddException;
 
 use Config;
 use Data;
+use Upadd\Bin\Tool\View;
 
 class Request{
 
@@ -95,7 +96,7 @@ class Request{
 
             return $this->Instantiation();
         }else{
-            throw new UpaddException('RouteMode error');
+            exit(View::error());
         }
     }
 

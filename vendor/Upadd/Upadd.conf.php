@@ -3,7 +3,7 @@
 +----------------------------------------------------------------------
 | UPADD [ Can be better to Up add]
 +----------------------------------------------------------------------
-| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
+| Copyright (c) 2011-2016 http://upadd.cn All rights reserved.
 +----------------------------------------------------------------------
 | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 +----------------------------------------------------------------------
@@ -15,7 +15,8 @@ header ( 'Content-Type:text/html;charset=utf-8' );
 // 设置时区
 date_default_timezone_set ( 'Asia/Shanghai' );
 
-if(APP_RUN_MODE) {
+if(APP_RUN_MODE)
+{
     define ('VENDOR', 'vendor/Upadd');
     define ('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
 }else{
@@ -39,6 +40,11 @@ $app = new \Upadd\Bin\Application();
 $app->getConfig();
 
 /**
+ * 设置Session
+ */
+$app->setSession();
+
+/**
  * 实例化模块
  */
 $app->getWorkModule();
@@ -52,6 +58,8 @@ Factory::Import($app->_work);
  * 载入别名
  */
 $app->getAlias()->run();
+
+
 
 /**
  * 开始工作

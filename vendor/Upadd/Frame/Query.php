@@ -119,6 +119,7 @@ class Query extends ProcessingSql{
             {
                 $data = lode(',',$data);
             }
+//            p($data);
             if ($this->_where)
             {
                 $this->_in_where = " AND `{$key}` IN ({$data}) ";

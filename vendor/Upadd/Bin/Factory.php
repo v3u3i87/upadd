@@ -11,7 +11,8 @@ abstract class Factory{
      * 导入项目
      * @param $_work
      */
-    public static function Import($_work){
+    public static function Import($_work)
+    {
         static::$instance = $_work;
     }
 

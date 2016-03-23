@@ -10,7 +10,7 @@ class Alias{
 
     public function __construct($setAlias=array())
     {
-        if(!empty($setAlias) && is_array($setAlias))
+        if($setAlias && is_array($setAlias))
         {
             $this->_aliasData = array_merge($this->aliasList(),$setAlias);
         }else{

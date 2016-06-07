@@ -161,8 +161,10 @@ if(!function_exists('array_merge_one')) {
  *        	as true 序列化 | false 反序列化
  * @return string|mixed
  */
-function setSequence($data, $type) {
-    if ($type) {
+function sequence($data, $type)
+{
+    if ($type)
+    {
         return serialize ( $data );
     } elseif (! $type) {
         return unserialize ( $data );

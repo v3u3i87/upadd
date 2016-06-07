@@ -50,6 +50,19 @@ class Query extends ProcessingSql{
         return $_data;
     }
 
+    public function one($field=null)
+    {
+        if($field)
+        {
+            $data = $this->find();
+            if(isset($data[$field]))
+            {
+                return $data[$field];
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 单行查询
@@ -420,6 +433,15 @@ class Query extends ProcessingSql{
         $this->joint_field('COUNT(*) AS `conut` ');
         $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic().';';
         return $this->_db->getTotal();
+    }
+
+    /**
+     * getTotal别名
+     * @return mixed
+     */
+    public function count()
+    {
+        return $this->getTotal();
     }
 
     /**

@@ -3,8 +3,8 @@
 return array(
 
     'environment'=>array(
-        'local'=>array('RR-ZMQ','demo','Mac-zmq.local'),
-        'dev'=>array('renrentest','demo'),
+        'local'=>array('RR-ZMQ','demo','Mac-zmq.local','Mac-zmq.lan','PC-PC'),
+        'dev'=>array('xcvu')
     ),
 
     'is_autoload'=>false,
@@ -36,6 +36,11 @@ return array(
     'exclude_config'=>['routing','filters','extend'],
 
     /**
+     * 是否开启
+     */
+    'is_session'=>IS_SESSION,
+
+    /**
      * 控制器
      */
     'set_action'=>'u',
@@ -43,5 +48,16 @@ return array(
      * 方法
      */
     'set_function'=>'p',
+
+    /**
+     * 设置session系列
+     */
+    'session'=>[
+        'domain'=>false,
+        'expire'=>false,
+        'use_cookies'=>false,
+        'cache_limiter'=>false,
+        'cache_expire'=>false,
+    ],
 
 );

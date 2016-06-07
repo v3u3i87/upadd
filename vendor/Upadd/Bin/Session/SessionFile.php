@@ -1,16 +1,9 @@
 <?php
-/**
- * About:Richard.z
- * Email:v3u3i87@gmail.com
- * Blog:https://www.zmq.cc
- * Date: 15/12/18
- * Time: 13:28
- * Name:
- */
 
 namespace Upadd\Bin\Session;
 
 use Upadd\Bin\UpaddException;
+
 class SessionFile{
 
     public $_save_path = null;
@@ -29,7 +22,7 @@ class SessionFile{
 
     public function is_dir()
     {
-        $this->_save_path =  host() .'data/'.APP_NAME.'/session';
+        $this->_save_path = host() .'data/'.APP_NAME.'/session';
         if(!is_dir($this->_save_path))
         {
             is_create_dir($this->_save_path);
@@ -76,7 +69,6 @@ class SessionFile{
                 return $sess_data;
             }
         }
-
         return null;
     }
 
@@ -89,14 +81,24 @@ class SessionFile{
     public function write($id,$sess_data)
     {
         $file = $this->getFile($id);
-        //打开文件
-        $fp = fopen($file,"w");
-        if ($fp)
+        if(is_writable($file))
         {
-            //执行写操作
-            return (fwrite($fp, $sess_data));
+            //打开文件
+            $fp = fopen($file,"w");
+            if ($fp)
+            {
+                if(fwrite($fp, $sess_data))
+                {
+                    fclose($fp);
+                }
+                return true;
+            }
+            return false;
+        }else{
+            throw new UpaddException('session写入失败');
         }
-        return false;
+
+
     }
 
     /**

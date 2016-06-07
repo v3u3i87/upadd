@@ -129,24 +129,57 @@ class Application{
 
 
     /**
+     * 获取Session配置状态
+     * @return mixed
+     */
+    private function getSessionStatus()
+    {
+        return static::$_config['sys']['is_session'];
+    }
+
+    /**
      * 设置 session
      * @return bool
      */
     public function setSession()
     {
-        if (is_run_evn() && IS_SESSION)
+        if(is_run_evn())
         {
-            $seeion = new \Upadd\Bin\Session\SessionFile();
-            session_set_save_handler(
-                array($seeion, 'open'),
-                array($seeion, 'close'),
-                array($seeion, 'read'),
-                array($seeion, 'write'),
-                array($seeion, 'destroy'),
-                array($seeion, 'gc')
-            );
-            register_shutdown_function('session_write_close');
-            session_start();
+            if ($this->getSessionStatus())
+            {
+                $config = static::$_config['sys']['session'];
+                if ($config['domain'])
+                {
+                    ini_set('session.cookie_domain', $config['domain']);
+                }
+                if ($config['expire'])
+                {
+                    ini_set('session.gc_maxlifetime', $config['expire']);
+                    ini_set('session.cookie_lifetime', $config['expire']);
+                }
+                if ($config['use_cookies'])
+                {
+                    ini_set('session.use_cookies', $config['use_cookies'] ? 1 : 0);
+                }
+                if ($config['cache_limiter'])
+                {
+                    session_cache_limiter($config['cache_limiter']);
+                }
+                if ($config['cache_expire']) {
+                    session_cache_expire($config['cache_expire']);
+                }
+
+                $seeion = new \Upadd\Bin\Session\SessionFile();
+                session_set_save_handler(
+                    array($seeion, 'open'),
+                    array($seeion, 'close'),
+                    array($seeion, 'read'),
+                    array($seeion, 'write'),
+                    array($seeion, 'destroy'),
+                    array($seeion, 'gc')
+                );
+                session_start();
+            }
         }
     }
 

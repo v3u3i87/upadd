@@ -32,13 +32,9 @@ class Action
      * @param $val
      * @throws \Upadd\Bin\UpaddException
      */
-    public function val($key,$val)
+    public function val($key=null,$val=null)
     {
-        if($key && $val)
-        {
-            return $this->_templates->val($key,$val);
-        }
-        throw new UpaddException('$key或$val没有设置');
+        return $this->_templates->val($key,$val);
     }
 
     /**

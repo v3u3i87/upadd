@@ -122,13 +122,23 @@ class ProcessingSql{
      */
     protected function joint_where($where=null)
     {
+
         $tmp = '';
         // 数组的方式
         if (Verify::isArr ( $where ))
         {
             foreach ( $where as $k => $v )
             {
-                $tmp .= $k . "='{$v}'" . ' AND ';
+                if(Verify::isArr($v))
+                {
+                    foreach($v as $in=>$item)
+                    {
+                        $tmp .= '`'.$k.'`' .$in." '{$item}' ".' AND ';
+                    }
+                }else{
+                    $tmp .= '`'.$k.'`' . "='{$v}'" . ' AND ';
+                }
+
             }
             $this->_where = substr ( $tmp, 0, - 4 );
 

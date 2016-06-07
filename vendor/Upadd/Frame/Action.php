@@ -15,18 +15,14 @@ use Upadd\Bin\UpaddException;
 use Upadd\Bin\View\Templates;
 
 // 控制器
-class Action {
-
-
-    /**
-     * 权限对象
-     * @var null
-     */
-    public $_rbac = null;
+class Action
+{
 
     public $_templates;
 
-	public function __construct(){
+
+    public function init()
+    {
         $this->_templates = new Templates();
     }
 
@@ -54,30 +50,9 @@ class Action {
     {
         if($file)
         {
-            return $this->_templates->path($file);
+            return $this->_templates->bound($file);
         }
         throw new UpaddException('模板文件没有设置');
-    }
-
-
-    /**
-     * 设置模板控制器
-     * @param $name
-     */
-    public function setViewAction($name)
-    {
-        $lode = lode('\\',$name);
-        if(isset($lode[2]))
-        {
-            $name = $lode[2];
-            if(substr($name, -6)=='Action')
-            {
-                $name = substr($name, 0,-6);
-            }
-            $this->_templates->setPath(strtolower($name));
-        }else{
-            throw new UpaddException('控制器模板目录设置失败');
-        }
     }
 
 

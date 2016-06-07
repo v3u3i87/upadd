@@ -59,11 +59,13 @@ class Data{
     public function get($name=null,$default=null,$method=null)
     {
 
-        if(isset($this->_setData[$name])){
+        if(isset($this->_setData[$name]))
+        {
             $default = $this->_setData[$name];
         }
 
-        if(is_callable($method)){
+        if(is_callable($method))
+        {
             return call_user_func($method,$default);
         }
 

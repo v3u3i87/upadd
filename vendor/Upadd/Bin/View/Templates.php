@@ -55,34 +55,20 @@ class Templates {
 	 */
 	public $_keyArr = array ();
 	
-	/**
-	 * 模板文件目录
-	 *
-	 * @var unknown
-	 */
-	private $_html_dir;
-	
-	/**
-	 * 编译文件目录
-	 *
-	 * @var unknown
-	 */
-	private $_compiled_dir;
-	
-	/**
-	 * 缓存文件目录
-	 *
-	 * @var unknown
-	 */
-	private $_cache_dir;
-	
+
 	/**
 	 * 模板目录
 	 *
 	 * @var unknown
 	 */
 	public $_path;
-	
+
+    /**
+     * 设置特定的路径
+     * @var null
+     */
+    public $_setPath = null;
+
 	/**
 	 * 控制器名称
 	 *
@@ -102,36 +88,6 @@ class Templates {
      */
     public $_section = array();
 
-
-	/**
-	 * 设置模板路径
-	 *
-	 * @param string $path        	
-	 */
-	public function setPath($path = null)
-    {
-		if ($path)
-        {
-			$this->_path =  $path . '/';
-		} else {
-            throw new UpaddException('找不到模板目录',404);
-		}
-	}
-
-    /**
-     * 设置目录
-     * @param $dirPath
-     */
-    public function setDir($dirPath)
-    {
-        if (! empty ( $dirPath ))
-        {
-            $this->_dir = host() . $dirPath . '/';
-        } else {
-            throw new UpaddException('找不到模板目录',404);
-        }
-    }
-
     /**
      * 判断模板文件
      * @param $file
@@ -139,13 +95,16 @@ class Templates {
      */
     protected function isHtmlFile($file)
     {
-        $_data = '';
-        if($this->_dir){
-            $_data = $this->_dir . $this->_path . $file;
+        if($this->_setPath)
+        {
+            $this->_htmlFile = $this->_setPath.'/'.$file;
         }else{
-            $_data = host().'works/view/'. $this->_path . $file;
+            $this->_htmlFile = $this->_path.'/'.$file;
         }
-        return $_data;
+        if(!file_exists($this->_htmlFile))
+        {
+            throw new UpaddException('您的'.$file.'模板文件不存在!');
+        }
     }
 
     /**
@@ -156,26 +115,24 @@ class Templates {
      */
     protected function createDataFile($file,$cache)
     {
+        $dirCompiled = host().'data/'.APP_NAME . '/compiled/'.$this->_actionName;
         //编译目录
-        if(self::checkPath ( Config::get('sys@HTML_COMPILED_DIR').$this->_path))
+        if(is_create_dir ($dirCompiled))
         {
-            $this->_compiled = Config::get('sys@HTML_COMPILED_DIR') .$this->_path.md5 ( $file ) . $file . '.php';
+            $this->_compiled = $dirCompiled.'/'.md5 ( $file ) . $file . '.php';
         }
-
-        if($cache && self::checkPath( Config::get('sys@HTML_CACHE_DIR') .$this->_path))
+        $dirCache = host().'data/'.APP_NAME . '/cache/'.$this->_actionName;
+        if($cache && is_create_dir($dirCache))
         {
-            $this->_cache = Config::get('sys@HTML_CACHE_DIR').$this->_path. md5($file) . $file . '.html';
+            $this->_cache = $dirCache.'/'.md5($file) . $file . '.html';
         }
-
     }
-
 
     /**
      * 模板编译
      */
     protected function getComilled()
     {
-
         /**
          * 更新编译模板文件
          */
@@ -183,7 +140,6 @@ class Templates {
         {
             throw new UpaddException('编译后的文件产生的错误' . $this->_htmlFile,404);
         }
-
     }
 
     /**
@@ -193,7 +149,7 @@ class Templates {
     {
         if (! file_exists ( $this->_cache ) || filemtime ( $this->_cache ) < filemtime ( $this->_compiled ))
         {
-            if (Config::get('sys@HTML_IS_CACHE'))
+            if (Config::get('sys@is_html_cache'))
             {
                 file_put_contents ( $this->_cache, ob_get_contents () );
                 ob_end_clean ();
@@ -201,26 +157,6 @@ class Templates {
             }
         }
     }
-
-    /**
-     * 判断目录是否存在，如果不存在就创建
-     *
-     * @param unknown $path
-     */
-    private function checkPath($path)
-    {
-        // 设置总目录
-        if (! is_dir ( $path ) || ! is_writeable ( $path ))
-        {
-            if (! mkdir ( $path, 0777 ))
-            {
-                throw new UpaddException('创建模板相关目录或是文件权限不足',404);
-            }
-        }
-
-        return true;
-    }
-
 
 
 	/**
@@ -237,27 +173,57 @@ class Templates {
             throw new UpaddException('Please set your value!',404);
 		}
 	}
-	
+
+    /**
+     * 设置模板控制器
+     * @param $name
+     */
+    private function setAutoPath()
+    {
+        $request = Config::get('sys@request');
+        $lode = lode('\\',$request['action']);
+        if(isset($lode[2]))
+        {
+            $name = $lode[2];
+            if(substr($name, -6)=='Action')
+            {
+                $this->_actionName = strtolower(substr($name, 0,-6));
+            }
+            $this->_path = host().APP_NAME.'/view/'.$this->_actionName;
+        }else{
+            throw new UpaddException('控制器模板目录设置失败');
+        }
+    }
+
+    /**
+     * 设置路径
+     * @param string $path
+     */
+    public function setPath($path='')
+    {
+        if($path)
+        {
+            $this->_setPath = host().APP_NAME.'/view/'.$path;
+        }else{
+            $this->_setPath = host().APP_NAME.'/view/public';
+        }
+    }
+
+
 	/**
 	 * 指向模板
 	 * @param string $_File        	
 	 */
-	public function path($file = '', $cache = 0)
+	public function bound($file = '', $cache = false)
     {
+        $this->setAutoPath();
+
 		if ($cache)
         {
-            Config::get('sys@HTML_IS_CACHE') ? ob_start () : null;
+            Config::get('sys@is_html_cache') ? ob_start () : null;
 		}
-
-		extract ( $this->_keyArr );
-
-        $this->_htmlFile = $this->isHtmlFile($file);
-
-        // 判断模板是否存在
-        if (! file_exists ( $this->_htmlFile ))
-        {
-            throw new UpaddException('模板文件不存在' . $this->_htmlFile,404);
-        }
+        extract ( $this->_keyArr );
+        $this->isHtmlFile($file);
 
         // 赋值和判断读取
         if (! $this->_fileVar = file_get_contents ( $this->_htmlFile ))
@@ -274,14 +240,15 @@ class Templates {
             /**
              * 执行模板标签替换
              */
-            if (Config::get('sys@HTML_TAG'))
+            if (Config::get('sys@is_html_tag'))
             {
-                $tag = new Tag($this->_fileVar,$this->_keyArr);
+                $tag = new Tag($this->_fileVar,$this->_keyArr,$this->_actionName);
                 $this->_fileVar = $tag->Compile();
             }
-
+            /**
+             * 更新编译文件
+             */
 			$this->getComilled ();
-
         }
 
 		// 引入编译文件

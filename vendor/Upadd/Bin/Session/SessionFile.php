@@ -29,10 +29,10 @@ class SessionFile{
 
     public function is_dir()
     {
-        $this->_save_path =  host() .'data/session';
+        $this->_save_path =  host() .'data/'.APP_NAME.'/session';
         if(!is_dir($this->_save_path))
         {
-            is_dirName($this->_save_path);
+            is_create_dir($this->_save_path);
         }
     }
 

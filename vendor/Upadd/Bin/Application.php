@@ -3,10 +3,9 @@ namespace Upadd\Bin;
 
 use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Loader;
-use Upadd\Bin\UpaddException;
 use Upadd\Bin\Alias;
 use Upadd\Bin\Tool\Log;
-use Config;
+use Upadd\Bin\UpaddException;
 
 class Application{
 
@@ -15,9 +14,9 @@ class Application{
     public $_work = array();
 
     /**
-     * 工作
+     * 运行
      */
-    public function work($callable,$argv)
+    public function run($callable,$argv)
     {
         /**
          * 加载组件
@@ -44,7 +43,6 @@ class Application{
             $this->request()->run_cli();
             $this->getTimeConsuming();
         }
-
     }
 
     /**
@@ -67,12 +65,12 @@ class Application{
     {
         $endtime = (microtime(true)) - RUNTIME;
         $_header = getHeader();
-        Log::request(array(
+        Log::request([
             'method'=>(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli'),
             'header'=>$_header,
             'run_time'=>$endtime,
             'param'=>$_REQUEST,
-        ));
+        ]);
     }
 
     /**
@@ -82,30 +80,6 @@ class Application{
     public function request()
     {
         return $this->_work['Request'];
-    }
-
-
-    /**
-     * 设置工作模块
-     * @param array $_data
-     */
-    public function setWorkModule($_data=array())
-    {
-        if(!is_array($_data))
-        {
-            throw new UpaddException('新设置的工作模块无法工作,因为不是数组类型');
-        }
-
-        if(!empty($_data))
-        {
-
-            foreach($_data as $k=>$v)
-            {
-                $this->_work[$k] = $v;
-            }
-
-        }
-
     }
 
 
@@ -125,6 +99,7 @@ class Application{
         ));
     }
 
+
     /**
      * 获取配置文件
      */
@@ -137,7 +112,7 @@ class Application{
      * 实例化全局配置文件
      * @return Configuration
      */
-    private function getConfiguration()
+    protected function getConfiguration()
     {
         return ($this->_work['Configuration'] = new Configuration());
     }
@@ -149,32 +124,9 @@ class Application{
      */
     public function getAlias()
     {
-        return (new Alias($this->setAlias()));
+        return (new Alias(static::$_config));
     }
 
-    /**
-     * 设置别名
-     * @return mixed
-     * @throws \Upadd\Bin\UpaddException
-     */
-    public function setAlias()
-    {
-        if(isset(static::$_config['start']['alias']))
-        {
-            return static::$_config['start']['alias'];
-        }
-        return false;
-    }
-
-
-    /**
-     * 获取Session配置状态
-     * @return mixed
-     */
-    private function getSessionStatus()
-    {
-        return static::$_config['start']['is_session'];
-    }
 
     /**
      * 设置 session
@@ -182,23 +134,106 @@ class Application{
      */
     public function setSession()
     {
-        if(is_run_evn())
+        if (is_run_evn() && IS_SESSION)
         {
-            if ($this->getSessionStatus())
-            {
-                $seeion = new \Upadd\Bin\Session\SessionFile();
-                session_set_save_handler(
-                    array($seeion, 'open'),
-                    array($seeion, 'close'),
-                    array($seeion, 'read'),
-                    array($seeion, 'write'),
-                    array($seeion, 'destroy'),
-                    array($seeion, 'gc')
-                );
-                register_shutdown_function('session_write_close');
-                session_start();
-            }
+            $seeion = new \Upadd\Bin\Session\SessionFile();
+            session_set_save_handler(
+                array($seeion, 'open'),
+                array($seeion, 'close'),
+                array($seeion, 'read'),
+                array($seeion, 'write'),
+                array($seeion, 'destroy'),
+                array($seeion, 'gc')
+            );
+            register_shutdown_function('session_write_close');
+            session_start();
         }
+    }
+
+
+    /**
+     * 创建配置文件目录
+     * @return bool
+     */
+    private function is_create_confg_dir()
+    {
+        if( $env = $this->getConfiguration()->get('sys@environment'))
+        {
+            //merge in config array
+            $oneEnv = array_merge_one($env);
+            $osName = getMachineName();
+            $configDir = $this->getConfiguration()->get('sys@config_dir');
+            // 总目录
+            is_create_dir($configDir);
+            foreach ($env as $k => $v) {
+                // 不是数字类型执行
+                if (!is_numeric($k)) {
+                    // 创建配置目录
+                    if (!is_dir($configDir . $k)) {
+                        if ($k) {
+                            is_create_dir($configDir . $k);
+                        }
+                    }
+                } else {
+                    return true;
+                }
+                //end for
+            }
+            return true;
+        }
+    }
+
+    /**
+     * 判断是否创建
+     */
+    public function is_create_data_dir()
+    {
+        header('X-Powered-By:'.$this->getConfiguration()->get('sys@upadd_version'));
+        $is_data = true;
+        if($is_data)
+        {
+            $this->is_create_confg_dir();
+            $_data_dir = $this->getConfiguration()->get('sys@data_dir');
+
+            // 数据资源文件夹
+            if (!is_dir($_data_dir))
+            {
+                is_create_dir($_data_dir);
+            }
+
+            // 数据资源文件夹
+            if (!is_dir($_data_dir . APP_NAME))
+            {
+                is_create_dir($_data_dir . APP_NAME);
+            }
+
+            // 日记目录
+            if (!is_dir($_data_dir . APP_NAME . '/log'))
+            {
+                is_create_dir($_data_dir . APP_NAME . '/log');
+            }
+
+            //创建编译文件夹
+            if (!is_dir($_data_dir . APP_NAME . '/compiled'))
+            {
+                is_create_dir($_data_dir . APP_NAME . '/compiled');
+            }
+
+            //创建缓存文件夹
+            if (!is_dir($_data_dir . APP_NAME . '/cache'))
+            {
+                is_create_dir($_data_dir . APP_NAME . '/cache');
+            }
+
+            //上传文件目录
+            if (!is_dir($_data_dir . 'upload'))
+            {
+                is_create_dir($_data_dir . 'upload');
+            }
+
+        }
+
+
     }
 
 

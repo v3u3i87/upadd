@@ -4,7 +4,7 @@ return array(
 
     'environment'=>array(
         'local'=>array('RR-ZMQ','demo','Mac-zmq.local'),
-        'dev'=>array('renrentest','demo')
+        'dev'=>array('renrentest','demo'),
     ),
 
     'is_autoload'=>false,
@@ -18,19 +18,30 @@ return array(
     ),
 
     //CLI模式下命名空间
-    'cli_action_autoload'=>'works\\action\\',
+    'cli_action_autoload'=>'console\\action\\',
+
+    /**
+     * 开启全局别名
+     */
+    'is_alias'=>false,
 
     /**
      * 自定义设置别名
      */
-//    'alias'=>array('Info'=>'works\Package\Info'),
+    'alias'=>array('main'=>'extend\admin\Main'),
 
+    /**
+     * 排除配置文件以外的定义文件
+     */
+    'exclude_config'=>['routing','filters','extend'],
 
-    'is_session'=>false,
-
-
-
-
-
+    /**
+     * 控制器
+     */
+    'set_action'=>'u',
+    /**
+     * 方法
+     */
+    'set_function'=>'p',
 
 );

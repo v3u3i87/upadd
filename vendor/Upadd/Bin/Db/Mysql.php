@@ -67,7 +67,8 @@ class Mysql implements Db {
 	 * @param unknown $sql        	
 	 * @return multitype:multitype:
 	 */
-	public function getNextId($sql) {
+	public function getNextId($sql)
+    {
 		if ($sql) {
 			$_result = $this->select ( $sql );
 			return $_result [0] ['Auto_increment'];

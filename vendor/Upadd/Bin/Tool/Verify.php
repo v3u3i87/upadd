@@ -16,32 +16,38 @@ namespace Upadd\Bin\Tool;
 class Verify {
 	
 	// 判断是否是数组
-	public static function isArr($_array) {
+	public static function isArr($_array)
+    {
 		return is_array ( $_array ) ? true : false;
 	}
 	
 	// 判断数组是否有元素
-	public static function isNullArray($_array) {
+	public static function isNullArray($_array)
+    {
 		return count ( $_array ) == 0 ? true : false;
 	}
 	
 	// 判断数组是否存在此元素
-	public static function InArr($_data, $_array) {
+	public static function InArr($_data, $_array)
+    {
 		return in_array ( $_data, $_array ) ? true : false;
 	}
 	
 	// 判断字符串是否为空
-	public static function IsNullString($_string) {
+	public static function IsNullString($_string)
+    {
 		return empty ( $_string ) ? true : false;
 	}
 	
 	// 判断是否为数字
-	public static function is_num($num) {
+	public static function is_num($num)
+    {
 		return is_numeric ( $num ) ? true : false;
 	}
 	
 	// 判断字符串长度是否合法
-	public static function CheckStrLength($_string, $_length, $_flag, $_charset = 'utf-8') {
+	public static function CheckStrLength($_string, $_length, $_flag, $_charset = 'utf-8')
+    {
 		if ($_flag == 'min') {
 			if (mb_strlen ( trim ( $_string ), $_charset ) < $_length)
 				return true;
@@ -50,199 +56,41 @@ class Verify {
 			if (mb_strlen ( trim ( $_string ), $_charset ) > $_length)
 				return true;
 			return false;
-		} elseif ($_flag == 'equals') {
+		} elseif ($_flag == 'equals')
+        {
 			if (mb_strlen ( trim ( $_string ), $_charset ) != $_length)
-				return true;
+            {
+                return true;
+            }
 			return false;
 		}
 	}
-	
-	// 判断数据是否一致
-	public static function CheckStrEquals($_string, $_otherstring) {
+
+    /**
+     *  判断数据是否一致
+     * @param $_string
+     * @param $_otherstring
+     * @return bool
+     */
+	public static function CheckStrEquals($_string, $_otherstring)
+    {
 		if (trim ( $_string ) == trim ( $_otherstring ))
-			return true;
+        {
+            return true;
+        }
 		return false;
 	}
-	
-	/**
-	 * 验证是否手机访问 if (is_mobile()) ? echo '手机' : echo '不是手机';
-	 *
-	 * @return boolean
-	 */
-	public static function is_mobile() {
-		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-		$mobile_agents = array (
-				"240x320",
-				"acer",
-				"acoon",
-				"acs-",
-				"abacho",
-				"ahong",
-				"airness",
-				"alcatel",
-				"amoi",
-				"android",
-				"anywhereyougo.com",
-				"applewebkit/525",
-				"applewebkit/532",
-				"asus",
-				"audio",
-				"au-mic",
-				"avantogo",
-				"becker",
-				"benq",
-				"bilbo",
-				"bird",
-				"blackberry",
-				"blazer",
-				"bleu",
-				"cdm-",
-				"compal",
-				"coolpad",
-				"danger",
-				"dbtel",
-				"dopod",
-				"elaine",
-				"eric",
-				"etouch",
-				"fly ",
-				"fly_",
-				"fly-",
-				"go.web",
-				"goodaccess",
-				"gradiente",
-				"grundig",
-				"haier",
-				"hedy",
-				"hitachi",
-				"htc",
-				"huawei",
-				"hutchison",
-				"inno",
-				"ipad",
-				"ipaq",
-				"iphone",
-				"ipod",
-				"jbrowser",
-				"kddi",
-				"kgt",
-				"kwc",
-				"lenovo",
-				"lg ",
-				"lg2",
-				"lg3",
-				"lg4",
-				"lg5",
-				"lg7",
-				"lg8",
-				"lg9",
-				"lg-",
-				"lge-",
-				"lge9",
-				"longcos",
-				"maemo",
-				"mercator",
-				"meridian",
-				"micromax",
-				"midp",
-				"mini",
-				"mitsu",
-				"mmm",
-				"mmp",
-				"mobi",
-				"mot-",
-				"moto",
-				"nec-",
-				"netfront",
-				"newgen",
-				"nexian",
-				"nf-browser",
-				"nintendo",
-				"nitro",
-				"nokia",
-				"nook",
-				"novarra",
-				"obigo",
-				"palm",
-				"panasonic",
-				"pantech",
-				"philips",
-				"phone",
-				"pg-",
-				"playstation",
-				"pocket",
-				"pt-",
-				"qc-",
-				"qtek",
-				"rover",
-				"sagem",
-				"sama",
-				"samu",
-				"sanyo",
-				"samsung",
-				"sch-",
-				"scooter",
-				"sec-",
-				"sendo",
-				"sgh-",
-				"sharp",
-				"siemens",
-				"sie-",
-				"softbank",
-				"sony",
-				"spice",
-				"sprint",
-				"spv",
-				"symbian",
-				"tablet",
-				"talkabout",
-				"tcl-",
-				"teleca",
-				"telit",
-				"tianyu",
-				"tim-",
-				"toshiba",
-				"tsm",
-				"up.browser",
-				"utec",
-				"utstar",
-				"verykool",
-				"virgin",
-				"vk-",
-				"voda",
-				"voxtel",
-				"vx",
-				"wap",
-				"wellco",
-				"wig browser",
-				"wii",
-				"windows ce",
-				"wireless",
-				"xda",
-				"xde",
-				"zte" 
-		);
-		$is_mobile = false;
-		foreach ( $mobile_agents as $device ) {
-			if (stristr ( $user_agent, $device )) {
-				$is_mobile = true;
-				break;
-			}
-		}
-		return $is_mobile;
-	}
-	
-	/**
-	 * 验证输入的手机号码
-	 *
-	 * @access public
-	 * @param string $user_mobile
-	 *        	需要验证的手机号码
-	 * @return bool
-	 */
-	public static function is_mobile_num($user_mobile) {
+
+    /**
+     * 验证输入的手机号码
+     * @param $mobile
+     * @return bool
+     */
+	public static function is_mobile($mobile)
+    {
 		$chars = '/^((\(\d{2,3}\))|(\d{3}\-))?1(3|5|8|9)\d{9}$/';
-		if (preg_match ( $chars, $user_mobile )) {
+		if (preg_match ( $chars, $mobile ))
+        {
 			return true;
 		} else {
 			return false;
@@ -258,10 +106,13 @@ class Verify {
 	 *        	
 	 * @return bool
 	 */
-	public static function is_email($user_email) {
+	public static function is_email($user_email)
+    {
 		$chars = '/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i';
-		if (strpos ( $user_email, '@' ) !== false && strpos ( $user_email, '.' ) !== false) {
-			if (preg_match ( $chars, $user_email )) {
+		if (strpos ( $user_email, '@' ) !== false && strpos ( $user_email, '.' ) !== false)
+        {
+			if (preg_match ( $chars, $user_email ))
+            {
 				return true;
 			} else {
 				return false;
@@ -273,11 +124,11 @@ class Verify {
 	
 	/**
 	 * 匹配中文，如果是中文返回true
-	 *
 	 * @param unknown $str        	
 	 * @return boolean
 	 */
-	public static function is_cn($cn) {
+	public static function is_cn($cn)
+    {
 		$preg = '/^[\x7f-\xff]+$/';
 		if (preg_match ( $preg, $cn ) || preg_match ( '/[\x7f-\xff]/', $cn )) {
 			return true;
@@ -292,9 +143,11 @@ class Verify {
 	 * @param unknown $user_email        	
 	 * @return boolean
 	 */
-	public static function is_zifu($user_email) {
+	public static function is_zifu($user_email)
+    {
 		$chars = '/[\.。,，\-]/';
-		if (preg_match ( $chars, $user_email )) {
+		if (preg_match ( $chars, $user_email ))
+        {
 			return true;
 		} else {
 			return false;

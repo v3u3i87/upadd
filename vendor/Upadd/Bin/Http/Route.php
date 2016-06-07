@@ -13,7 +13,6 @@
 namespace Upadd\Bin\Http;
 
 use Upadd\Bin\UpaddException;
-use Upadd\Bin\Tool\Rbac;
 
 class Route extends Request{
 

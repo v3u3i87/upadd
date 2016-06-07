@@ -19,6 +19,8 @@ class LinkPdoMysql implements Db{
 
     protected $queue = array();
 
+    protected $_logSql = [];
+
     public function __construct($link)
     {
         try {
@@ -80,7 +82,12 @@ class LinkPdoMysql implements Db{
      */
     public function getTotal()
     {
-        return $this->query()->fetchColumn();
+        $query = $this->query();
+        if($query)
+        {
+            return $query->fetchColumn();
+        }
+        return 0;
     }
 
     /**
@@ -120,32 +127,34 @@ class LinkPdoMysql implements Db{
         {
             $this->_sql = $sql;
         }
-        $this->log($this->_sql);
-
-        if($this->_linkID->exec( $this->_sql ))
+        $this->log();
+        $result = $this->_linkID->exec( $this->_sql );
+        if($result)
         {
             return true;
+        }else{
+            return $this->is_debug();
         }
-
-        throw new UpaddException("sql:".$this->_sql.$this->error());
     }
-
 
     /**
      * 提交SQL
      */
     public function query()
     {
-        $this->log($this->_sql);
+        $this->log();
         $result = $this->_linkID->query($this->_sql);
         if($result)
         {
             return $result;
+        }else{
+            return $this->is_debug();
         }
-        throw new UpaddException("sql:".$this->_sql.$this->error());
     }
 
-    // 记录SQL错误
+    /**
+     * 记录SQL错误
+     */
     public function log()
     {
         Log::write ( $this->_sql, 'log.sql' ); // 记录SQL
@@ -198,10 +207,34 @@ class LinkPdoMysql implements Db{
      * 返回错误信息
      * @return array
      */
-    public function error()
+    private function error()
     {
         $error = $this->_linkID->errorInfo();
-        return 'type:'.$error[0]."\n".'code:'.$error[1]."\n".'info:'.$error[2];
+        return [
+            'msg'=>'type:'.$error[0]."\n".'code:'.$error[1]."\n".'info:'.$error[2],
+            'info'=>$error
+        ];
+    }
+
+
+    /**
+     * 判断是否启用调试
+     * @return bool
+     * @throws UpaddException
+     */
+    private function is_debug()
+    {
+        try {
+            $result = $this->error();
+            $msg = $result['msg'];
+            $info = $result['info'];
+            if ($info[0] === '00000' || $info[0] === '01000')
+            {
+                return true;
+            }
+        }catch(\Exception $e){
+            throw new UpaddException("sql:".$this->_sql.$this->error());
+        }
     }
 
 }

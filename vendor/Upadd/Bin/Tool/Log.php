@@ -130,7 +130,6 @@ class Log {
 	
 	/**
 	 * 获取路径
-	 *
 	 * @param string $path        	
 	 * @return string
 	 */

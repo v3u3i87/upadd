@@ -3,21 +3,32 @@ namespace Upadd\Bin;
 
 use Upadd\Bin\UpaddException;
 
-class Alias{
+class Alias
+{
 
-    public $_aliasData = array();
+    /**
+     * 配置文件
+     * @var array
+     */
+    protected $_config = [];
 
+    /**
+     * 系统别名
+     * @var array
+     */
+    protected $_alias = [
+            'Routes'=>'Upadd\Bin\Package\Routes',
+            'Config'=>'Upadd\Bin\Package\Config',
+            'Session'=>'Upadd\Bin\Package\Session',
+            'Log'=>'Upadd\Bin\Package\Log',
+            'Data'=>'Upadd\Bin\Package\Data',
+            'Model'=>'Upadd\Frame\Model',
+    ];
 
-    public function __construct($setAlias=array())
+    public function __construct(array $config)
     {
-        if($setAlias && is_array($setAlias))
-        {
-            $this->_aliasData = array_merge($this->aliasList(),$setAlias);
-        }else{
-            $this->_aliasData = $this->aliasList();
-        }
+        $this->_config = $config['sys'];
     }
-
 
     /**
      * 定义工厂包别名,全局可使用
@@ -25,14 +36,19 @@ class Alias{
      */
     public function aliasList()
     {
-        return array(
-            'Routes'=>'Upadd\Bin\Package\Routes',
-            'Config'=>'Upadd\Bin\Package\Config',
-            'Session'=>'Upadd\Bin\Package\Session',
-            'Log'=>'Upadd\Bin\Package\Log',
-            'Data'=>'Upadd\Bin\Package\Data',
-            'Model'=>'Upadd\Frame\Model',
-        );
+        return $this->setAliasList();
+    }
+
+    /**
+     * 设置别名
+     */
+    public function setAliasList()
+    {
+        if($this->_config['is_alias'])
+        {
+            return array_merge($this->_alias,$this->_config['alias']);
+        }
+        return $this->_alias;
     }
 
     /**
@@ -40,12 +56,13 @@ class Alias{
      */
     public function run()
     {
-        try{
+        try
+        {
             /**
              * 断点调试
              * p($this->_aliasData);
              */
-            foreach ($this->_aliasData as $alias => $name)
+            foreach ($this->aliasList() as $alias => $name)
             {
 
                 $alias = class_alias($name,$alias);
@@ -54,12 +71,10 @@ class Alias{
                 {
                     throw new UpaddException($alias.'别名设置失败,'.'执行的路径:'.$name);
                 }
-
             }
-
         }catch(UpaddException $e)
         {
-            echo $e->getMessage();
+            p($e->getMessage());
         }
     }
 

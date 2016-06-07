@@ -22,12 +22,14 @@ class Tag{
 
     public $front_domain = '';
 
+    public $action = null;
+
     /**
      * Tag constructor.
      * @param $file
      * @param $_KeyArr
      */
-    public function __construct($file,$_KeyArr)
+    public function __construct($file,$_KeyArr,$action)
     {
         /**
          * 模板文件字符串
@@ -37,7 +39,10 @@ class Tag{
          * 获取模板变量数组
          */
         $this->_KeyArr = $_KeyArr;
-
+        /**
+         * 控制器
+         */
+        $this->action = $action;
         /**
          * 判断是否加载前端域名
          */
@@ -45,15 +50,13 @@ class Tag{
         {
             $this->front_domain = Config::get('tag@front_domain');
         }
-
-
     }
 
 
     /**
      * 批量替换
      */
-    public function pregVal() {
+    private function pregVal() {
         $preaa = array (
             '/<\!--\s\$([\w]+)\s\-->/',
             '/<\!--\s+if\s+\$([\w]+)\s+\-->/',
@@ -100,27 +103,40 @@ class Tag{
      * 加载前端资源文件
      * @return mixed|string
      */
-    public function style(){
-        return ($this->_file = preg_replace ( array(
-            "/\@load\(\'(.*?)\'\)/i",
+    private function style(){
+        $this->_file = preg_replace ([
             "/\@css\(\'(.*?)\'\)/i",
             "/\@public_css\(\'(.*?)\'\)/i",
             "/\@js\(\'(.*?)\'\)/i",
             "/\@public_js\(\'(.*?)\'\)/i",
-        ), array(
-            '<?php include host()."works/view/$1"; ?>',
+        ],[
             $this->css(),
             $this->public_css(),
             $this->js(),
             $this->public_js()
-        ), $this->_file ));
+        ], $this->_file );
+        return $this->_file;
+    }
+
+
+    private function load()
+    {
+        $this->_file = preg_replace_callback ( "/\@load\(\'(.*?)\'\)/i",function($matches)
+        {
+            if(isset($matches[1]))
+            {
+                $dir = host().APP_NAME.'/view'.$matches[1];
+                $var = file_get_contents($dir);
+                return $var;
+            }
+        }, $this->_file );
     }
 
     /**
      * 指定目录的CSS
      * @return string
      */
-    public function css(){
+    private function css(){
         $css = $this->front_domain.'/resou/css/'."$1";
         return "<link rel=\"stylesheet\" href=\"{$css}\">";
     }
@@ -129,7 +145,7 @@ class Tag{
      * 公共目录的CSS
      * @return string
      */
-    public function public_css()
+    private function public_css()
     {
         $css = $this->front_domain."$1";
         return "<link rel=\"stylesheet\" href=\"{$css}\">";
@@ -139,7 +155,7 @@ class Tag{
      * 获取指定目录的JS
      * @return string
      */
-    public function js(){
+    private function js(){
         $js = $this->front_domain.'/resou/js/'."$1";
         return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
     }
@@ -149,13 +165,13 @@ class Tag{
      * 获取公共目录的JS
      * @return string
      */
-    public function public_js(){
+    private function public_js(){
         $js = $this->front_domain."$1";
         return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
     }
 
 
-    public function val(){
+    private function val(){
         return ($this->_file = preg_replace (array(
             "/\@val\(\'(.*?)\'\)/i",
         ), array(
@@ -168,6 +184,7 @@ class Tag{
      * @return string
      */
     public function Compile(){
+        $this->load();
         $this->style();
         $this->val();
         return $this->_file;

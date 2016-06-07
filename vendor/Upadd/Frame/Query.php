@@ -37,7 +37,8 @@ class Query extends ProcessingSql{
      * @param null $_field
      * @return array 有分页
      */
-    public function get($_field=null){
+    public function get($_field=null)
+    {
         $this->joint_field($_field);
         $this->_db->_sql = ' SELECT ' . $this->mergeSqlLogic();
         $_data = $this->_db->select();
@@ -70,8 +71,7 @@ class Query extends ProcessingSql{
      */
     public function first($value,$_field=null)
     {
-        $this->where(array($this->_primaryKey=>$value));
-        return $this->find($_field);
+        return $this->where(array($this->_primaryKey=>$value))->find($_field);
     }
 
     /**
@@ -81,7 +81,9 @@ class Query extends ProcessingSql{
      */
     public function join($_table=array())
     {
-        if(empty($_table)) return false;
+        if(empty($_table)){
+            return false;
+        }
         $name = '';
         foreach($_table as $k=>$v)
         {
@@ -113,23 +115,21 @@ class Query extends ProcessingSql{
      */
     public function in_where($key,$data=array())
     {
-        if($key && $data)
+        if(empty($key) && empty($data))
         {
-            if(is_array($data))
-            {
-                $data = lode(',',$data);
-            }
-//            p($data);
-            if ($this->_where)
-            {
-                $this->_in_where = " AND `{$key}` IN ({$data}) ";
-            } else {
-                $this->_in_where = " WHERE `{$key}` IN ({$data}) ";
-            }
-            return $this;
-        }else{
-            throw new UpaddException('缺少key或data的参数');
+            throw new UpaddException('in_where 类型,需传key或data');
         }
+        if(is_array($data))
+        {
+            $data = lode(',',$data);
+        }
+        if ($this->_where)
+        {
+            $this->_in_where = " AND `{$key}` IN ({$data}) ";
+        } else {
+            $this->_in_where = " WHERE `{$key}` IN ({$data}) ";
+        }
+        return $this;
     }
 
     /**
@@ -139,20 +139,23 @@ class Query extends ProcessingSql{
      * @return $this
      * @throws UpaddException
      */
-    public function not_where($key,$data=null){
-        if($key && $data) {
-            if(is_array($data)){
-                $data = lode(',',$data);
-            }
-            if ($this->_where) {
-                $this->_not_in_where = " AND `{$key}`  NOT IN ({$data}) ";
-            } else {
-                $this->_not_in_where = " WHERE `{$key}`  NOT IN ({$data}) ";
-            }
-            return $this;
-        }else{
-            throw new UpaddException('缺少key或data的参数');
+    public function not_where($key=null,$data=null)
+    {
+        if(empty($key) && empty($data))
+        {
+            throw new UpaddException('not_where类型:传key或data');
         }
+        if(is_array($data))
+        {
+            $data = lode(',',$data);
+        }
+        if ($this->_where)
+        {
+            $this->_not_in_where = " AND `{$key}`  NOT IN ({$data}) ";
+        } else {
+            $this->_not_in_where = " WHERE `{$key}`  NOT IN ({$data}) ";
+        }
+        return $this;
     }
 
     /**
@@ -174,7 +177,7 @@ class Query extends ProcessingSql{
             {
                 $sql.=$tmp;
             }
-            $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic();
+            $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic().';';
             return $this->_db->getTotal();
         }
     }
@@ -188,9 +191,9 @@ class Query extends ProcessingSql{
     {
         if ($by)
         {
-            $this->_sort =  " ORDER BY `{$sort}` DESC";
+            $this->_sort =  " ORDER BY {$sort} DESC";
         } else {
-            $this->_sort =  " ORDER BY `{$sort}` ASC";
+            $this->_sort =  " ORDER BY {$sort} ASC";
         }
         return $this;
     }
@@ -255,9 +258,9 @@ class Query extends ProcessingSql{
             $field [] = $k;
             $value [] = $v;
         }
-        $field = implode ( ',', $field );
+        $field = implode ("`,`", $field );
         $value = implode ( "','", $value );
-        $this->_db->_sql = "INSERT INTO {$this->_table} ($field) VALUES ('$value')";
+        $this->_db->_sql = "INSERT INTO `{$this->_table}` (`$field`) VALUES ('$value') ;";
         if($this->_db->sql())
         {
             return $this->getId();
@@ -272,6 +275,11 @@ class Query extends ProcessingSql{
      */
     public function save($_data=array(), $where=null)
     {
+        if(!empty($this->_where) && !empty($_data))
+        {
+            return $this->update($_data,$this->_where);
+        }
+
         if(is_array($_data) && !empty($where))
         {
             return $this->update($_data,$where);
@@ -295,9 +303,12 @@ class Query extends ProcessingSql{
      * @param $where
      * @return bool
      */
-    public function update($_data, $where)
+    public function update($_data=[], $where=null)
     {
-        if (!is_array ( $_data )) return false;
+        if (!is_array ( $_data ))
+        {
+            return false;
+        }
 
         $_editdata = '';
         foreach ( $_data as $k => $v )
@@ -306,7 +317,7 @@ class Query extends ProcessingSql{
         }
         $_editdata = substr ( $_editdata, 0, - 1 );
         $_where = $this->joint_where($where);
-        $this->_db->_sql = "UPDATE {$this->_table} SET {$_editdata}  WHERE {$_where} ";
+        $this->_db->_sql = "UPDATE `{$this->_table}` SET {$_editdata}  WHERE {$_where};";
         return $this->_db->sql();
     }
 
@@ -335,8 +346,19 @@ class Query extends ProcessingSql{
     public function del($where = null)
     {
         $_where = $this->joint_where($where);
-        $this->_db->_sql = " DELETE FROM {$this->_table} WHERE {$_where} ";
+        $this->_db->_sql = " DELETE FROM {$this->_table} WHERE {$_where};";
         return $this->_db->sql();
+    }
+
+    /**
+     * 运行SQL
+     * @param null $sql
+     * @return mixed
+     */
+    public function sql($sql=null)
+    {
+        $this->_db->_sql = $sql;
+        return $this->_db;
     }
 
 
@@ -353,7 +375,7 @@ class Query extends ProcessingSql{
      */
     public function getField()
     {
-        $this->_db->_sql = "SHOW COLUMNS FROM {$this->_table}";
+        $this->_db->_sql = "SHOW COLUMNS FROM {$this->_table};";
         return $this->_db->getField ();
     }
 
@@ -362,7 +384,7 @@ class Query extends ProcessingSql{
      */
     public function getNextId()
     {
-        $this->_db->_sql = "SHOW TABLE STATUS LIKE `{$this->_table}` ";
+        $this->_db->_sql = "SHOW TABLE STATUS LIKE `{$this->_table}`;";
         return $this->_db->getNextId ();
     }
 
@@ -374,9 +396,9 @@ class Query extends ProcessingSql{
     public function lock($type = 1)
     {
         if($type){
-            $this->_db->_sql = "LOCK TABLES `{$this->_table}` WRITE";
+            $this->_db->_sql = "LOCK TABLES `{$this->_table}` WRITE;";
         }else{
-            $this->_db->_sql = "LOCK TABLES `{$this->_table}` READ";
+            $this->_db->_sql = "LOCK TABLES `{$this->_table}` READ;";
         }
         return $this->_db->sql();
     }
@@ -386,7 +408,7 @@ class Query extends ProcessingSql{
      */
     public function unlock()
     {
-        $this->_db->_sql = " UNLOCK TABLES ";
+        $this->_db->_sql = " UNLOCK TABLES;";
         return $this->_db->sql ();
     }
 
@@ -395,8 +417,8 @@ class Query extends ProcessingSql{
      */
     public function getTotal()
     {
-        $this->joint_field('COUNT(*) as conut ');
-        $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic();
+        $this->joint_field('COUNT(*) AS `conut` ');
+        $this->_db->_sql = 'SELECT '.$this->mergeSqlLogic().';';
         return $this->_db->getTotal();
     }
 

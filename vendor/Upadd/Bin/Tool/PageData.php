@@ -79,7 +79,13 @@ class PageData {
     private function setPage()
     {
         $pageNumeber = (int) Data::get('page',1);
-
+        if(!is_numeric($pageNumeber))
+        {
+            $pageNumeber = 1;
+        }elseif(empty($pageNumeber))
+        {
+            $pageNumeber = 1;
+        }
         if ( $pageNumeber > $this->_pagenum)
         {
             return $this->_pagenum;

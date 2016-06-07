@@ -23,18 +23,15 @@ class Loader
      */
     private static $_autoload = array();
 
-    private $_config = array();
 
     public static function Run()
     {
-        self::loadDir();
 
         spl_autoload_register (function($className)
         {
 
             /**
-             * 判断是否开启自定义
-             * 默认不开启
+             * 自定义命名空间 - 默认不开启
              */
             if(Config::get('start@is_autoload'))
             {
@@ -71,7 +68,8 @@ class Loader
     {
         $autoload = Config::get('start@autoload');
         //判断是否启用插件
-        if(Config::get('start@IS_PLUG')){
+        if(Config::get('sys@is_plug'))
+        {
             $autoload = array_merge($autoload,self::$_autoload);
         }
         return $autoload;
@@ -87,90 +85,6 @@ class Loader
             self::$_autoload = $_autoloadArray;
         }
     }
-
-
-
-    /**
-     * 判断运行环境
-     * @return bool
-     */
-    private static function isRunMachineName()
-    {
-        $env = Config::get('start@environment');
-        //merge in config array
-        $oneEnv = array_merge_one($env);
-        $osName = getMachineName();
-        if(in_array($osName,$oneEnv))
-        {
-            $configDir = Config::get('sys@CONF_DIR');
-            // 总目录
-            is_dirName($configDir);
-            foreach ($env as $k => $v)
-            {
-                // 不是数字类型执行
-                if (!is_numeric($k)) {
-                    // 创建配置目录
-                    if (!is_dir($configDir . $k)) {
-                        if ($k) {
-                            is_dirName($configDir . $k);
-                        }
-                    }
-                }else{
-                    return true;
-                }
-                //end for
-            }
-            return true;
-        }else{
-           throw new UpaddException(lang('run_is_name'));
-        }
-    }
-
-    /**
-     * 初始化判断目录文件
-     */
-    protected static function loadDir()
-    {
-        header('X-Powered-By:'.Config::get('sys@UPADD_VERSION'));
-        if(!self::isRunMachineName())
-        {
-            msg(10004,lang('loadRunConfig'));
-        }
-
-        $_data_dir = Config::get('sys@data_dir');
-        
-        // 数据资源文件夹
-        if (! is_dir ( $_data_dir ))
-        {
-            is_dirName ( $_data_dir );
-        }
-
-        // 日记目录
-        if( ! is_dir($_data_dir . 'log'))
-        {
-            is_dirName ( $_data_dir . 'log' );
-        }
-
-        //创建编译文件夹
-        if(! is_dir($_data_dir.'compiled'))
-        {
-            is_dirName($_data_dir.'compiled');
-        }
-
-        //创建缓存文件夹
-        if(! is_dir($_data_dir.'cache'))
-        {
-            is_dirName($_data_dir.'cache');
-        }
-
-        //上传文件目录
-        if(! is_dir($_data_dir.'upload')){
-            is_dirName($_data_dir.'upload');
-        }
-
-    }
-
-
 
 
 

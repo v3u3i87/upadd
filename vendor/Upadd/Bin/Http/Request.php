@@ -11,11 +11,10 @@
  **/
 namespace Upadd\Bin\Http;
 
-use Upadd\Bin\UpaddException;
-
 use Config;
 use Data;
 use Upadd\Bin\Tool\View;
+use Upadd\Bin\UpaddException;
 
 class Request{
 
@@ -84,21 +83,25 @@ class Request{
      */
     public function run_cgi()
     {
-        $this->_routing = $this->getRoute()->getResou();
-        if($this->_routing)
+        if(APP_ROUTES)
         {
+            $this->_routing = $this->getRoute()->getResou();
             if(is_callable($this->_routing['callbacks']))
             {
                 return call_user_func_array($this->_routing['callbacks'],func_get_args());
             }
-
             $this->getAction($this->_routing['methods']);
-
-            return $this->Instantiation();
         }else{
-            exit(View::error());
+            $set_action = Data::get(Config::get('sys@set_action'));
+            $set_function = Data::get(Config::get('sys@set_function'));
+            $action = $set_action ? $set_action : 'index';
+            $action && $action = ucfirst($action);
+            $this->_action = APP_NAME."\\action\\{$action}Action";
+            $this->_method = $set_function ? $set_function : 'main';
         }
+        return $this->Instantiation();
     }
+
 
 
     /**
@@ -215,6 +218,7 @@ class Request{
 
             if(class_exists($this->_action))
             {
+                Config::setFileVal('sys','request',['action'=>$this->_action,'method'=>$this->_method]);
                 /**
                  * 实例化控制器
                  */
@@ -229,18 +233,12 @@ class Request{
 
                 if(is_run_evn())
                 {
-                    /**
-                     * 设置模板目录
-                     */
-                    $class->setViewAction($this->_action);
-
+                    $class->init();
                     $tmpData = func_get_args();
                 }else{
                     $tmpData = $this->_cliData;
                 }
-
                 return call_user_func_array(array($class,$method),$tmpData);
-
             }else{
                 throw new UpaddException($this->_action.',There is no Action');
             }

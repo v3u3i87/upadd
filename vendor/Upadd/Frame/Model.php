@@ -151,12 +151,7 @@ abstract class Model {
 
     public function __call($name, $parameters)
     {
-        /**
-         * 实例化自己
-         */
-        $instance = $this;
-
-        return call_user_func_array(array($instance->_query, $name), $parameters);
+        return call_user_func_array(array($this->_query, $name), $parameters);
     }
 
 

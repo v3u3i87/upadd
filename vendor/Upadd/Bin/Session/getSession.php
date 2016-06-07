@@ -92,13 +92,7 @@ class getSession
     {
         if($this->is_key($key))
         {
-            if(is_array($this->_data[$key]))
-            {
-                $this->_data[$key] = array_merge($this->_data[$key],$value);
-
-            }else{
-                throw new UpaddException('参数必须为数组类型,才可以使用add()方法');
-            }
+            $this->_data[$key] = array_merge($this->_data[$key],$value);
             return $this->_data[$key];
         }
         return false;
@@ -115,7 +109,7 @@ class getSession
         if(empty($key))
         {
             return (session_destroy());
-        }elseif(isset($this->_data[$key]))
+        }elseif($this->is_key($key))
         {
             unset($this->_data[$key]);
             return true;
@@ -129,7 +123,11 @@ class getSession
      */
     private function is_key($key)
     {
-        return array_key_exists($key, $this->_data);
+        if(isset($this->_data[$key]))
+        {
+            return true;
+        }
+        return false;
     }
 
 }

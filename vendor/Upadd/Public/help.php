@@ -90,14 +90,21 @@ if(! function_exists('lang')) {
     }
 }
 
-if(!function_exists('equal')){
+if(!function_exists('equal'))
+{
 
-    function is_equal($k,$key){
-        if($k === $key){
+    /**
+     * @param $k
+     * @param $key
+     * @return bool
+     */
+    function is_equal($k,$key)
+    {
+        if($k === $key)
+        {
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
 }
@@ -185,7 +192,9 @@ if(!function_exists('is_json')){
      */
     function is_json($string = null)
     {
-        if($string = json_decode($string)){
+        $string = json_decode($string);
+        if($string)
+        {
             return true;
         }
         return false;
@@ -200,8 +209,10 @@ if(!function_exists('json')){
      * @param bool $type
      * @return json/array
      */
-    function json($data=null,$type=true){
-        if(is_array($data)){
+    function json($data=null,$type=true)
+    {
+        if(is_array($data))
+        {
             return json_encode($data);
         }else{
             return json_decode($data,$type);
@@ -209,22 +220,23 @@ if(!function_exists('json')){
     }
 }
 
-if(!function_exists('is_dirName'))
+if(!function_exists('is_create_dir'))
 {
     /**
      * 判断目录是否存在，如果不存在就创建
      * @param unknown $path
      */
-    function is_dirName($dirName)
+    function is_create_dir($dir,$type=false)
     {
         // 设置总目录
-        if (!is_dir($dirName) || !is_writeable($dirName))
+        if (!is_dir($dir) || !is_writable($dir))
         {
-            if (!mkdir($dirName, 0777))
+            if (!mkdir($dir,0777))
             {
-                exit($dirName . lang('is_dir'));
+                exit($dir . lang('is_dir'));
             }
         }
+        return true;
     }
 }
 
@@ -232,15 +244,16 @@ if(!function_exists('is_dirName'))
 if(!function_exists('array_sort_field'))
 {
     /**
-     * 根据某字段多维数组排序
-     * @param unknown $array
-     * @param unknown $field
-     * @param string $desc
+     * 二维字数组排序
+     * @param array $array 数据
+     * @param $field 排序字段
+     * @param bool $desc
      */
     function array_sort_field(array $array, $field, $desc = false)
     {
         $fieldArr = array();
-        foreach ($array as $k => $v) {
+        foreach ($array as $k => $v)
+        {
             $fieldArr [$k] = $v [$field];
         }
         $sort = $desc == false ? SORT_ASC : SORT_DESC;
@@ -280,38 +293,10 @@ if(!function_exists('msg'))
      * @param array $data
      * @param string $type or json
      */
-    function msg($code=10001,$message='Unauthorized access',$data = array(),$type='json')
+    function msg($code=10001,$message='Unauthorized access',$data=[],$type='json')
     {
-        header('Content-type: application/json');
-        exit(json(array(
-            'code'=>$code,
-            'msg'=>$message,
-            'data'=>$data
-        )));
-    }
-}
-
-if(!function_exists('jump_view')){
-    /**
-     * 验证信息
-     * @param $url
-     * @param $info
-     */
-    function jump_view($info='注意异常,请尽快联系开发者!',$url='',$html='error.html')
-    {
-        $_view = new \Upadd\Bin\View\Templates();
-        $_view->setDir(VENDOR);
-        $_view->setPath('Html');
-        if($info){
-            $_view->val('name', '提示');
-            if (empty($url)) {
-                $url = empty($_SERVER["HTTP_REFERER"]) ? '###' : $_SERVER["HTTP_REFERER"];
-            }
-            $_view->val('url', $url);
-            $_view->val('info', $info);
-            $_view->path($html);
-            exit;
-        }
+        header('Content-type: application/json; charset=utf-8');
+        exit(json(['code'=> (int) $code, 'msg'=>(string) $message,'result'=> (array) $data]));
     }
 }
 
@@ -324,8 +309,8 @@ if(! function_exists('jump')) {
     {
         if ($url) {
             header("HTTP/1.1 301 Moved Permanently");
-            header("Location:{$url}");
-            exit ();
+            header("Location: {$url}");
+            exit;
         }
     }
 }
@@ -454,5 +439,15 @@ if(!function_exists('get_hash'))
         $content = uniqid() . $random;
         $content.=$key;
         return sha1($content);
+    }
+}
+
+if(!function_exists('pp'))
+{
+    function pp ($val=null,$status=true)
+    {
+        print_r($val);
+        echo "\n\r";
+        if($status) exit();
     }
 }

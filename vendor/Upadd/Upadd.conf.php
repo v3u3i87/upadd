@@ -15,17 +15,19 @@ header ( 'Content-Type:text/html;charset=utf-8' );
 // 设置时区
 date_default_timezone_set ( 'Asia/Shanghai' );
 
-if(APP_RUN_MODE)
-{
-    define ('VENDOR', 'vendor/Upadd');
-    define ('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
-}else{
-    define ('VENDOR', '');
-    define ('UPADD_HOST', substr(dirname(__FILE__), 0, -6));
-}
+define ('VENDOR', 'vendor/Upadd');
+define ('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
 
 // 函数库
 require UPADD_HOST . VENDOR .'/Public/help.php';
+
+if(APP_DEBUG)
+{
+    //引入报错文件
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
 
 use Upadd\Bin\Factory;
 
@@ -34,15 +36,23 @@ use Upadd\Bin\Factory;
  */
 $app = new \Upadd\Bin\Application();
 
+
+
 /**
  * 设置配置文件
  */
 $app->getConfig();
 
 /**
+ * 创建目录
+ */
+$app->is_create_data_dir();
+
+/**
  * 设置Session
  */
 $app->setSession();
+
 
 /**
  * 实例化模块
@@ -64,7 +74,7 @@ $app->getAlias()->run();
 /**
  * 开始工作
  */
-$app->work(function() use ($app)
+$app->run(function() use ($app)
 {
 
     $_hostConfigPath = host().'config';
@@ -78,13 +88,13 @@ $app->work(function() use ($app)
     /**
      * 路由配置
      */
-    $routing = $_hostConfigPath.'/routing.php';
-    if(file_exists($routing)) require $routing;
+    $routing = $_hostConfigPath . '/routing.php';
+    if (file_exists($routing)) require $routing;
 
     /**
      * 过滤器
      */
-    $filters = $_hostConfigPath.'/filters.php';
-    if(file_exists($filters)) require $filters;
+    $filters = $_hostConfigPath . '/filters.php';
+    if (file_exists($filters)) require $filters;
 
 },isset($argv) ? $argv : array());

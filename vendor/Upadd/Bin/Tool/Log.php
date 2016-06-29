@@ -70,7 +70,7 @@ class Log {
     public static function request($cont, $fileName = 'request.logs') {
         $cont['url'] = self::getHttpUrl();
         $cont['time'] = date ( 'Y-m-d H:i:s' );
-        $info = json($cont) . "\r\r";
+        $info = json($cont) . ",\r\r";
         $file = self::isBak ( $fileName );
         $fh = fopen ( $file, 'a+' );
         fwrite ( $fh, $info );

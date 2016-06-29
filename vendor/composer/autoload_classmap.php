@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Upadd\\Asyncp\\Http' => $vendorDir . '/Upadd/Async/Http.php',
     'Upadd\\Bin\\Alias' => $vendorDir . '/Upadd/Bin/Alias.php',
     'Upadd\\Bin\\Application' => $vendorDir . '/Upadd/Bin/Application.php',
     'Upadd\\Bin\\Cache\\Cache' => $vendorDir . '/Upadd/Bin/Cache/Cache.php',
@@ -25,11 +26,14 @@ return array(
     'Upadd\\Bin\\Package\\Log' => $vendorDir . '/Upadd/Bin/Package/Log.php',
     'Upadd\\Bin\\Package\\Routes' => $vendorDir . '/Upadd/Bin/Package/Routes.php',
     'Upadd\\Bin\\Package\\Session' => $vendorDir . '/Upadd/Bin/Package/Session.php',
+    'Upadd\\Bin\\Response\\Json' => $vendorDir . '/Upadd/Bin/Response/Json.php',
+    'Upadd\\Bin\\Response\\Run' => $vendorDir . '/Upadd/Bin/Response/Run.php',
+    'Upadd\\Bin\\Response\\View' => $vendorDir . '/Upadd/Bin/Response/View.php',
+    'Upadd\\Bin\\Response\\Xml' => $vendorDir . '/Upadd/Bin/Response/Xml.php',
     'Upadd\\Bin\\Session\\SessionFile' => $vendorDir . '/Upadd/Bin/Session/SessionFile.php',
     'Upadd\\Bin\\Session\\getSession' => $vendorDir . '/Upadd/Bin/Session/getSession.php',
     'Upadd\\Bin\\Tool\\Log' => $vendorDir . '/Upadd/Bin/Tool/Log.php',
     'Upadd\\Bin\\Tool\\PageData' => $vendorDir . '/Upadd/Bin/Tool/PageData.php',
-    'Upadd\\Bin\\Tool\\Rbac' => $vendorDir . '/Upadd/Bin/Tool/Rbac.php',
     'Upadd\\Bin\\Tool\\Security' => $vendorDir . '/Upadd/Bin/Tool/Security.php',
     'Upadd\\Bin\\Tool\\Session' => $vendorDir . '/Upadd/Bin/Tool/Session.php',
     'Upadd\\Bin\\Tool\\Upload' => $vendorDir . '/Upadd/Bin/Tool/Upload.php',

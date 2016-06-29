@@ -9,11 +9,12 @@
  */
 namespace demo\action;
 
+use Data;
 class HomeAction extends \Upadd\Frame\Action{
 
     public function main()
     {
-        echo 'hi, welcome to use Upadd';
+        return 'hi, welcome to use Upadd';
     }
 
     public function test()

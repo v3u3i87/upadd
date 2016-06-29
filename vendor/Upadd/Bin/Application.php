@@ -5,13 +5,29 @@ use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Loader;
 use Upadd\Bin\Alias;
 use Upadd\Bin\Tool\Log;
+use Upadd\Bin\Response\Run as ResponseRun;
 use Upadd\Bin\UpaddException;
 
 class Application{
 
-    public static $_config = array();
+    /**
+     * 配置文件
+     * @var array
+     */
+    public static $_config = [];
 
-    public $_work = array();
+    /**
+     * 初始化组件对象
+     * @var array
+     */
+    public $_work = [];
+
+    /**
+     * 响应数据
+     * @var
+     */
+    public $_responseData;
+
 
     /**
      * 运行
@@ -38,11 +54,17 @@ class Application{
                  call_user_func_array($callable,func_get_args());
             }
             $this->runRequest();
-            $this->request()->run_cgi();
+            $this->_responseData = $this->request()->run_cgi();
         }else{
-            $this->request()->run_cli();
-            $this->getTimeConsuming();
+            $this->_responseData = $this->request()->run_cli();
+//            $this->getTimeConsuming();
         }
+
+        /**
+         * 发送响应数据
+         */
+        $_responseRun = new ResponseRun($this->_responseData,$this->request()->_responseType);
+        $_responseRun->send();
     }
 
     /**

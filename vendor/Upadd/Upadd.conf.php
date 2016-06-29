@@ -9,7 +9,7 @@
 +----------------------------------------------------------------------
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
-if (version_compare ( PHP_VERSION, '5.4.0', '<' ))	die ( 'require PHP > 5.3.0 !' );
+if (version_compare ( PHP_VERSION, '5.5.0', '<' ))	exit ( 'require PHP > 5.5.0 !' );
 // 设置编码
 header ( 'Content-Type:text/html;charset=utf-8' );
 // 设置时区
@@ -35,7 +35,6 @@ use Upadd\Bin\Factory;
  * 实例化APP
  */
 $app = new \Upadd\Bin\Application();
-
 
 
 /**
@@ -69,8 +68,6 @@ Factory::Import($app->_work);
  */
 $app->getAlias()->run();
 
-
-
 /**
  * 开始工作
  */
@@ -83,18 +80,18 @@ $app->run(function() use ($app)
      * 扩展文件
      */
     $extend = $_hostConfigPath.'/extend.php';
-    if(file_exists($extend)) require $extend;
+    file_exists($extend) && require $extend;
 
     /**
      * 路由配置
      */
     $routing = $_hostConfigPath . '/routing.php';
-    if (file_exists($routing)) require $routing;
+    file_exists($routing) && require $routing;
 
     /**
      * 过滤器
      */
     $filters = $_hostConfigPath . '/filters.php';
-    if (file_exists($filters)) require $filters;
+    file_exists($filters) && require $filters;
 
 },isset($argv) ? $argv : array());

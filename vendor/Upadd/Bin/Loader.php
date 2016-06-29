@@ -46,7 +46,6 @@ class Loader
             }else{
                 $_filePath =  UPADD_HOST . str_replace('\\', '/', $className).'.php';
             }
-
             if(is_file($_filePath))
             {
                 require $_filePath;

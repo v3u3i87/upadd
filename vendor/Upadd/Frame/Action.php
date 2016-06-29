@@ -18,9 +18,21 @@ use Upadd\Bin\View\Templates;
 class Action
 {
 
-    public $_templates;
+    /**
+     * 模板对象
+     * @var
+     */
+    private $_templates;
 
+    /**
+     * 响应返回对象
+     * @var string
+     */
+    protected $_responseType = 'json';
 
+    /**
+     * 实例化
+     */
     public function init()
     {
         $this->_templates = new Templates();
@@ -32,7 +44,7 @@ class Action
      * @param $val
      * @throws \Upadd\Bin\UpaddException
      */
-    public function val($key=null,$val=null)
+    protected function val($key=null,$val=null)
     {
         return $this->_templates->val($key,$val);
     }
@@ -42,7 +54,7 @@ class Action
      * @param $file
      * @throws UpaddException
      */
-    public function view($file)
+    protected function view($file)
     {
         if($file)
         {
@@ -50,6 +62,27 @@ class Action
         }
         throw new UpaddException('模板文件没有设置');
     }
+
+
+    /**
+     * 设置响应类型
+     * @param $type
+     */
+    protected function setResponseType($type)
+    {
+        $this->_responseType = $type;
+    }
+
+    /**
+     * 返回响应类型
+     * @return string
+     */
+    public function getResponseType()
+    {
+        return $this->_responseType;
+    }
+
+
 
 
 

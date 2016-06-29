@@ -48,6 +48,12 @@ class Request{
      */
     public $_method = null;
 
+    /**
+     * 响应类型
+     * @var null
+     */
+    public $_responseType;
+
 
     /**
      * 获取实例化工作对象
@@ -208,9 +214,9 @@ class Request{
     }
 
 
-
     /**
-     * 实例化
+     * Instantiation Action
+     * @return mixed
      */
     public function Instantiation()
     {
@@ -238,7 +244,12 @@ class Request{
                 }else{
                     $tmpData = $this->_cliData;
                 }
-                return call_user_func_array(array($class,$method),$tmpData);
+
+                $result = call_user_func_array(array($class,$method),$tmpData);
+
+                $this->_responseType = $class->getResponseType();
+
+                return $result;
             }else{
                 throw new UpaddException($this->_action.',There is no Action');
             }

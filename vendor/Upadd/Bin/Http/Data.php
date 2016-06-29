@@ -50,6 +50,14 @@ class Data{
     }
 
     /**
+     * 设置数据流
+     */
+    private function setStream()
+    {
+        file_get_contents("php://input");
+    }
+
+    /**
      * 对外获取的方法
      * @param null $name
      * @param null $default

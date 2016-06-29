@@ -1,14 +1,11 @@
 <?php
+
 namespace extend\admin;
 
-
-class Main{
-
+class Main
+{
     public function info()
     {
         return 'hi';
     }
-
-
-
 }

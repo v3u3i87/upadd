@@ -5,20 +5,19 @@
  * Blog:https://www.zmq.cc
  * Date: 15/12/22
  * Time: 16:55
- * Name:
+ * Name:.
  */
 
 return array(
 
-    /**
+    /*
      * 是否开启前端域名
      */
-    'is_front_domain'=>false,
+    'is_front_domain' => false,
 
-    /**
+    /*
      * 前端域名
      */
-    'front_domain'=>'http://up.int.com',
-
+    'front_domain' => 'http://up.int.com',
 
 );

@@ -5,13 +5,13 @@
  * Blog:https://www.zmq.cc
  * Date: 16/4/25
  * Time: 19:36
- * Name:
+ * Name:.
  */
+
 namespace demo\action;
 
-use Data;
-class HomeAction extends \Upadd\Frame\Action{
-
+class HomeAction extends \Upadd\Frame\Action
+{
     public function main()
     {
         return 'hi, welcome to use Upadd';
@@ -21,5 +21,4 @@ class HomeAction extends \Upadd\Frame\Action{
     {
         echo 'hi, welcome to use Upadd';
     }
-
 }

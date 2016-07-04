@@ -13,7 +13,7 @@
 
   "require": {
     "filp/whoops": "*",
-    "Upadd": "*"
+    "v3u3i87/upadd": "*"
   },
 
    "autoload": {

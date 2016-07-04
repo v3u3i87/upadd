@@ -10,6 +10,8 @@
 
 namespace demo\action;
 
+use Data;
+
 class HomeAction extends \Upadd\Frame\Action
 {
     public function main()
@@ -20,5 +22,11 @@ class HomeAction extends \Upadd\Frame\Action
     public function test()
     {
         echo 'hi, welcome to use Upadd';
+    }
+
+    public function info()
+    {
+        $all = Data::get('string');
+        p($all);
     }
 }

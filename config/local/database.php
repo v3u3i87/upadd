@@ -12,11 +12,11 @@ return array(
         'type' => 'pdo_mysql',
         'host' => '127.0.0.1',
         'user' => 'root',
-        'pass' => 'maoqiang',
-        'name' => 'wanju',
+        'pass' => 'upadd',
+        'name' => 'upadd',
         'port' => 3306,
         'charset' => 'UTF8',
-        'prefix' => 'edu_',
+        'prefix' => 'up_',
     ),
 
 );

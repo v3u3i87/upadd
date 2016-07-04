@@ -120,6 +120,9 @@ class LinkPdoMysql implements Db{
 
     /**
      * 对外提供提交SQL
+     * @param null $sql
+     * @return bool
+     * @throws UpaddException
      */
     public function sql($sql=null)
     {
@@ -139,6 +142,8 @@ class LinkPdoMysql implements Db{
 
     /**
      * 提交SQL
+     * @return bool|\PDOStatement
+     * @throws UpaddException
      */
     public function query()
     {

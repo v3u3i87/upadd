@@ -2,6 +2,8 @@
 
 namespace Upadd\Bin\Http;
 
+use Upadd\Bin\UpaddException;
+
 class Data{
 
     public $_setData = array();
@@ -14,6 +16,23 @@ class Data{
         $this->setGet();
         $this->setPost();
         $this->setFiles();
+        $this->getStream();
+        $this->setJson();
+    }
+
+    /**
+     * 设置json
+     */
+    private function setJson()
+    {
+        $json = $this->getStream();
+        if($json)
+        {
+            $data = json_decode($json,true);
+            if(count($data) >= 1){
+                $this->_setData = array_merge($this->_setData,$data);
+            }
+        }
     }
 
     /**
@@ -49,12 +68,25 @@ class Data{
         }
     }
 
+
     /**
-     * 设置数据流
+     * 获取数据流
      */
-    private function setStream()
+    private function getStream()
     {
-        file_get_contents("php://input");
+        try
+        {
+            $data = file_get_contents("php://input");
+            if(!empty($data))
+            {
+                return $data;
+            }
+            return false;
+        }catch(UpaddException $msg)
+        {
+            p($msg->getMessage());
+        }
+
     }
 
     /**

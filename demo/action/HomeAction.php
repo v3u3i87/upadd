@@ -26,7 +26,9 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function info()
     {
-        $all = Data::get('string');
+        $all = Data::all();
         p($all);
     }
+
+
 }

@@ -16,6 +16,12 @@
     "filp/whoops": "*"
   },
 
+  "autoload": {
+    "classmap": [
+      "vendor/Upadd"
+    ]
+  },
+
   "minimum-stability": "dev"
 
 

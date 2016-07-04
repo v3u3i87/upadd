@@ -6,13 +6,17 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
 {
-    public static $prefixesPsr0 = array (
+    public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
-            'Whoops' => 
-            array (
-                0 => __DIR__ . '/..' . '/filp/whoops/src',
-            ),
+            'Whoops\\' => 7,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Whoops\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
         ),
     );
 
@@ -57,15 +61,13 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Frame\\Model' => __DIR__ . '/..' . '/Upadd/Frame/Model.php',
         'Upadd\\Frame\\ProcessingSql' => __DIR__ . '/..' . '/Upadd/Frame/ProcessingSql.php',
         'Upadd\\Frame\\Query' => __DIR__ . '/..' . '/Upadd/Frame/Query.php',
-        'Whoops\\Module' => __DIR__ . '/..' . '/filp/whoops/src/deprecated/Zend/Module.php',
-        'Whoops\\Provider\\Zend\\ExceptionStrategy' => __DIR__ . '/..' . '/filp/whoops/src/deprecated/Zend/ExceptionStrategy.php',
-        'Whoops\\Provider\\Zend\\RouteNotFoundStrategy' => __DIR__ . '/..' . '/filp/whoops/src/deprecated/Zend/RouteNotFoundStrategy.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixesPsr0 = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$classMap;
 
         }, null, ClassLoader::class);

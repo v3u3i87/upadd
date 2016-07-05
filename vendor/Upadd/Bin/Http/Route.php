@@ -33,7 +33,7 @@ class Route extends Request{
      * @param array $method
      * @param $_callback
      */
-    public function group($method=array(),$_callback)
+    public function group($method=array(),$_callback=null)
     {
         if(array_key_exists('prefix',$method))
         {
@@ -49,7 +49,6 @@ class Route extends Request{
         {
            return call_user_func($_callback);
         }
-
     }
 
 
@@ -65,10 +64,9 @@ class Route extends Request{
         {
             //获取本次请求路由资源
             $resou  = $this->_resou[$_urlKey];
-
-            if($resou['filters'] == $key)
+            if($resou['filters'] == $key && is_callable($_callback))
             {
-                is_callable($_callback) && call_user_func($_callback);
+                call_user_func($_callback);
             }
         }
     }
@@ -132,7 +130,7 @@ class Route extends Request{
      * 获取资源
      * @return bool || array
      */
-    public function getResou()
+    public function resources()
     {
          if(array_key_exists($this->setUrlHash(),$this->_resou))
          {

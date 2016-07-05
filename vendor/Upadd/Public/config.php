@@ -21,6 +21,8 @@ return [
     'upadd_version'=>'Upadd-0.5',
     //判断是否启用插件
     'is_plug'=>false,
+    //系统缓存
+    'system_dir'=>UPADD_HOST.'data/system/',
     //http协议
     'http_header'=>[
         100 => "HTTP/1.1 100 Continue",

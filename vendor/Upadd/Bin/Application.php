@@ -53,11 +53,11 @@ class Application{
             {
                  call_user_func_array($callable,func_get_args());
             }
-            $this->runRequest();
+            //日志
+            $this->setRequestLog();
             $this->_responseData = $this->request()->run_cgi();
         }else{
             $this->_responseData = $this->request()->run_cli();
-//            $this->getTimeConsuming();
         }
 
         /**
@@ -72,18 +72,18 @@ class Application{
      */
     private function getTimeConsuming()
     {
-        echo "\n";
+        echo "\r\n";
         $endtime = (microtime(true)) - RUNTIME;
         echo 'Time consuming '.round($endtime,3).' second';
-        echo "\n";
+        echo "\r\n";
     }
 
 
     /**
-     * 记录运行时间
+     * 储存请求日志
      * @pamer
      */
-    private function runRequest()
+    private function setRequestLog()
     {
         $endtime = (microtime(true)) - RUNTIME;
         $_header = getHeader();
@@ -285,10 +285,7 @@ class Application{
             {
                 is_create_dir($_data_dir . 'upload');
             }
-
         }
-
-
     }
 
 

@@ -91,7 +91,7 @@ class Request{
     {
         if(APP_ROUTES)
         {
-            $this->_routing = $this->getRoute()->getResou();
+            $this->_routing = $this->getRoute()->resources();
             if(is_callable($this->_routing['callbacks']))
             {
                 return call_user_func_array($this->_routing['callbacks'],func_get_args());
@@ -107,8 +107,6 @@ class Request{
         }
         return $this->Instantiation();
     }
-
-
 
     /**
      * 获取当前的URL
@@ -173,7 +171,6 @@ class Request{
     {
         $val = substr($val,0,-1);
         $val = lode(',',$val);
-        $_data = array();
         foreach($val as $k=>$v)
         {
             $tmpLode = lode(':',$v);
@@ -251,18 +248,20 @@ class Request{
 
                 return $result;
             }else{
-                throw new UpaddException($this->_action.',There is no Action');
+                throw new UpaddException('There is no Action');
             }
 
-        } catch( UpaddException $e ) {
-            if(is_run_evn()){
+        } catch( UpaddException $e )
+        {
+            if(is_run_evn())
+            {
                 p($e->getMessage());
             }else{
                 print_r($e->getMessage());
             }
         }
-    }
 
+    }
 
 
 }

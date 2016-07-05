@@ -27,7 +27,7 @@ class HomeAction extends \Upadd\Frame\Action
     public function info()
     {
         $all = Data::all();
-        p($all);
+        return $all;
     }
 
 

@@ -12,7 +12,9 @@ namespace demo\action;
 
 use Data;
 use Cache;
+use Async;
 use extend\InfoModel;
+use Upadd\Bin\Async\Http;
 
 class HomeAction extends \Upadd\Frame\Action
 {
@@ -23,9 +25,36 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-//        return InfoModel::get();
-        return $this->testMemcache();
+        $this->asyncGet();
+        $this->asyncPost();
     }
+
+    protected function asyncGet()
+    {
+        $http = Async::http();
+        //开启监听,并返回服务端数据
+        $http->monitor();
+        if($http->get('http://up.int.com/user/info'))
+        {
+            p($http->data(),1);
+        }
+    }
+
+    protected function asyncPost()
+    {
+        $http = Async::Http();
+        //开启监听,并返回服务端数据
+        $http->monitor();
+        if($http->post('http://up.int.com/user/info',['han'=>111,'name'=>'韩斌']))
+        {
+            p($http->data());
+        }else{
+            p($http->error());
+        }
+    }
+
+
+
 
     public function test()
     {

@@ -6,9 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Upadd\\Asyncp\\Http' => $vendorDir . '/Upadd/Async/Http.php',
     'Upadd\\Bin\\Alias' => $vendorDir . '/Upadd/Bin/Alias.php',
     'Upadd\\Bin\\Application' => $vendorDir . '/Upadd/Bin/Application.php',
+    'Upadd\\Bin\\Async' => $vendorDir . '/Upadd/Bin/Async.php',
+    'Upadd\\Bin\\Async\\Http' => $vendorDir . '/Upadd/Bin/Async/Http.php',
     'Upadd\\Bin\\Cache' => $vendorDir . '/Upadd/Bin/Cache.php',
     'Upadd\\Bin\\Cache\\CacheRoute' => $vendorDir . '/Upadd/Bin/Cache/CacheRoute.php',
     'Upadd\\Bin\\Cache\\getMemcache' => $vendorDir . '/Upadd/Bin/Cache/getMemcache.php',

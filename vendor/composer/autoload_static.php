@@ -21,9 +21,10 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
     );
 
     public static $classMap = array (
-        'Upadd\\Asyncp\\Http' => __DIR__ . '/..' . '/Upadd/Async/Http.php',
         'Upadd\\Bin\\Alias' => __DIR__ . '/..' . '/Upadd/Bin/Alias.php',
         'Upadd\\Bin\\Application' => __DIR__ . '/..' . '/Upadd/Bin/Application.php',
+        'Upadd\\Bin\\Async' => __DIR__ . '/..' . '/Upadd/Bin/Async.php',
+        'Upadd\\Bin\\Async\\Http' => __DIR__ . '/..' . '/Upadd/Bin/Async/Http.php',
         'Upadd\\Bin\\Cache' => __DIR__ . '/..' . '/Upadd/Bin/Cache.php',
         'Upadd\\Bin\\Cache\\CacheRoute' => __DIR__ . '/..' . '/Upadd/Bin/Cache/CacheRoute.php',
         'Upadd\\Bin\\Cache\\getMemcache' => __DIR__ . '/..' . '/Upadd/Bin/Cache/getMemcache.php',

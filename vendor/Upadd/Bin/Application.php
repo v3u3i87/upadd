@@ -111,7 +111,7 @@ class Application{
      */
     public function getWorkModule()
     {
-        return ($this->_work = array(
+        return ($this->_work = [
             'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
             'Request'=>new \Upadd\Bin\Http\Request,
             'Route'=>new \Upadd\Bin\Http\Route,
@@ -119,7 +119,8 @@ class Application{
             'Log'=>new \Upadd\Bin\Tool\Log,
             'Data'=>new \Upadd\Bin\Http\Data,
             'Cache'=>new \Upadd\Bin\Cache,
-        ));
+            'Async'=>new \Upadd\Bin\Async,
+        ]);
     }
 
 

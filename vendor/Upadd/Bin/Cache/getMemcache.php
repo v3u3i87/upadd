@@ -2,25 +2,13 @@
 
 namespace Upadd\Bin\Cache;
 
+use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\UpaddException;
-
-use Config;
 
 /**
  * Memcached缓存管理器
- *
- * $params = array // 构造参数形式
- * (
- *		'host'				=> 'localhost',
- *		'port'				=> 3306,
- *		'timeout'			=> 3,			// 连接超时时间
- *		'compression'		=> true,		// 默认是否压缩的标志
- *		'lifetime'			=> 3600,		// 默认缓存时间
- *		'enableDelayExpire'	=> false,		// 是否开启延迟删除失效数据操作
- *		'delayExpireTime'	=> null			// 延迟删除失效数据时间
- * );
  */
-class Mem
+class getMemcache
 {
 	/**
 	 * Memcache对象实
@@ -43,7 +31,7 @@ class Mem
         {
             throw new UpaddException('Load memcache extension failure!');
 		}
-        $this->config = Config::get('tag@memcache');
+        $this->config = Configuration::get('tag@memcache');
         $this->connect();
 	}
 
@@ -54,7 +42,6 @@ class Mem
         {
             throw new UpaddException("Connect to memcache server failure({$this->config['host']}:{$this->config['port']})!");
         }
-        return true;
     }
 	
 	/**

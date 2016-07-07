@@ -1,7 +1,7 @@
 <?php
-namespace extend;
+namespace Upadd\Bin\Cache;
 
-use Config;
+use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\UpaddException;
 
 class getRedis
@@ -35,7 +35,7 @@ class getRedis
      */
     protected function connect()
     {
-        $config = Config::get('tag@redis');
+        $config = Configuration::get('tag@redis');
         $this->redis = new \Redis();
         $this->redis->connect($config['host'], $config['port']);
     }
@@ -69,14 +69,16 @@ class getRedis
      * 删除一条数据
      * @param string $key KEY名称
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         return $this->redis->delete($key);
     }
 
     /**
      * 清空数据
      */
-    public function flushAll() {
+    public function flushAll()
+    {
         return $this->redis->flushAll();
     }
 
@@ -86,7 +88,8 @@ class getRedis
      * @param string|array $value 获取得到的数据
      * @param bool $right 是否从右边开始入
      */
-    public function push($key, $value ,$right = true) {
+    public function push($key, $value ,$right = true)
+    {
         $value = json_encode($value);
         return $right ? $this->redis->rPush($key, $value) : $this->redis->lPush($key, $value);
     }
@@ -96,7 +99,8 @@ class getRedis
      * @param string $key KEY名称
      * @param bool $left 是否从左边开始出数据
      */
-    public function pop($key , $left = true) {
+    public function pop($key , $left = true)
+    {
         $val = $left ? $this->redis->lPop($key) : $this->redis->rPop($key);
         return json_decode($val);
     }
@@ -105,7 +109,8 @@ class getRedis
      * 数据自增
      * @param string $key KEY名称
      */
-    public function increment($key) {
+    public function increment($key)
+    {
         return $this->redis->incr($key);
     }
 
@@ -113,7 +118,8 @@ class getRedis
      * 数据自减
      * @param string $key KEY名称
      */
-    public function decrement($key) {
+    public function decrement($key)
+    {
         return $this->redis->decr($key);
     }
 
@@ -121,7 +127,8 @@ class getRedis
      * key是否存在，存在返回ture
      * @param string $key KEY名称
      */
-    public function exists($key) {
+    public function exists($key)
+    {
         return $this->redis->exists($key);
     }
 
@@ -130,7 +137,8 @@ class getRedis
      * redis有非常多的操作方法，我们只封装了一部分
      * 拿着这个对象就可以直接调用redis自身方法
      */
-    public function redis() {
+    public function redis()
+    {
         return $this->redis;
     }
 

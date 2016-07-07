@@ -60,4 +60,13 @@ return array(
         'cache_expire' => false,
     ],
 
+    /**
+     * 是否使用
+     */
+    'is_use_redis'=>true,
+
+    /**
+     * 是否开启
+     */
+    'is_use_memcache'=>true,
 );

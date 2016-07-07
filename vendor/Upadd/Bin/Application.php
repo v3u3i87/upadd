@@ -118,6 +118,7 @@ class Application{
             'getSession'=>\Upadd\Bin\Session\getSession::init(),
             'Log'=>new \Upadd\Bin\Tool\Log,
             'Data'=>new \Upadd\Bin\Http\Data,
+            'Cache'=>new \Upadd\Bin\Cache,
         ));
     }
 

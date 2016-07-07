@@ -1,6 +1,7 @@
 <?php
 namespace extend;
-use Upadd\Frame\Model;
+
+use Model;
 
 /**
  * Class InfoModel
@@ -24,9 +25,9 @@ class InfoModel extends Model
     protected $_primaryKey = 'id';
 
 
-    public function name()
+    public static function name()
     {
-
+        return self::get();
     }
 
 

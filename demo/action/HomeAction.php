@@ -11,8 +11,7 @@
 namespace demo\action;
 
 use Data;
-use extend\getRedis;
-use Upadd\Bin\Cache\Mem;
+use Cache;
 use extend\InfoModel;
 
 class HomeAction extends \Upadd\Frame\Action
@@ -24,7 +23,8 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-        return InfoModel::get();
+//        return InfoModel::get();
+        return $this->testMemcache();
     }
 
     public function test()
@@ -35,17 +35,18 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function testMemcache()
     {
-        $this->memcache = new Mem();
-//        $this->memcache->set('regtion',[1,3,4,5,6],['lifetime'=>60]);
-        return $this->memcache->get('regtion');
+        $memcache = Cache::memcache();
+//        $memcache->set('regtion',[1,3,4,5,6],['lifetime'=>60]);
+        return $memcache->get('regtion');
     }
 
     public function testResid()
     {
-        $this->redis = new getRedis();
+        $redis = Cache::redis();
+        $redis->set('up',json(['info'=>1111,'name'=>'xiaohb']));
 //        $this->redis->flushAll();
 //        $this->redis->set('up',json(['info'=>1111,'name'=>'xiaohb']));
-        return $this->redis->get('up');
+        return $redis->get('up');
     }
 
     public function info()

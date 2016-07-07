@@ -35,7 +35,6 @@ abstract class Factory{
     {
 
         $action = static::getName();
-
         switch (count($args))
         {
             case 0:

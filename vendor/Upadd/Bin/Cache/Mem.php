@@ -1,8 +1,10 @@
 <?php
 
-namespace Upadd\Bin\Cache\Mem;
+namespace Upadd\Bin\Cache;
 
-use Upadd\Bin\Cache\Cache;
+use Upadd\Bin\UpaddException;
+
+use Config;
 
 /**
  * Memcached缓存管理器
@@ -18,50 +20,50 @@ use Upadd\Bin\Cache\Cache;
  *		'delayExpireTime'	=> null			// 延迟删除失效数据时间
  * );
  */
-class Mem extends Cache {
+class Mem
+{
 	/**
-	 * Memcache对象实例
-	 *
+	 * Memcache对象实
 	 * @var Memcache
 	 */
 	private $_memcache = null;
-	protected $_params = array (
-			'host' => 'localhost',
-			'port' => 11211,
-			'timeout' => 3, // 连接超时时间
-			'compression' => true, // 默认是否压缩的标志
-			'lifetime' => 3600  // 默认缓存时间
-	);
+
+	protected $config = [];
 	
 	/**
-	 *
 	 * @see Cache#_connect()
 	 */
-	public function _connect() {
-		if ($this->_memcache !== null) {
+	public function __construct()
+    {
+		if ($this->_memcache !== null)
+        {
 			return $this->_memcache;
 		}
-		if (! extension_loaded ( 'memcache' )) {
-			$this->_memcache = false;
-			$this->_setLastErrorInfo ( 'Load memcache extension failure!' );
-			return false;
+		if (! extension_loaded ( 'memcache' ))
+        {
+            throw new UpaddException('Load memcache extension failure!');
 		}
-		
-		$this->_memcache = new Memcache ();
-		if (! $this->_memcache->connect ( $this->_params ['host'], $this->_params ['port'] )) {
-			$this->_memcache = false;
-			$this->_setLastErrorInfo ( "Connect to memcache server failure({$this->_params['host']}:{$this->_params['port']})!" );
-			return false;
-		}
-		return true;
+        $this->config = Config::get('tag@memcache');
+        $this->connect();
 	}
+
+    protected function connect()
+    {
+        $this->_memcache = new \Memcache ();
+        if (! $this->_memcache->connect ( $this->config ['host'], $this->config ['port'] ))
+        {
+            throw new UpaddException("Connect to memcache server failure({$this->config['host']}:{$this->config['port']})!");
+        }
+        return true;
+    }
 	
 	/**
-	 *
 	 * @see Cache#has($key)
 	 */
-	public function has($key) {
-		if ($this->_memcache) {
+	public function has($key)
+    {
+		if ($this->_memcache)
+        {
 			return $this->_memcache->get ( $key ) !== false;
 		} else {
 			return false;
@@ -69,13 +71,16 @@ class Mem extends Cache {
 	}
 	
 	/**
-	 *
+	 * 获取数据
 	 * @see Cache #get($key)
 	 */
-	public function get($key) {
-		if ($this->_memcache) {
+	public function get($key)
+    {
+		if ($this->_memcache)
+        {
 			$retData = $this->_memcache->get ( $key );
-			if ($retData !== false) {
+			if ($retData !== false)
+            {
 				return unserialize ( $retData );
 			}
 		}
@@ -83,23 +88,28 @@ class Mem extends Cache {
 	}
 	
 	/**
-	 *
+	 * 设置参数
 	 * @see Cache#set($key, $val, array $extra = null)
 	 */
-	public function set($key, $val, array $extra = null) {
-		if (! $this->_memcache) {
+	public function set($key, $val, array $extra = null)
+    {
+		if (! $this->_memcache)
+        {
 			return false;
 		}
 		
-		if (! empty ( $extra ) && isset ( $extra ['compression'] )) {
+		if (isset ( $extra ['compression'] ))
+        {
 			$flag = $extra ['compression'] ? MEMCACHE_COMPRESSED : 0;
 		} else {
-			$flag = $this->_params ['compression'] ? MEMCACHE_COMPRESSED : 0;
+			$flag = $this->config ['compression'] ? MEMCACHE_COMPRESSED : 0;
 		}
-		if (! empty ( $extra ) && isset ( $extra ['lifetime'] )) {
+
+		if ( isset ( $extra ['lifetime'] ))
+        {
 			$lifetime = $extra ['lifetime'];
 		} else {
-			$lifetime = $this->_params ['lifetime'];
+			$lifetime = $this->config ['lifetime'];
 		}
 		return $this->_memcache->set ( $key, serialize ( $val ), $flag, $lifetime );
 	}
@@ -108,8 +118,10 @@ class Mem extends Cache {
 	 *
 	 * @see Cache#delete($key)
 	 */
-	public function delete($key) {
-		if ($this->_memcache) {
+	public function delete($key)
+    {
+		if ($this->_memcache)
+        {
 			return $this->_memcache->delete ( $key );
 		} else {
 			return false;
@@ -117,11 +129,13 @@ class Mem extends Cache {
 	}
 	
 	/**
-	 *
+	 * 关闭
 	 * @see Cache#_disConnect()
 	 */
-	protected function _disConnect() {
-		if ($this->_memcache) {
+	protected function close()
+    {
+		if ($this->_memcache)
+        {
 			$this->_memcache->close ();
 			$this->_memcache = null;
 		}
@@ -131,7 +145,8 @@ class Mem extends Cache {
 	 *
 	 * @see Cache#getHandler()
 	 */
-	public function getHandler() {
+	public function getHandler()
+    {
 		return $this->_memcache;
 	}
 }

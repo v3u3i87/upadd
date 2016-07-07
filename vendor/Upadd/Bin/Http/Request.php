@@ -118,6 +118,15 @@ class Request{
     }
 
     /**
+     * 获取请求类型
+     * @return mixed
+     */
+    protected function getRequestMethod()
+    {
+        return strtoupper($_SERVER['REQUEST_METHOD']);
+    }
+
+    /**
      * 设置URL哈希加密
      * @return string
      */

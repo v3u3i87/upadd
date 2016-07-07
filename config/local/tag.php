@@ -20,4 +20,12 @@ return array(
      */
     'front_domain' => 'http://up.int.com',
 
+    /**
+     * 设置redis
+     */
+    'redis'=>[
+        'host'=>'127.0.0.1',
+        'port'=>'6379',
+    ],
+
 );

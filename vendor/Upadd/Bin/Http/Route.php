@@ -12,6 +12,8 @@
  **/
 namespace Upadd\Bin\Http;
 
+use Config;
+use Upadd\Bin\Cache\CacheRoute;
 use Upadd\Bin\UpaddException;
 
 class Route extends Request{
@@ -51,7 +53,6 @@ class Route extends Request{
         }
     }
 
-
     /**
      * 过滤器
      * @param $key
@@ -66,7 +67,7 @@ class Route extends Request{
             $resou  = $this->_resou[$_urlKey];
             if($resou['filters'] == $key && is_callable($_callback))
             {
-                call_user_func($_callback);
+                return call_user_func($_callback);
             }
         }
     }
@@ -91,12 +92,12 @@ class Route extends Request{
 
 
     /**
-     * 设置资源
+     * 缓存请求
      * @param $url
      * @param $method
      * @param $type
      */
-    public function setResou($url='',$method=null,$type='')
+    public function setCacheRequest($url='',$method=null,$type='')
     {
         $method = $this->is_method($method);
         $sha_url = sha1($this->is_url($url));
@@ -134,7 +135,12 @@ class Route extends Request{
     {
          if(array_key_exists($this->setUrlHash(),$this->_resou))
          {
-            return $this->_resou[$this->setUrlHash()];
+             $req = $this->_resou[$this->setUrlHash()];
+             if($this->getRequestMethod() == $req['type'] || $req['type'] == 'ANY')
+             {
+                return $req;
+             }
+             throw new UpaddException("Request the wrong way, your source is ({$this->getRequestMethod()}), the request is {$req['type']}.");
          }
          return false;
     }
@@ -153,51 +159,15 @@ class Route extends Request{
         }
     }
 
-
-    /**
-     * GET方法,从服务器上获取一个具体的资源或者一个资源列表
-     * @param null $getUrl
-     * @param null $method
-     */
-    public function get($getUrl='',$method=null)
+    public function __call($name, $parameters)
     {
-        return $this->setResou($getUrl,$method,'GET');
+        $url = $parameters[0];
+        $fun = $parameters[1];
+        $method = strtoupper($name);
+        $this->setCacheRequest($url,$fun,$method);
     }
 
-    /**
-     * POST方法 在服务器上创建一个新的资源
-     * @param string $getUrl
-     * @param null $method
-     */
-    public function post($getUrl='',$method=null)
-    {
-        return $this->setResou($getUrl,$method,'POST');
-    }
 
-    /**
-     * 以整体的方式更新服务器上的一个资源
-     */
-    public function put(){}
-
-    /**
-     * 更新上一个资源的一个属性
-     */
-    public function patch(){}
-
-    /**
-     * 删除一个资源
-     */
-    public function delete(){}
-
-    /**
-     * 获取一个资源的元数据，如数据的哈希值或最后的更新时间
-     */
-    public function head(){}
-
-    /**
-     * 获取客户端能对资源做什么操作的信息
-     */
-    public function options(){}
 
 
 }

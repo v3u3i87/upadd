@@ -25,8 +25,7 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-        $this->asyncGet();
-        $this->asyncPost();
+        vd(InfoModel::where(['id'=>1])->del());
     }
 
     protected function asyncGet()

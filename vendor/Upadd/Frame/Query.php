@@ -8,7 +8,8 @@ use Upadd\Bin\Tool\PageData;
 use Upadd\Frame\ProcessingSql;
 use Upadd\Bin\UpaddException;
 
-class Query extends ProcessingSql{
+class Query extends ProcessingSql
+{
 
     /**
      * 数据库对象
@@ -24,6 +25,13 @@ class Query extends ProcessingSql{
     public $_pageData = array();
 
 
+    /**
+     * Query constructor.
+     * @param Db $db
+     * @param $_table
+     * @param $_primaryKey
+     * @param $db_prefix
+     */
     public function __construct(Db $db,$_table,$_primaryKey,$db_prefix)
     {
         $this->_db = $db;
@@ -447,7 +455,7 @@ class Query extends ProcessingSql{
     /**
      * @return array
      */
-    public function getData()
+    public function getParameter()
     {
         return $this->parameter;
     }
@@ -458,9 +466,9 @@ class Query extends ProcessingSql{
      * @param int $type
      * @return mixed
      */
-    public function printSql($status=true)
+    public function p($status=true)
     {
-        return $this->_db->printSql($status);
+        return $this->_db->p($status);
     }
 
 
@@ -491,4 +499,21 @@ class Query extends ProcessingSql{
         return $this->_db->rollBack();
     }
 
+    /**
+     * 返回错误信息
+     * @return mixed
+     */
+    public function error()
+    {
+        return $this->_db->error();
+    }
+
+    /**
+     * 返回上一条影响行数
+     * @return mixed
+     */
+    public function rowCount()
+    {
+        return $this->_db->rowCount();
+    }
 }

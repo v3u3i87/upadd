@@ -26,7 +26,6 @@ class LinkPdoMysql implements Db{
         try {
             $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
             $this->_linkID = new PDO($dns,$link ['user'], $link ['pass']);
-//            $this->_linkID->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $this->_linkID->exec('SET NAMES '.$link ['charset']);
         } catch (PDOException $e) {
             throw new UpaddException($e->getMessage());
@@ -135,9 +134,8 @@ class LinkPdoMysql implements Db{
         if($result)
         {
             return true;
-        }else{
-            return $this->is_debug();
         }
+        return false;
     }
 
     /**
@@ -152,9 +150,8 @@ class LinkPdoMysql implements Db{
         if($result)
         {
             return $result;
-        }else{
-            return $this->is_debug();
         }
+        return false;
     }
 
     /**
@@ -198,7 +195,7 @@ class LinkPdoMysql implements Db{
      * @param $type as exit or
      * @return mixed
      */
-    public function printSql($status=true)
+    public function p($status=true)
     {
         if($status)
         {
@@ -212,34 +209,9 @@ class LinkPdoMysql implements Db{
      * 返回错误信息
      * @return array
      */
-    private function error()
+    public function error()
     {
-        $error = $this->_linkID->errorInfo();
-        return [
-            'msg'=>'type:'.$error[0]."\n".'code:'.$error[1]."\n".'info:'.$error[2],
-            'info'=>$error
-        ];
-    }
-
-
-    /**
-     * 判断是否启用调试
-     * @return bool
-     * @throws UpaddException
-     */
-    private function is_debug()
-    {
-        try {
-            $result = $this->error();
-            $msg = $result['msg'];
-            $info = $result['info'];
-            if ($info[0] === '00000' || $info[0] === '01000')
-            {
-                return true;
-            }
-        }catch(\Exception $e){
-            throw new UpaddException("sql:".$this->_sql.$this->error());
-        }
+        return $this->_linkID->errorInfo();
     }
 
 }

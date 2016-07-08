@@ -48,8 +48,7 @@ abstract class Model {
      * 查询SQL对象
      * @var null
      */
-    protected $_query = null;
-
+    public $_query = null;
 
     /**
      * 初始化
@@ -67,28 +66,7 @@ abstract class Model {
          */
         $this->setTableName($this->_table);
 
-        /**
-         * 选数据库类
-         */
-        $this->DbType($DBinfo['type'],$DBinfo);
-    }
-
-
-    /**
-     * 数据库类型
-     * @param null $type
-     * @param $DBinfo
-     */
-    private function DbType($type=null,$DBinfo)
-    {
-        if($type =='mysql')
-        {
-            $this->_db = new \Upadd\Bin\Db\Mysql($DBinfo);
-        }elseif($type=='pdo_mysql'){
-            $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
-        }else{
-            throw new UpaddException('数据库连接类型没有选择');
-        }
+        $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($DBinfo);
         $this->_query = new Query($this->_db,$this->getTableName(),$this->_primaryKey,$this->db_prefix);
     }
 
@@ -145,7 +123,7 @@ abstract class Model {
      */
     public function getData()
     {
-        return $this->_query->getData();
+        return $this->_query->getParameter();
     }
 
 

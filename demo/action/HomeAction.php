@@ -13,7 +13,7 @@ namespace demo\action;
 use Data;
 use Cache;
 use Async;
-use extend\InfoModel;
+//use extend\InfoModel;
 use Upadd\Bin\Async\Http;
 
 class HomeAction extends \Upadd\Frame\Action
@@ -25,7 +25,8 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-        vd(InfoModel::where(['id'=>1])->del());
+        $this->test();
+//        vd(InfoModel::where(['id'=>1])->del());
     }
 
     protected function asyncGet()

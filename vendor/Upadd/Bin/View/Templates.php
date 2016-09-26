@@ -195,6 +195,17 @@ class Templates {
         }
     }
 
+
+    /**
+     * 自定义目录
+     * @param $dir
+     */
+    public function customizeDir($dir)
+    {
+        $this->_setPath = $dir;
+    }
+
+
     /**
      * 设置路径
      * @param string $path

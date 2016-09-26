@@ -6,20 +6,6 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
 {
-    public static $prefixLengthsPsr4 = array (
-        'W' => 
-        array (
-            'Whoops\\' => 7,
-        ),
-    );
-
-    public static $prefixDirsPsr4 = array (
-        'Whoops\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
-        ),
-    );
-
     public static $classMap = array (
         'Upadd\\Bin\\Alias' => __DIR__ . '/..' . '/Upadd/Bin/Alias.php',
         'Upadd\\Bin\\Application' => __DIR__ . '/..' . '/Upadd/Bin/Application.php',
@@ -33,7 +19,9 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Config\\GetConfiguration' => __DIR__ . '/..' . '/Upadd/Bin/Config/GetConfiguration.php',
         'Upadd\\Bin\\Db\\Db' => __DIR__ . '/..' . '/Upadd/Bin/Db/Db.php',
         'Upadd\\Bin\\Db\\LinkPdoMysql' => __DIR__ . '/..' . '/Upadd/Bin/Db/LinkPdoMysql.php',
+        'Upadd\\Bin\\Debug' => __DIR__ . '/..' . '/Upadd/Bin/Debug.php',
         'Upadd\\Bin\\Factory' => __DIR__ . '/..' . '/Upadd/Bin/Factory.php',
+        'Upadd\\Bin\\Grab' => __DIR__ . '/..' . '/Upadd/Bin/Grab.php',
         'Upadd\\Bin\\Http\\Data' => __DIR__ . '/..' . '/Upadd/Bin/Http/Data.php',
         'Upadd\\Bin\\Http\\Request' => __DIR__ . '/..' . '/Upadd/Bin/Http/Request.php',
         'Upadd\\Bin\\Http\\Route' => __DIR__ . '/..' . '/Upadd/Bin/Http/Route.php',
@@ -69,8 +57,6 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit5748b66abe6b6367eae34e451e2ed586::$classMap;
 
         }, null, ClassLoader::class);

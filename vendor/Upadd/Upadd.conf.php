@@ -1,41 +1,31 @@
 <?php
 /**
-+----------------------------------------------------------------------
-| UPADD [ Can be better to Up add]
-+----------------------------------------------------------------------
-| Copyright (c) 2011-2016 http://upadd.cn All rights reserved.
-+----------------------------------------------------------------------
-| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-+----------------------------------------------------------------------
-| Author: Richard.z <v3u3i87@gmail.com>
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 2011-2016 http://upadd.cn All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
  **/
-if (version_compare ( PHP_VERSION, '5.5.0', '<' ))	exit ( 'require PHP > 5.5.0 !' );
-// 设置编码
-header ( 'Content-Type:text/html;charset=utf-8' );
-// 设置时区
-date_default_timezone_set ( 'Asia/Shanghai' );
+if (version_compare(PHP_VERSION, '5.5.0', '<')) exit ('require PHP > 5.5.0 !');
 
-define ('VENDOR', 'vendor/Upadd');
-define ('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
+
+define('VENDOR', 'vendor/Upadd');
+define('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
 
 // 函数库
-require UPADD_HOST . VENDOR .'/Public/help.php';
+require UPADD_HOST . VENDOR . '/Public/help.php';
 
-if(APP_DEBUG)
-{
-    //引入报错文件
-    $whoops = new \Whoops\Run;
-    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-    $whoops->register();
-}
-
+use Upadd\Bin\Grab;
 use Upadd\Bin\Factory;
+use Upadd\Bin\Loader;
 
 /**
  * 实例化APP
  */
 $app = new \Upadd\Bin\Application();
-
 
 /**
  * 设置配置文件
@@ -43,15 +33,14 @@ $app = new \Upadd\Bin\Application();
 $app->getConfig();
 
 /**
- * 创建目录
+ * 加载组件
  */
-$app->is_create_data_dir();
+Loader::Run();
 
 /**
  * 设置Session
  */
 $app->setSession();
-
 
 /**
  * 实例化模块
@@ -68,18 +57,19 @@ Factory::Import($app->_work);
  */
 $app->getAlias()->run();
 
-/**
- * 开始工作
- */
-$app->run(function() use ($app)
-{
 
-    $_hostConfigPath = host().'config';
+Grab::run();
+/**
+ * 运行
+ */
+$app->run(function () use ($app) {
+
+    $_hostConfigPath = host() . 'config';
 
     /**
      * 扩展文件
      */
-    $extend = $_hostConfigPath.'/extend.php';
+    $extend = $_hostConfigPath . '/extend.php';
     file_exists($extend) && require $extend;
 
     /**
@@ -94,4 +84,5 @@ $app->run(function() use ($app)
     $filters = $_hostConfigPath . '/filters.php';
     file_exists($filters) && require $filters;
 
-},isset($argv) ? $argv : array());
+}, isset($argv) ? $argv : array());
+

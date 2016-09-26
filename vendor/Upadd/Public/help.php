@@ -1,23 +1,23 @@
 <?php
 /**
-+----------------------------------------------------------------------
-| UPADD [ Can be better to Up add]
-+----------------------------------------------------------------------
-| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
-+----------------------------------------------------------------------
-| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-+----------------------------------------------------------------------
-| Author: Richard.z <v3u3i87@gmail.com>
-| FileName:Upadd函数库
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
+ * | FileName:Upadd函数库
  **/
 
-if ( ! function_exists('getHeader'))
-{
+if (!function_exists('getHeader')) {
     /**
      * 获取头信息
      */
     function getHeader($headers = array())
     {
+
         foreach ($_SERVER as $name => $value) {
             if (substr($name, 0, 5) == 'HTTP_') {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
@@ -29,27 +29,26 @@ if ( ! function_exists('getHeader'))
 }
 
 
-if ( ! function_exists('p'))
-{
+if (!function_exists('p')) {
     /**
      * 该函数格式化打印数组
      *
      * @param unknown $data
      * @param string $type
-     *        	true as 1 为不断点执行
+     *            true as 1 为不断点执行
      */
-    function p($data=array(), $type = null)
+    function p($data = array(), $type = null)
     {
-        header ( 'Content-Type:text/html;charset=utf-8' );
+        header('Content-Type:text/html;charset=utf-8');
         echo '<pre>';
-        print_r ( $data );
+        print_r($data);
         echo '</pre>';
         !$type ? exit () : null;
     }
 
 }
 
-if(! function_exists('vd')) {
+if (!function_exists('vd')) {
     /**
      * 打印参数详细数据 var_dump
      *
@@ -59,7 +58,7 @@ if(! function_exists('vd')) {
      */
     function vd($data, $type = '')
     {
-        header ( 'Content-Type:text/html;charset=utf-8' );
+        header('Content-Type:text/html;charset=utf-8');
         echo '<pre>';
         var_dump($data);
         echo '</pre>';
@@ -69,7 +68,7 @@ if(! function_exists('vd')) {
 }
 
 
-if(! function_exists('lang')) {
+if (!function_exists('lang')) {
     /**
      * 语言包提示
      *
@@ -81,7 +80,7 @@ if(! function_exists('lang')) {
         if ($key) {
             // 程序语言包
             if (defined('APP_LANG')) {
-                $lang = require UPADD_HOST .VENDOR. '/Lang/' . APP_LANG .'.php';
+                $lang = require UPADD_HOST . VENDOR . '/Lang/' . APP_LANG . '.php';
                 return $lang [$key];
             } else {
                 exit('Sorry, you have not set the language pack!');
@@ -90,18 +89,16 @@ if(! function_exists('lang')) {
     }
 }
 
-if(!function_exists('equal'))
-{
+if (!function_exists('equal')) {
 
     /**
      * @param $k
      * @param $key
      * @return bool
      */
-    function is_equal($k,$key)
+    function is_equal($k, $key)
     {
-        if($k === $key)
-        {
+        if ($k === $key) {
             return true;
         }
         return false;
@@ -109,7 +106,7 @@ if(!function_exists('equal'))
 
 }
 
-if(! function_exists('lode')) {
+if (!function_exists('lode')) {
     /**
      * 分割数组或字符串处理
      *
@@ -132,15 +129,15 @@ if(! function_exists('lode')) {
     }
 }
 
-if(!function_exists('array_merge_one')) {
+if (!function_exists('array_merge_one')) {
     /**
      * 多维数组合并成一维数组
      * @param array $data
      * @return array
      */
-    function array_merge_one($data=array())
+    function array_merge_one($data = array())
     {
-        if($data) {
+        if ($data) {
             static $one;
             foreach ($data as $v) {
                 is_array($v) ? array_merge_one($v) : $one [] = $v;
@@ -152,27 +149,25 @@ if(!function_exists('array_merge_one')) {
 }
 
 
-
 /**
  * 序列化函数
  *
  * @param 序列化的数据 $data
  * @param 类型 $type
- *        	as true 序列化 | false 反序列化
+ *            as true 序列化 | false 反序列化
  * @return string|mixed
  */
 function sequence($data, $type)
 {
-    if ($type)
-    {
-        return serialize ( $data );
-    } elseif (! $type) {
-        return unserialize ( $data );
+    if ($type) {
+        return serialize($data);
+    } elseif (!$type) {
+        return unserialize($data);
     }
 }
 
 
-if(!function_exists('conf')) {
+if (!function_exists('conf')) {
     /**
      * 调用配置数组参数
      * @param string $name
@@ -186,7 +181,7 @@ if(!function_exists('conf')) {
 }
 
 
-if(!function_exists('is_json')){
+if (!function_exists('is_json')) {
     /**
      * 判断JSON是否合法
      * @param null $string
@@ -195,15 +190,14 @@ if(!function_exists('is_json')){
     function is_json($string = null)
     {
         $string = json_decode($string);
-        if($string)
-        {
+        if ($string) {
             return true;
         }
         return false;
     }
 }
 
-if(!function_exists('json')){
+if (!function_exists('json')) {
 
     /**
      * 对json进行编码或解码
@@ -211,30 +205,26 @@ if(!function_exists('json')){
      * @param bool $type
      * @return json/array
      */
-    function json($data=null,$type=true)
+    function json($data = null, $type = true)
     {
-        if(is_array($data))
-        {
+        if (is_array($data)) {
             return json_encode($data);
-        }else{
-            return json_decode($data,$type);
+        } else {
+            return json_decode($data, $type);
         }
     }
 }
 
-if(!function_exists('is_create_dir'))
-{
+if (!function_exists('is_create_dir')) {
     /**
      * 判断目录是否存在，如果不存在就创建
      * @param unknown $path
      */
-    function is_create_dir($dir,$type=false)
+    function is_create_dir($dir, $type = false)
     {
         // 设置总目录
-        if (!is_dir($dir) || !is_writable($dir))
-        {
-            if (!mkdir($dir,0777))
-            {
+        if (!is_dir($dir) || !is_writable($dir)) {
+            if (!mkdir($dir, 0777)) {
                 exit($dir . lang('is_dir'));
             }
         }
@@ -243,8 +233,7 @@ if(!function_exists('is_create_dir'))
 }
 
 
-if(!function_exists('array_sort_field'))
-{
+if (!function_exists('array_sort_field')) {
     /**
      * 二维字数组排序
      * @param array $array 数据
@@ -254,8 +243,7 @@ if(!function_exists('array_sort_field'))
     function array_sort_field(array $array, $field, $desc = false)
     {
         $fieldArr = array();
-        foreach ($array as $k => $v)
-        {
+        foreach ($array as $k => $v) {
             $fieldArr [$k] = $v [$field];
         }
         $sort = $desc == false ? SORT_ASC : SORT_DESC;
@@ -264,8 +252,7 @@ if(!function_exists('array_sort_field'))
 
 }
 
-if(!function_exists('getMachineName'))
-{
+if (!function_exists('getMachineName')) {
 
     /**
      * 返回机器名称
@@ -274,11 +261,10 @@ if(!function_exists('getMachineName'))
     function getMachineName()
     {
         $os = lode(" ", php_uname());
-        if('/'==DIRECTORY_SEPARATOR )
-        {
-            $os =  $os[1];
-        }else{
-            $os =  $os[2];
+        if ('/' == DIRECTORY_SEPARATOR) {
+            $os = $os[1];
+        } else {
+            $os = $os[2];
         }
         $osName = $os;
         return $osName;
@@ -286,8 +272,7 @@ if(!function_exists('getMachineName'))
 
 }
 
-if(!function_exists('msg'))
-{
+if (!function_exists('msg')) {
     /**
      * 对外接口数据msg
      * @param int $code
@@ -295,14 +280,14 @@ if(!function_exists('msg'))
      * @param array $data
      * @param string $type or json
      */
-    function msg($code=10001,$message='Unauthorized access',$data=[],$type='json')
+    function msg($code = 10001, $message = 'Unauthorized access', $data = [], $type = 'json')
     {
         header('Content-type: application/json; charset=utf-8');
-        exit(json(['code'=> (int) $code, 'msg'=>(string) $message,'result'=> (array) $data]));
+        exit(json(['code' => (int)$code, 'msg' => (string)$message, 'result' => (array)$data]));
     }
 }
 
-if(! function_exists('jump')) {
+if (!function_exists('jump')) {
     /**
      * 转跳
      * @param $url
@@ -317,18 +302,16 @@ if(! function_exists('jump')) {
     }
 }
 
-if(! function_exists('getArgs'))
-{
+if (!function_exists('getArgs')) {
 
     /**
      * 获取CLI变量
      * @param $argv
      * @return array
      */
-    function getArgs($argv,$out = array())
+    function getArgs($argv, $out = array())
     {
-        if(!empty($argv))
-        {
+        if (!empty($argv)) {
             array_shift($argv);
             foreach ($argv as $arg) {
                 if (substr($arg, 0, 2) == '--') {
@@ -350,34 +333,33 @@ if(! function_exists('getArgs'))
 
 }
 
-if(!function_exists('host'))
-{
-    function host(){
+if (!function_exists('host')) {
+    function host()
+    {
         return UPADD_HOST;
     }
 
 }
 
-if(!function_exists('is_run_evn')){
+if (!function_exists('is_run_evn')) {
     /**
      * 判断运行环境
      * @return bool
      */
     function is_run_evn()
     {
-        if(php_sapi_name() === 'cli')
-        {
+        if (php_sapi_name() === 'cli') {
             return false;
-        }elseif(PHP_SAPI === 'cli'){
+        } elseif (PHP_SAPI === 'cli') {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
 
 }
 
-if(!function_exists('getClient_id')){
+if (!function_exists('getClient_id')) {
 
     /**
      * 获取客户端ID
@@ -387,17 +369,15 @@ if(!function_exists('getClient_id')){
     function getClient_id($_ip = null)
     {
 
-        if(isset($_SERVER['HTTP_CLIENT_IP'])
+        if (isset($_SERVER['HTTP_CLIENT_IP'])
             || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-            || isset($_SERVER['REMOTE_ADDR']))
-        {
+            || isset($_SERVER['REMOTE_ADDR'])
+        ) {
 
-            if (!empty($_SERVER['HTTP_CLIENT_IP']))
-            {
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
                 //check ip from share internet
                 $_ip = $_SERVER['HTTP_CLIENT_IP'];
-            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-            {
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
                 //to check ip is pass from PRoxy
                 $_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
             } else {
@@ -411,45 +391,82 @@ if(!function_exists('getClient_id')){
 
 }
 
-if(!function_exists('verificationCode'))
-{
+if (!function_exists('verificationCode')) {
     /**
      * 随机生成6位验证码
      * @param int $num 默认是6位
      * @return string
      */
-    function verificationCode($num=6)
+    function verificationCode($num = 6)
     {
-        return substr(str_shuffle('1234567890'),0,$num);
+        return substr(str_shuffle('1234567890'), 0, $num);
     }
 }
 
 
-if(!function_exists('get_hash'))
-{
+if (!function_exists('get_hash')) {
 
     /**
      * 生产哈希加密
      * @param string $key
      * @return string
      */
-    function get_hash($key='upadd')
+    function get_hash($key = 'upadd')
     {
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()+-';
         //Random 5 times
         $random = $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)] . $chars[mt_rand(0, 73)];
         $content = uniqid() . $random;
-        $content.=$key;
+        $content .= $key;
         return sha1($content);
     }
 }
 
-if(!function_exists('pp'))
-{
-    function pp ($val=null,$status=true)
+if (!function_exists('pp')) {
+    function pp($val = null, $status = true)
     {
         print_r($val);
         echo "\n\r";
-        if($status) exit();
+        if ($status) exit();
     }
+}
+
+/**
+ * @param $multi
+ * @return array
+ */
+function arrayToOne($multi)
+{
+    $arr = array();
+    foreach ($multi as $key => $val) {
+        if (is_array($val)) {
+            $arr = array_merge($arr, arrayToOne($val));
+        } else {
+            $arr[] = $val;
+        }
+    }
+    return $arr;
+}
+
+/**
+ * 索引转关联数组
+ * @param array $arr
+ * @return array|bool
+ */
+function array_associated_index($arr=[])
+{
+    if (count($arr) % 2 == 0)
+    {
+        $data = [];
+        for ($i = 0; $i < count($arr); $i++)
+        {
+            $val = $i + 1;
+            if (isset($arr[$val]))
+            {
+                $data[$arr[$i]] = $arr[$val];
+            }
+        }
+        return $data;
+    }
+    return false;
 }

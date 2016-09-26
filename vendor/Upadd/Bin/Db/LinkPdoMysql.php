@@ -1,10 +1,10 @@
 <?php
 namespace Upadd\Bin\Db;
 
-use Upadd\Bin\Tool\Log;
-
 use PDO;
 use Upadd\Bin\UpaddException;
+use Upadd\Bin\Tool\Log;
+use Upadd\Bin\Response\Run;
 
 class LinkPdoMysql implements Db{
 
@@ -159,7 +159,7 @@ class LinkPdoMysql implements Db{
      */
     public function log()
     {
-        Log::write ( $this->_sql, 'log.sql' ); // 记录SQL
+        Log::run($this->_sql."\n");
     }
 
 
@@ -214,4 +214,16 @@ class LinkPdoMysql implements Db{
         return $this->_linkID->errorInfo();
     }
 
+    /**
+     * 提交失败打印
+     */
+    public function debug()
+    {
+        var_dump($this->error());
+    }
+
+    public function close()
+    {
+        $this->_linkID = null;
+    }
 }

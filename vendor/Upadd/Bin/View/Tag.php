@@ -46,7 +46,7 @@ class Tag{
         /**
          * 判断是否加载前端域名
          */
-        if(Config::get('tag@is_front_domain'))
+        if(Config::get('tag@is_front_domain') === true)
         {
             $this->front_domain = Config::get('tag@front_domain');
         }
@@ -109,11 +109,15 @@ class Tag{
             "/\@public_css\(\'(.*?)\'\)/i",
             "/\@js\(\'(.*?)\'\)/i",
             "/\@public_js\(\'(.*?)\'\)/i",
+            "/\@c\(\'(.*?)\'\)/i",
+            "/\@j\(\'(.*?)\'\)/i",
         ],[
             $this->css(),
             $this->public_css(),
             $this->js(),
-            $this->public_js()
+            $this->public_js(),
+            $this->c(),
+            $this->j(),
         ], $this->_file );
         return $this->_file;
     }
@@ -152,6 +156,16 @@ class Tag{
     }
 
     /**
+     * 公共目录的CSS
+     * @return string
+     */
+    private function c()
+    {
+        $css = $this->front_domain."$1";
+        return "<link rel=\"stylesheet\" href=\"{$css}\">";
+    }
+
+    /**
      * 获取指定目录的JS
      * @return string
      */
@@ -170,6 +184,15 @@ class Tag{
         return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
     }
 
+
+    /**
+     * 获取公共目录的JS
+     * @return string
+     */
+    private function j(){
+        $js = $this->front_domain."$1";
+        return "<script type=\"text/javascript\" src=\"{$js}\"></script>";
+    }
 
     private function val(){
         return ($this->_file = preg_replace (array(

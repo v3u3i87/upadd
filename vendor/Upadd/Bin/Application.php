@@ -2,11 +2,9 @@
 namespace Upadd\Bin;
 
 use Upadd\Bin\Config\Configuration;
-use Upadd\Bin\Loader;
-use Upadd\Bin\Alias;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\Response\Run as ResponseRun;
-use Upadd\Bin\UpaddException;
+use Upadd\Bin\Package\Data;
 
 class Application{
 
@@ -32,12 +30,13 @@ class Application{
     /**
      * 运行
      */
-    public function run($callable,$argv)
+    public function run($callable,$argv=[])
     {
-        /**
-         * 加载组件
-         */
-        Loader::Run();
+        //日志
+        $this->setRequestLog();
+
+        // 设置时区
+        date_default_timezone_set ( 'Asia/Shanghai' );
 
         /**
          * 实例化对象
@@ -53,8 +52,7 @@ class Application{
             {
                  call_user_func_array($callable,func_get_args());
             }
-            //日志
-            $this->setRequestLog();
+
             $this->_responseData = $this->request()->run_cgi();
         }else{
             $this->_responseData = $this->request()->run_cli();
@@ -67,32 +65,28 @@ class Application{
         $_responseRun->send();
     }
 
-    /**
-     * 获取执行时间
-     */
-    private function getTimeConsuming()
-    {
-        echo "\r\n";
-        $endtime = (microtime(true)) - RUNTIME;
-        echo 'Time consuming '.round($endtime,3).' second';
-        echo "\r\n";
-    }
-
 
     /**
-     * 储存请求日志
+     * 请求日志
      * @pamer
      */
     private function setRequestLog()
     {
-        $endtime = (microtime(true)) - RUNTIME;
         $_header = getHeader();
-        Log::request([
-            'method'=>(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli'),
-            'header'=>$_header,
-            'run_time'=>$endtime,
-            'param'=>$_REQUEST,
-        ]);
+        $Requset = '';
+        if (is_run_evn()) {
+            if (isset($_SERVER ['REQUEST_URI'])) $Requset =  $_SERVER ['REQUEST_URI'];
+        } else {
+            $Requset = 'cli';
+        }
+        $body = 'Run Start'."\n";
+        $body.= 'Host:'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '')."\n";
+        $body.= 'Requset:'.$Requset."\n";
+        $body.= 'Ip:'.getClient_id()."\n";
+        $body.= 'Method:'.(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli')."\n";
+        $body.= 'Header:'.json($_header)."\n";
+        $body.= 'Parameter:'.json(Data::all())."\n";
+        Log::run($body);
     }
 
     /**
@@ -206,89 +200,5 @@ class Application{
             }
         }
     }
-
-
-    /**
-     * 创建配置文件目录
-     * @return bool
-     */
-    private function is_create_confg_dir()
-    {
-        if( $env = $this->getConfiguration()->get('sys@environment'))
-        {
-            //merge in config array
-            $oneEnv = array_merge_one($env);
-            $osName = getMachineName();
-            $configDir = $this->getConfiguration()->get('sys@config_dir');
-            // 总目录
-            is_create_dir($configDir);
-            foreach ($env as $k => $v) {
-                // 不是数字类型执行
-                if (!is_numeric($k)) {
-                    // 创建配置目录
-                    if (!is_dir($configDir . $k)) {
-                        if ($k) {
-                            is_create_dir($configDir . $k);
-                        }
-                    }
-                } else {
-                    return true;
-                }
-                //end for
-            }
-            return true;
-        }
-    }
-
-    /**
-     * 判断是否创建
-     */
-    public function is_create_data_dir()
-    {
-        header('X-Powered-By:'.$this->getConfiguration()->get('sys@upadd_version'));
-        $is_data = true;
-        if($is_data)
-        {
-            $this->is_create_confg_dir();
-            $_data_dir = $this->getConfiguration()->get('sys@data_dir');
-
-            // 数据资源文件夹
-            if (!is_dir($_data_dir))
-            {
-                is_create_dir($_data_dir);
-            }
-
-            // 数据资源文件夹
-            if (!is_dir($_data_dir . APP_NAME))
-            {
-                is_create_dir($_data_dir . APP_NAME);
-            }
-
-            // 日记目录
-            if (!is_dir($_data_dir . APP_NAME . '/log'))
-            {
-                is_create_dir($_data_dir . APP_NAME . '/log');
-            }
-
-            //创建编译文件夹
-            if (!is_dir($_data_dir . APP_NAME . '/compiled'))
-            {
-                is_create_dir($_data_dir . APP_NAME . '/compiled');
-            }
-
-            //创建缓存文件夹
-            if (!is_dir($_data_dir . APP_NAME . '/cache'))
-            {
-                is_create_dir($_data_dir . APP_NAME . '/cache');
-            }
-
-            //上传文件目录
-            if (!is_dir($_data_dir . 'upload'))
-            {
-                is_create_dir($_data_dir . 'upload');
-            }
-        }
-    }
-
 
 }

@@ -3,8 +3,7 @@
 return array(
 
     'environment' => array(
-        'local' => array('RR-ZMQ', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan', 'PC-PC'),
-        'dev' => array('xcvu'),
+        'local' => array('RR-ZMQ', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan'),
     ),
 
     'is_autoload' => false,
@@ -63,10 +62,16 @@ return array(
     /**
      * 是否使用
      */
-    'is_use_redis'=>true,
+    'is_use_redis' => true,
 
     /**
      * 是否开启
      */
-    'is_use_memcache'=>true,
+    'is_use_memcache' => false,
+
+
+    'is_swoole'=>true,
+
+    'swoole'=>[],
+
 );

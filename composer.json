@@ -11,9 +11,7 @@
 			    }
 	],
 
-  "require": {
-    "filp/whoops": "*"
-  },
+  "require": {},
 
   "autoload": {
     "classmap": [

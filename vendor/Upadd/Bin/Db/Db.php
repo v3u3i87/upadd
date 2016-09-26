@@ -109,6 +109,19 @@ interface Db {
     public function error();
 
 
+    /**
+     * 观察bug
+     * @return mixed
+     */
+    public function debug();
+
+    /**
+     * 关闭数据库
+     * @return mixed
+     */
+    public function close();
+
+
 
 
 

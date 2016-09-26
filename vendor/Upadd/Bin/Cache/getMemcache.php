@@ -68,7 +68,7 @@ class getMemcache
 			$retData = $this->_memcache->get ( $key );
 			if ($retData !== false)
             {
-				return unserialize ( $retData );
+				return $retData;
 			}
 		}
 		return false;
@@ -98,7 +98,7 @@ class getMemcache
 		} else {
 			$lifetime = $this->config ['lifetime'];
 		}
-		return $this->_memcache->set ( $key, serialize ( $val ), $flag, $lifetime );
+		return $this->_memcache->set ( $key,$val, $flag, $lifetime );
 	}
 	
 	/**

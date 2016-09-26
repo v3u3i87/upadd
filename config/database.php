@@ -8,15 +8,21 @@
 
 return array(
 
-    'db' => array(
-        'type' => 'mysql',
-        'host' => '127.0.0.1',
+    'db' => [
+        'type' => 'pdo_mysql',
+        'host' => 'api.upadd.cn',
         'user' => 'root',
-        'pass' => '123456',
-        'name' => 'upadd',
+        'pass' => 'root',
+        'name' => 'test',
         'port' => 3306,
         'charset' => 'UTF8',
         'prefix' => 'up_',
-    ),
+    ],
+
+
+    /**
+     * 单库为 false
+     */
+    'many'=>false,
 
 );

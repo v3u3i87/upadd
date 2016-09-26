@@ -50,6 +50,15 @@ class Action
     }
 
     /**
+     * 返回模板对象
+     * @return mixed
+     */
+    protected function getTemplates()
+    {
+        return $this->_templates;
+    }
+
+    /**
      * 设置模板文件
      * @param $file
      * @throws UpaddException

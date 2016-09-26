@@ -1,14 +1,14 @@
 <?php
 
 /**
-+----------------------------------------------------------------------
-| UPADD [ Can be better to Up add]
-+----------------------------------------------------------------------
-| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
-+----------------------------------------------------------------------
-| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-+----------------------------------------------------------------------
-| Author: Richard.z <v3u3i87@gmail.com>
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
  **/
 namespace Upadd\Bin\Http;
 
@@ -16,7 +16,8 @@ use Config;
 use Upadd\Bin\Cache\CacheRoute;
 use Upadd\Bin\UpaddException;
 
-class Route extends Request{
+class Route extends Request
+{
 
     public $prefix = '';
 
@@ -33,23 +34,20 @@ class Route extends Request{
     /**
      * URL组
      * @param array $method
-     * @param $_callback
+     * @param       $_callback
      */
-    public function group($method=array(),$_callback=null)
+    public function group($method = array(), $_callback = null)
     {
-        if(array_key_exists('prefix',$method))
-        {
+        if (array_key_exists('prefix', $method)) {
             $this->prefix = $method['prefix'];
         }
 
-        if(array_key_exists('filters',$method))
-        {
+        if (array_key_exists('filters', $method)) {
             $this->filters = $method['filters'];
         }
 
-        if(is_callable($_callback))
-        {
-           return call_user_func($_callback);
+        if (is_callable($_callback)) {
+            return call_user_func($_callback);
         }
     }
 
@@ -58,15 +56,13 @@ class Route extends Request{
      * @param $key
      * @param $_callback
      */
-    public function filters($key,$_callback)
+    public function filters($key, $_callback)
     {
         $_urlKey = $this->setUrlHash();
-        if(isset($this->_resou[$_urlKey]))
-        {
+        if (isset($this->_resou[$_urlKey])) {
             //获取本次请求路由资源
-            $resou  = $this->_resou[$_urlKey];
-            if($resou['filters'] == $key && is_callable($_callback))
-            {
+            $resou = $this->_resou[$_urlKey];
+            if ($resou['filters'] == $key && is_callable($_callback)) {
                 return call_user_func($_callback);
             }
         }
@@ -78,13 +74,11 @@ class Route extends Request{
      * @param $method
      * @return callable|null|string
      */
-    public function is_method($method, $callable = null)
+    private function is_method($method, $callable = null)
     {
-        if(is_callable($method))
-        {
+        if (is_callable($method)) {
             $callable = $method;
-        }elseif(is_string($method))
-        {
+        } elseif (is_string($method)) {
             $callable = $method;
         }
         return $callable;
@@ -97,32 +91,31 @@ class Route extends Request{
      * @param $method
      * @param $type
      */
-    public function setCacheRequest($url='',$method=null,$type='')
+    private function setCacheRequest($url = '', $method = null, $type = '')
     {
         $method = $this->is_method($method);
-        $sha_url = sha1($this->is_url($url));
-        $this->_resou[$sha_url] = array(
-            'methods'=>$method,
-            'callbacks'=>$method,
-            'url'=>$url,
-            'type'=>$type,
+        $url = $this->setUrl($url);
+        $this->_resou[$url] = array(
+            'methods'   => $method,
+            'callbacks' => $method,
+            'url'       => $url,
+            'type'      => $type,
+            'prefix'    => $this->prefix,
+            'filters'   => $this->filters
         );
-        $this->_resou[$sha_url]['prefix'] = $this->prefix;
-        $this->_resou[$sha_url]['filters'] = $this->filters;
     }
 
     /**
-     * 判断URL
+     * 设置URL
      * @param $url
      * @return string
      */
-    public function is_url($url)
+    private function setUrl($url)
     {
-        if($this->getPathUrl() === $url)
-        {
-           return $url;
-        }else{
-            $url = $this->prefix.$url;
+        if ($this->getPathUrl() === $url) {
+            return $url;
+        } else {
+            $url = $this->prefix . $url;
         }
         return $url;
     }
@@ -133,16 +126,40 @@ class Route extends Request{
      */
     public function resources()
     {
-         if(array_key_exists($this->setUrlHash(),$this->_resou))
-         {
-             $req = $this->_resou[$this->setUrlHash()];
-             if($this->getRequestMethod() == $req['type'] || $req['type'] == 'ANY')
-             {
-                return $req;
-             }
-             throw new UpaddException("Request the wrong way, your source is ({$this->getRequestMethod()}), the request is {$req['type']}.");
-         }
-         return false;
+        $currentRequest = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        if ($this->_resou)
+        {
+            if(isset($this->_resou[$currentRequest]))
+            {
+                return $this->isRequestMethod($this->_resou[$currentRequest]);
+            }else{
+                foreach ($this->_resou as $name => $item)
+                {
+                    $key = $this->setRewrite($name,$currentRequest);
+                    if($key)
+                    {
+                        return $this->isRequestMethod($this->_resou[$key]);
+                    }
+                }
+            }
+        }
+        throw new UpaddException("请设置路由");
+    }
+
+
+    /**
+     * 判断请求模式
+     * @param $request
+     * @return mixed
+     * @throws UpaddException
+     */
+    private function isRequestMethod($request)
+    {
+        if ($this->getRequestMethod() == $request['type'] || $request['type'] == 'ANY')
+        {
+            return $request;
+        }
+        throw new UpaddException("Request the wrong way, your source is ({$this->getRequestMethod()}), the request is {$request['type']}.");
     }
 
     /**
@@ -150,24 +167,30 @@ class Route extends Request{
      * @param null $_action
      * @param null $_method
      */
-    public function setAction($_action=null,$_method=null)
+    public function setAction($_action = null, $_method = null)
     {
-        if($_action && $_method)
-        {
+        if ($_action && $_method) {
             static::$action = $_action;
             static::$method = $_method;
         }
     }
 
+    /**
+     * @param $name
+     * @param $parameters
+     */
     public function __call($name, $parameters)
     {
         $url = $parameters[0];
-        $fun = $parameters[1];
+        $action = $parameters[1];
         $method = strtoupper($name);
-        $this->setCacheRequest($url,$fun,$method);
+        /**
+         * $url 访问地址
+         * $action 访问控制器
+         * $method 访问类型
+         */
+        $this->setCacheRequest($url, $action, $method);
     }
-
-
 
 
 }

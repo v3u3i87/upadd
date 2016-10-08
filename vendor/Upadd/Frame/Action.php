@@ -15,18 +15,26 @@ use Upadd\Bin\UpaddException;
 use Upadd\Bin\View\Templates;
 
 // 控制器
-class Action {
-
+class Action
+{
 
     /**
-     * 权限对象
-     * @var null
+     * 模板对象
+     * @var
      */
-    public $_rbac = null;
+    private $_templates;
 
-    public $_templates;
+    /**
+     * 响应返回对象
+     * @var string
+     */
+    protected $_responseType = 'json';
 
-	public function __construct(){
+    /**
+     * 实例化
+     */
+    public function init()
+    {
         $this->_templates = new Templates();
     }
 
@@ -36,13 +44,18 @@ class Action {
      * @param $val
      * @throws \Upadd\Bin\UpaddException
      */
-    public function val($key,$val)
+    protected function val($key=null,$val=null)
     {
-        if($key && $val)
-        {
-            return $this->_templates->val($key,$val);
-        }
-        throw new UpaddException('$key或$val没有设置');
+        return $this->_templates->val($key,$val);
+    }
+
+    /**
+     * 返回模板对象
+     * @return mixed
+     */
+    protected function getTemplates()
+    {
+        return $this->_templates;
     }
 
     /**
@@ -50,35 +63,35 @@ class Action {
      * @param $file
      * @throws UpaddException
      */
-    public function view($file)
+    protected function view($file)
     {
         if($file)
         {
-            return $this->_templates->path($file);
+            return $this->_templates->bound($file);
         }
         throw new UpaddException('模板文件没有设置');
     }
 
 
     /**
-     * 设置模板控制器
-     * @param $name
+     * 设置响应类型
+     * @param $type
      */
-    public function setViewAction($name)
+    protected function setResponseType($type)
     {
-        $lode = lode('\\',$name);
-        if(isset($lode[2]))
-        {
-            $name = $lode[2];
-            if(substr($name, -6)=='Action')
-            {
-                $name = substr($name, 0,-6);
-            }
-            $this->_templates->setPath(strtolower($name));
-        }else{
-            throw new UpaddException('控制器模板目录设置失败');
-        }
+        $this->_responseType = $type;
     }
+
+    /**
+     * 返回响应类型
+     * @return string
+     */
+    public function getResponseType()
+    {
+        return $this->_responseType;
+    }
+
+
 
 
 

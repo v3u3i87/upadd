@@ -59,7 +59,6 @@ interface Db {
 	 */
 	public function sql($sql=null);
 
-
 	/**
 	 * 单条查询
 	 *
@@ -101,7 +100,27 @@ interface Db {
      * @param $status as exit or
      * @return mixed
      */
-    public function printSql($status);
+    public function p($status);
+
+    /**
+     * 返回错误码
+     * @return mixed
+     */
+    public function error();
+
+
+    /**
+     * 观察bug
+     * @return mixed
+     */
+    public function debug();
+
+    /**
+     * 关闭数据库
+     * @return mixed
+     */
+    public function close();
+
 
 
 

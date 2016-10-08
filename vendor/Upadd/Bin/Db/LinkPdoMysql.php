@@ -1,10 +1,10 @@
 <?php
 namespace Upadd\Bin\Db;
 
-use Upadd\Bin\Tool\Log;
-
 use PDO;
 use Upadd\Bin\UpaddException;
+use Upadd\Bin\Tool\Log;
+use Upadd\Bin\Response\Run;
 
 class LinkPdoMysql implements Db{
 
@@ -19,12 +19,13 @@ class LinkPdoMysql implements Db{
 
     protected $queue = array();
 
+    protected $_logSql = [];
+
     public function __construct($link)
     {
         try {
             $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
             $this->_linkID = new PDO($dns,$link ['user'], $link ['pass']);
-//            $this->_linkID->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $this->_linkID->exec('SET NAMES '.$link ['charset']);
         } catch (PDOException $e) {
             throw new UpaddException($e->getMessage());
@@ -80,7 +81,12 @@ class LinkPdoMysql implements Db{
      */
     public function getTotal()
     {
-        return $this->query()->fetchColumn();
+        $query = $this->query();
+        if($query)
+        {
+            return $query->fetchColumn();
+        }
+        return 0;
     }
 
     /**
@@ -113,6 +119,9 @@ class LinkPdoMysql implements Db{
 
     /**
      * 对外提供提交SQL
+     * @param null $sql
+     * @return bool
+     * @throws UpaddException
      */
     public function sql($sql=null)
     {
@@ -120,32 +129,37 @@ class LinkPdoMysql implements Db{
         {
             $this->_sql = $sql;
         }
-        if($this->_linkID->exec( $this->_sql ))
+        $this->log();
+        $result = $this->_linkID->exec( $this->_sql );
+        if($result)
         {
             return true;
         }
-        throw new UpaddException("sql:".$this->_sql.$this->error());
+        return false;
     }
-
 
     /**
      * 提交SQL
+     * @return bool|\PDOStatement
+     * @throws UpaddException
      */
     public function query()
     {
-        $this->log($this->_sql);
+        $this->log();
         $result = $this->_linkID->query($this->_sql);
         if($result)
         {
             return $result;
         }
-        throw new UpaddException("sql:".$this->_sql.$this->error());
+        return false;
     }
 
-    // 记录SQL错误
+    /**
+     * 记录SQL错误
+     */
     public function log()
     {
-        Log::write ( $this->_sql, 'log.sql' ); // 记录SQL
+        Log::run($this->_sql."\n");
     }
 
 
@@ -181,7 +195,7 @@ class LinkPdoMysql implements Db{
      * @param $type as exit or
      * @return mixed
      */
-    public function printSql($status=true)
+    public function p($status=true)
     {
         if($status)
         {
@@ -197,8 +211,19 @@ class LinkPdoMysql implements Db{
      */
     public function error()
     {
-        $error = $this->_linkID->errorInfo();
-        return 'type:'.$error[0]."\n".'code:'.$error[1]."\n".'info:'.$error[2];
+        return $this->_linkID->errorInfo();
     }
 
+    /**
+     * 提交失败打印
+     */
+    public function debug()
+    {
+        var_dump($this->error());
+    }
+
+    public function close()
+    {
+        $this->_linkID = null;
+    }
 }

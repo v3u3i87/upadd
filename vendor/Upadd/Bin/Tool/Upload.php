@@ -18,10 +18,13 @@ class Upload {
     private $_size;//文件大小
     private $_type;//类型
 
+    private $_getFile = null;
+
 
 
     public function __construct($file,$max_file_siz=6120,$_fileType=array(),$_setPath=null)
     {
+        $this->_getFile = $file;
         //获取文件参数
         $this->_error = $file['error'];
         $this->_size = $file['size'];
@@ -50,25 +53,31 @@ class Upload {
     /**
      * 设置文件上传路径
      */
-    public function setLoadFilePath(){
-        if($this->_path===null){
+    public function setLoadFilePath()
+    {
+        if($this->_path===null)
+        {
             $this->_path = host().'data/upload';
         }
     }
 
     //返回路径
-    public function getpath(){
+    public function getpath()
+    {
         $this->_linkPath = $this->_linkPath;
         return $this->_linkPath;
     }
 
 
     //移动文件
-    private function moveload(){
-        if (is_uploaded_file($this->_tmp_name)){
+    private function moveload()
+    {
+        if (is_uploaded_file($this->_tmp_name))
+        {
             umask(0022);
             chmod($this->_tmp_name,0777);
-            if (!move_uploaded_file($this->_tmp_name, $this->setFileNewName())){
+            if (!move_uploaded_file($this->_tmp_name, $this->setFileNewName()))
+            {
                 msg(206,'警告:上传失败!');
             }
         }else {
@@ -77,7 +86,8 @@ class Upload {
     }
 
     //获取名称后重立名
-    private function setFileNewName(){
+    private function setFileNewName()
+    {
         $fileArray = lode('.', $this->_name);
         $fileAttr =  $fileArray[count($fileArray)-1];
         //设置文件新名称
@@ -91,32 +101,41 @@ class Upload {
     //判断目录
     private function checkPath(){
         //设置总目录
-        if (!is_dir($this->_path) || !is_writeable($this->_path)){
-            if(!mkdir($this->_path,0777)){
+        if (!is_dir($this->_path) || !is_writeable($this->_path))
+        {
+            if(!mkdir($this->_path,0777))
+            {
                 msg(206,'警告:处理的总目录没有创建成功!');
             }
         }
 
         //设置子目录
-        if (!is_dir($this->_today) || !is_writeable($this->_today)){
-            if(!mkdir($this->_today,0777)){
+        if (!is_dir($this->_today) || !is_writeable($this->_today))
+        {
+            if(!mkdir($this->_today,0777))
+            {
                 msg(206,'警告:处理的子目录没有创建成功!');
             }
         }
     }
 
     //判断类型
-    private function checkType(){
+    private function checkType()
+    {
         $type = lode('/',$this->_type);
         $this->_type = $type[1];
-        if(!in_array($this->_type,$this->_fileTypeArr)){
+//        p([$this->_getFile,$this->_fileTypeArr,$this->_type,$type,$this->_tmp_name,$this->_name]);
+        if(!in_array($this->_type,$this->_fileTypeArr))
+        {
             msg(206,'警告:上传的类型不合法');
         }
     }
 
     //判断上传错误代码
-    private function checkErrorCode(){
-        switch ($this->_error >=1 ){
+    private function checkErrorCode()
+    {
+        switch ($this->_error >=1 )
+        {
             case 1 :
                 msg(206,'警告:上传值超过了约定最大值!');
                 break;

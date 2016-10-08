@@ -1,18 +1,10 @@
 <?php
 
-Routes::get('/', 'works\action\DemoAction@home');
+Routes::get('/', 'demo\action\HomeAction@main');
 
-Routes::get('/faq','works\action\FaqAction@main');
+Routes::group(array('prefix' => '/user'), function ()
+{
 
-Routes::group(array('prefix' => '/user','filters'=>'info'),function() {
-
-    Routes::get('/info','works\action\DemoAction@info');
-
-});
-
-
-Routes::group(array('prefix' => '/name'),function() {
-
-    Routes::get('/info','works\action\DemoAction@name');
+    Routes::any('/info', 'demo\action\HomeAction@info');
 
 });

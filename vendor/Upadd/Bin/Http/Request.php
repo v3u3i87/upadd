@@ -1,22 +1,24 @@
 <?php
 /**
-+----------------------------------------------------------------------
-| UPADD [ Can be better to Up add]
-+----------------------------------------------------------------------
-| Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
-+----------------------------------------------------------------------
-| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-+----------------------------------------------------------------------
-| Author: Richard.z <v3u3i87@gmail.com>
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
  **/
 namespace Upadd\Bin\Http;
 
-use Upadd\Bin\UpaddException;
-
 use Config;
 use Data;
+use extend\Tools\Log;
+use Upadd\Bin\Tool\View;
+use Upadd\Bin\UpaddException;
 
-class Request{
+class Request
+{
 
     /**
      * 命令行数据
@@ -48,13 +50,22 @@ class Request{
      */
     public $_method = null;
 
+    /**
+     * 响应类型
+     * @var null
+     */
+    public $_responseType;
+
+
+    public $_reqUrl = '/';
+
 
     /**
      * 获取实例化工作对象
      * @param $_work
      * @param $argv
      */
-    public function getInit($_work,$argv)
+    public function getInit($_work, $argv)
     {
         $this->_work = $_work;
         $this->_cliData = getArgs($argv);
@@ -67,9 +78,9 @@ class Request{
     public function run_cli()
     {
         $cli_action_autoload = Config::get('start@cli_action_autoload');
-        if(array_key_exists('u',$this->_cliData) && array_key_exists('p',$this->_cliData))
+        if (array_key_exists('u', $this->_cliData) && array_key_exists('p', $this->_cliData))
         {
-            $this->getAction($cli_action_autoload . $this->_cliData['u'] . 'Action' . '@' . $this->_cliData['p']);
+            $this->getAction($cli_action_autoload .ucfirst($this->_cliData['u']) . 'Action' . '@' . $this->_cliData['p']);
         }
         unset($this->_cliData['u']);
         unset($this->_cliData['p']);
@@ -83,22 +94,24 @@ class Request{
      */
     public function run_cgi()
     {
-        $this->_routing = $this->getRoute()->getResou();
-        if($this->_routing)
-        {
-            if(is_callable($this->_routing['callbacks']))
-            {
-                return call_user_func_array($this->_routing['callbacks'],func_get_args());
-            }
+        if (APP_ROUTES) {
+            $this->_routing = $this->getRoute()->resources();
 
+            if (is_callable($this->_routing['callbacks'])) {
+                return call_user_func_array($this->_routing['callbacks'], func_get_args());
+            }
             $this->getAction($this->_routing['methods']);
 
-            return $this->Instantiation();
-        }else{
-            throw new UpaddException('RouteMode error');
+        } else {
+            $set_action = Data::get(Config::get('sys@set_action'));
+            $set_function = Data::get(Config::get('sys@set_function'));
+            $action = $set_action ? $set_action : 'index';
+            $action && $action = ucfirst($action);
+            $this->_action = APP_NAME . "\\action\\{$action}Action";
+            $this->_method = $set_function ? $set_function : 'main';
         }
+        return $this->Instantiation();
     }
-
 
     /**
      * 获取当前的URL
@@ -110,66 +123,86 @@ class Request{
     }
 
     /**
+     * 获取请求类型
+     * @return mixed
+     */
+    protected function getRequestMethod()
+    {
+        return strtoupper($_SERVER['REQUEST_METHOD']);
+    }
+
+    /**
      * 设置URL哈希加密
      * @return string
      */
     public function setUrlHash()
     {
-        return sha1($this->getPathUrl());
+        return $this->getPathUrl();
     }
 
 
     /**
      * 处理路由请求参数
+     * @param $setResou
+     * @return string
      */
-    public function setRewrite($_url=null,$_resou=array())
+    public function setRewrite($setResou, $currentRequest)
     {
-        if(is_array($_resou))
-        {
-            foreach ($_resou as $k => $v)
-            {
-                if ($v['url'] != '/')
-                {
-                    //获取路由长度
-                    $_routeInt = strlen($v['url']);
-                    $_urlInt = strlen($_url);
-                    $num = $_urlInt - $_routeInt;
-                    $param = substr($_url, -$num);
-                    $key = substr($_url, 0, -strlen($param));
-                    //有参数执行
-                    if ($key && $key === $v['url'])
-                    {
-                        $val = preg_replace('/\/(\w+)\/([^\/]+)/', '\\1' . ':' . '\\2' . ',', $param);
-                        $this->setGetParam($val);
-                        return $v['url'];
-                        //没参数执行
-                    } elseif ($v['url'] === $_url)
-                    {
-                        return $v['url'];
-                    }
-                }
-            }
-        }
-    }
 
+        if ($setResou == '/') {
+            return false;
+        }
+
+        $regex = '@' . $setResou . '((?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
+        if (preg_match($regex, $currentRequest, $m))
+        {
+            $arr = explode('/', $m[1]);
+            $arr = array_associated_index($arr);
+            $arr &&  Data::accept($arr);
+            return $setResou;
+        }
+        return false;
+
+
+//        //路由长度
+//        $_routeInt = strlen($setResou);
+//        //实际长度
+//        $_urlInt = strlen($currentRequest);
+//        //计算路由长度
+//        $nowNum = ($_urlInt - $_routeInt);
+//        //重新定义访问URL
+//        $nowSetResou = substr($currentRequest, 0, -$nowNum);
+//        //获取剩余URL地址参数
+//        $param = substr($currentRequest, -$nowNum);
+//
+//        if ($nowSetResou == $setResou)
+//        {
+//            $val = preg_replace('/\/(\w+)\/([^\/]+)/', '\\1' . ':' . '\\2' . ',', $param);
+//            $this->setGetParam($val);
+//            return $nowSetResou;;
+//        } elseif ($setResou == $currentRequest)
+//        {
+//            return $setResou;
+//        }else{
+//            return false;
+//        }
+    }
 
     /**
      * 设置请求参数
-     * @param $spec
+     * @param      $spec
      * @param null $value
      * @return $this
      */
     private function setGetParam($val)
     {
-        $val = substr($val,0,-1);
-        $val = lode(',',$val);
-        $_data = array();
-        foreach($val as $k=>$v)
-        {
-            $tmpLode = lode(':',$v);
-            if(count($tmpLode) == 2){
-                list($_key,$value) = $tmpLode;
-                $_GET[$_key] = $value;
+        $val = substr($val, 0, -1);
+        $val = lode(',', $val);
+        foreach ($val as $k => $v) {
+            $tmpLode = lode(':', $v);
+            if (count($tmpLode) == 2) {
+                list($_key, $value) = $tmpLode;
+                Data::accept([$_key => $value]);
             }
         }
     }
@@ -181,8 +214,7 @@ class Request{
      */
     public function getRoute()
     {
-        if(isset($this->_work['Route']))
-        {
+        if (isset($this->_work['Route'])) {
             return $this->_work['Route'];
         }
         throw new UpaddException('请求获取路由失败');
@@ -194,26 +226,28 @@ class Request{
      */
     public function getAction($methods)
     {
-        if($_objAction = explode('@',$methods))
-        {
-            //路由设置控制器
-            $this->getRoute()->setAction($_objAction[0],$_objAction[1]);
-            return list($this->_action, $this->_method) = $_objAction;
+        try {
+            if ($_objAction = explode('@', $methods)) {
+                //路由设置控制器
+                $this->getRoute()->setAction($_objAction[0], $_objAction[1]);
+                return list($this->_action, $this->_method) = $_objAction;
+            }
+        } catch (\Exception $e) {
+            throw new UpaddException('The Action set wrong..');
         }
-        throw new UpaddException('The Action set wrong..');
     }
 
 
-
     /**
-     * 实例化
+     * Instantiation Action
+     * @return mixed
      */
     public function Instantiation()
     {
         try {
 
-            if(class_exists($this->_action))
-            {
+            if (class_exists($this->_action)) {
+                Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
                 /**
                  * 实例化控制器
                  */
@@ -226,33 +260,31 @@ class Request{
 
                 $tmpData = null;
 
-                if(is_run_evn())
-                {
-                    /**
-                     * 设置模板目录
-                     */
-                    $class->setViewAction($this->_action);
-
+                if (is_run_evn()) {
+                    $class->init();
                     $tmpData = func_get_args();
-                }else{
+                } else {
                     $tmpData = $this->_cliData;
                 }
 
-                return call_user_func_array(array($class,$method),$tmpData);
+                $result = call_user_func_array(array($class, $method), $tmpData);
 
-            }else{
-                throw new UpaddException($this->_action.',There is no Action');
+                $this->_responseType = $class->getResponseType();
+
+                return $result;
+            } else {
+                throw new UpaddException('There is no Action');
             }
 
-        } catch( UpaddException $e ) {
-            if(is_run_evn()){
+        } catch (UpaddException $e) {
+            if (is_run_evn()) {
                 p($e->getMessage());
-            }else{
+            } else {
                 print_r($e->getMessage());
             }
         }
-    }
 
+    }
 
 
 }

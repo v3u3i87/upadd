@@ -8,12 +8,12 @@ class Configuration{
 
     public $_config = array();
 
-    public $start = array();
-
     //电脑名称
     public $hostName = null;
 
     public $_evn = null;
+
+    public $_sys = [];
 
     public static $_configData = array();
 
@@ -23,11 +23,12 @@ class Configuration{
      */
     public function getConfigLoad()
     {
-        $this->start = $this->getConfLoad();
+        $this->_sys = $this->mergeConfig();
+        $this->_config['sys'] = $this->_sys;
         $this->hostName = gethostname();
-        if(array_key_exists('environment',$this->start))
+        if(array_key_exists('environment',$this->_sys))
         {
-            $evn = $this->start['environment'];
+            $evn = $this->_sys['environment'];
             $this->_evn = $this->getEvnName($evn);
         }
         $configPath = host().'config';
@@ -37,13 +38,12 @@ class Configuration{
             $config = $this->getConfigName($configPath.'/'.$this->_evn );
             if($config)
             {
-                $this->_config = $config;
+                $this->_config = array_merge($this->_config,$config);
             }
         }else{
             $this->_config['database'] = $this->getConfigName($configPath.'/'.'database.php',false);
         }
-        $this->_config['start'] = $this->start;
-        $this->_config['sys'] = $this->sysConfig();
+
         static::$_configData = $this->_config;
         return $this->_config;
     }
@@ -58,8 +58,11 @@ class Configuration{
         if($type)
         {
            return $this->soFileLoad($configPath);
-        }else{
-            if(file_exists($configPath))  return  require $configPath;
+        }
+
+        if(file_exists($configPath))
+        {
+            return (require $configPath);
         }
         return false;
     }
@@ -100,16 +103,13 @@ class Configuration{
      * 获取配置文件
      * @param string $fileNmae
      */
-    public function getConfLoad($fileNmae='')
+    public function getConfLoad($fileNmae=null)
     {
         try {
-            $file = 'start.php';
-            if($fileNmae)
-            {
-                $file = $fileNmae;
-            }
-            $file = host().'config/'.$file;
-            if(file_exists($file))
+
+            $file = host().'config/'.$fileNmae.'.php';
+
+            if(file_exists($file) && is_file($file))
             {
                 return require $file;
             }
@@ -130,8 +130,13 @@ class Configuration{
         {
             foreach ($env as $k => $v)
             {
-                if (in_array($this->hostName, $v))
+                if(is_array($v))
                 {
+                    if (in_array($this->hostName, $v))
+                    {
+                        return $k;
+                    }
+                }else{
                     return $k;
                 }
             }
@@ -139,10 +144,33 @@ class Configuration{
         return false;
     }
 
-    //系统配置文件
-    protected function sysConfig()
+    /**
+     * 获取系统配置
+     * @return mixed
+     */
+    protected function getSys()
     {
-        return require host().VENDOR.'/Public/config.php';
+        $sys = host().VENDOR.'/Public/config.php';
+        return (require $sys);
+    }
+
+    /**
+     * 获取启动配置
+     * @return mixed
+     */
+    protected function getStart()
+    {
+        $start = host().'/config/start.php';
+        return (require $start);
+    }
+
+    /**
+     * 合并配置文件
+     * @return array
+     */
+    protected function mergeConfig()
+    {
+        return array_merge($this->getStart(),$this->getSys());
     }
 
     /**

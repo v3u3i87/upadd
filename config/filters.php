@@ -1,18 +1,17 @@
 <?php
 
-Routes::filters('test',function(){
+Routes::filters('test', function () {
 
-    if(false){
+    if (false) {
         echo '嘻嘻';
-    }else{
+    } else {
         echo '抱歉,没有登陆哈哈';
     }
     echo '<br />';
 
 });
 
-
-Routes::filters('info',function(){
+Routes::filters('info', function () {
 
     echo '需要思考的实现';
     echo '<br />';

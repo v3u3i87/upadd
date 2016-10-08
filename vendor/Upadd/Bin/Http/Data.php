@@ -2,7 +2,8 @@
 
 namespace Upadd\Bin\Http;
 
-class Data{
+class Data
+{
 
     public $_setData = array();
 
@@ -14,6 +15,22 @@ class Data{
         $this->setGet();
         $this->setPost();
         $this->setFiles();
+        $this->getStream();
+        $this->setJson();
+    }
+
+    /**
+     * 设置json
+     */
+    private function setJson()
+    {
+        $json = $this->getStream();
+        if ($json) {
+            $data = json_decode($json, true);
+            if (count($data) >= 1) {
+                $this->_setData = array_merge($this->_setData, $data);
+            }
+        }
     }
 
     /**
@@ -21,9 +38,8 @@ class Data{
      */
     private function setPost()
     {
-        if(count($_POST) >= 1)
-        {
-            $this->_setData = array_merge($this->_setData,$_POST);
+        if (count($_POST) >= 1) {
+            $this->_setData = array_merge($this->_setData, $_POST);
         }
     }
 
@@ -32,9 +48,8 @@ class Data{
      */
     private function setGet()
     {
-        if(count($_GET) >= 1)
-        {
-            $this->_setData = array_merge($this->_setData,$_GET);
+        if (count($_GET) >= 1) {
+            $this->_setData = array_merge($this->_setData, $_GET);
         }
     }
 
@@ -43,10 +58,23 @@ class Data{
      */
     private function setFiles()
     {
-        if(count($_FILES) >= 1)
-        {
-            $this->_setData = array_merge($this->_setData,$_FILES);
+        if (count($_FILES) >= 1) {
+            $this->_setData = array_merge($this->_setData, $_FILES);
         }
+    }
+
+
+    /**
+     * 获取数据流
+     * @return array|string
+     */
+    private function getStream()
+    {
+        $data = file_get_contents("php://input");
+        if ($data) {
+            return $data;
+        }
+        return [];
     }
 
     /**
@@ -56,15 +84,15 @@ class Data{
      * @param null $method
      * @return mixed|null
      */
-    public function get($name=null,$default=null,$method=null)
+    public function get($name = null, $default = null, $method = null)
     {
 
-        if(isset($this->_setData[$name])){
+        if (isset($this->_setData[$name])) {
             $default = $this->_setData[$name];
         }
 
-        if(is_callable($method)){
-            return call_user_func($method,$default);
+        if (is_callable($method)) {
+            return call_user_func($method, $default);
         }
 
         return $default;
@@ -76,18 +104,17 @@ class Data{
      */
     public function all()
     {
-       return $this->_setData;
+        return $this->_setData;
     }
 
     /**
      * 接受数据
      * @param array $data
      */
-    public function accept($data=[])
+    public function accept($data = [])
     {
-        if(count($data) >= 1)
-        {
-           return ($this->_setData = array_merge($this->_setData,$data));
+        if (count($data) >= 1) {
+            return ($this->_setData = array_merge($this->_setData, $data));
         }
     }
 

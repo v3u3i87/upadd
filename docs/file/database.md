@@ -35,7 +35,7 @@ $so['status'] =  1;
 $fundsShow = $this->_fund->where($so)->find($field);
 ```
 说明:
-    * $so查询条件
+   * $so查询条件
 
 ## OR 类型查询(or_where)
 
@@ -51,7 +51,7 @@ $detail = $this->_fund->where(['status' => 1])->in_where('id', $fund_arr)->page(
 ```
 
 说明:
-    * $fund_arr为数组
+   * $fund_arr为数组
 
 ## notWhere查询(not_where)
 
@@ -60,7 +60,7 @@ $detail = $this->_fund->where(['status' => 1])->in_where('id', $fund_arr)->page(
 ```
 
 说明:
-    * $ids为数组
+   * $ids为数组
 
 ## 去重统计(count_distinct)
 
@@ -69,7 +69,7 @@ $this->_fund->where(['status' => 1])->count_distinct('id', $field);
 ```
 
 说明:
-    $field:需要返回的参数
+   * $field:需要返回的参数
 
 ## 去重返回列表(get_distinct)
 
@@ -88,8 +88,8 @@ self::where($so)->page($page)->sort('id')->get($field);
 ```
 
 说明:
-    * 此例以ID为主键排序
-    * $page表示分页个数
+   * 此例以ID为主键排序
+   * $page表示分页个数
 
 ## 模糊查询(like)
 
@@ -100,9 +100,9 @@ self::where($select)->join(['project' => 'a', 'financing' => 'b'])->like($key, $
 ```
 
 说明:
-    * $select查询条件
-    * $key 查询key
-    * $value 查询值
+   * $select查询条件
+   * $key 查询key
+   * $value 查询值
 
 ## 查询条数(limit)
 
@@ -122,8 +122,8 @@ $member['create_time'] = time();
 $up = $this->_member->add($member);
 ```
 说明:
-    * $up返回0表示添加失败
-    * 添加成功$up返回当前记录id
+   * $up返回0表示添加失败
+   * 添加成功$up返回当前记录id
 
 ## 保存数据(save)
 
@@ -157,8 +157,8 @@ $up = $this->member->update(['code' => $code], ['id' => $id]);
 ```
 
 说明:
-    * $up返回0表示更新失败
-    * 更新成功$up返回大于0
+   * $up返回0表示更新失败
+   * 更新成功$up返回大于0
 
 
 ## 删除(del)
@@ -168,8 +168,8 @@ $up = $this->member->del(['id' => $id]);
 ```
 
 说明:
-    * $up返回0表示删除失败
-    * 删除成功$up返回大于0
+   * $up返回0表示删除失败
+   * 删除成功$up返回大于0
 
 
 ## 运行sql(sql)
@@ -268,17 +268,18 @@ if ($up) {
 ```
 
 说明:
-    * begin开启事物
-    * 如果操作失败,则回滚rollback
-    * 只有所有的操作都成功之后,提交并结束commit
-    * 事务对应一个model即可
+   * begin开启事物
+   * 如果操作失败,则回滚rollback
+   * 只有所有的操作都成功之后,提交并结束commit
+   * 事务对应一个model即可
 
 
 ## 返回错误信息(error)
 
 ## 返回上一条影响行数(rowCount)
 
-
+```
+```
 
 ## 返回数据库的所有表名(showTables)
 

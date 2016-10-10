@@ -3,18 +3,10 @@
 return array(
 
     'environment' => array(
-        'local' => array('RR-ZMQ', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan'),
+        'local' => array('RR-ZMQ', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan','localhost'),
     ),
 
     'is_autoload' => false,
-
-    //命名空间辐射关系
-    'autoload' => array(
-        //控制器
-        'Up\\Action\\' => 'works/action/',
-        'Up\\Logic\\' => 'works/logic/',
-
-    ),
 
     //CLI模式下命名空间
     'cli_action_autoload' => 'console\\action\\',
@@ -62,7 +54,7 @@ return array(
     /**
      * 是否使用
      */
-    'is_use_redis' => true,
+    'is_use_redis' => false,
 
     /**
      * 是否开启
@@ -70,7 +62,7 @@ return array(
     'is_use_memcache' => false,
 
 
-    'is_swoole'=>true,
+    'is_swoole'=>false,
 
     'swoole'=>[],
 

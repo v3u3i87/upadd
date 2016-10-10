@@ -1,11 +1,10 @@
 <?php
+
 /**
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
 define('RUNTIME', microtime(true));
 define('APP_NAME', 'demo');
-// 开启调试报错
-define('APP_DEBUG', false);
 define('APP_LANG', 'zh_cn');
 define('APP_ROUTES', true);
 //是否开启 SESSION

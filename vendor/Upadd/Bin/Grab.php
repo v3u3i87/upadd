@@ -70,6 +70,15 @@ class Grab extends Debug
             'code' => $e->getCode(),
             'previous' => $e->getPrevious()
         ];
+        $body = "Exception\n";
+        $body .= "----\n";
+        $body .= "Msg:" . $error['msg'] . "\n";
+        $body .= "File:" . $error['file'] . "\n";
+        $body .= "Line:" . $error['line'] . "\n";
+        $body .= "Code:" . $error['code'] . "\n";
+        $body .= "Previous:" . $error['previous'] . "\n";
+        $body .= "----\n";
+        Log::run($body);
         if (Config::get('tag@debug'))
         {
             self::printError($error);
@@ -86,16 +95,22 @@ class Grab extends Debug
          * type,message,fileline
          */
         $error = error_get_last();
-        self::printError($error);
-        /**
-         * 检测是否有错误
-         */
-        if (is_null($error) === false) {
-            //待处理全局致命类型错误
-            if (in_array($error['type'], static::$errorType)) {
 
+        if($error)
+        {
+            /**
+             * 检测是否有错误
+             */
+            if (is_null($error) === false)
+            {
+                //待处理全局致命类型错误
+                if (in_array($error['type'], static::$errorType)) {
+
+                }
             }
+            self::printError($error);
         }
+
         $endtime = "Date:" . date('Y/m/d H:i:s') . "\n";
         $time = (microtime(true)) - RUNTIME;
         $endtime .= 'End Run Time consuming ' . round($time, 3) . ' second';
@@ -109,7 +124,8 @@ class Grab extends Debug
      */
     private static function printError($error = [])
     {
-        if ($error) {
+        if ($error)
+        {
             if (is_run_evn()) {
                 echo '<pre>';
                 print_r($error);

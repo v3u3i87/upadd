@@ -17,7 +17,6 @@ use Upadd\Bin\UpaddException;
 class ProcessingSql
 {
 
-
     /**
      * 表名
      *
@@ -42,58 +41,58 @@ class ProcessingSql
      * 外部参数
      * @var array
      */
-    public $parameter = array();
+    protected $parameter = array();
 
     /**
      * where判断语句
      * @var null
      */
-    public $_where = null;
+    protected $_where = null;
 
     /**
      * 字段
      * @var null
      */
-    public $_field = null;
+    protected $_field = null;
 
     /**
      * 设置分页数
      * @var null
      */
-    public $_limit = null;
+    protected $_limit = null;
 
     /**
      * 排序
      * @var null
      */
-    public $_sort = null;
+    protected $_sort = null;
 
     /**
      * 搜索
      * @var null
      */
-    public $_like = null;
+    protected $_like = null;
 
 
-    public $_or_where = null;
+    protected $_or_where = null;
 
-    public $_in_where = null;
+    protected $_in_where = null;
 
-    public $_not_in_where = null;
+    protected $_not_in_where = null;
 
     /**
      * 去重
      * @var null
      */
-    public $_distinct = null;
+    protected $_distinct = null;
 
     /**
      * 多表
      * @var
      */
-    public $_join = null;
+    protected $_join = null;
 
-    public $_mergeJoin = null;
+    protected $_mergeJoin = null;
 
     /**
      * 查询字段

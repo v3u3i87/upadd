@@ -19,25 +19,94 @@ class Query extends ProcessingSql
     private $_db;
 
     /**
+     * DB信息
+     * @var
+     */
+    protected $_dbInfo;
+
+    /**
+     * 默认库
+     * @var string
+     */
+    private $use = 'local';
+
+    /**
      * 分页参数
      * @var array
      */
-    public $_pageData = array();
+    protected $_pageData = array();
+
+
+//    /**
+//     * Query constructor.
+//     * @param Db $db
+//     * @param    $_table
+//     * @param    $_primaryKey
+//     * @param    $db_prefix
+//     */
+//    public function __construct(Db $db, $_table, $_primaryKey, $db_prefix)
+//    {
+//        $this->_db = $db;
+//        $this->_table = $_table;
+//        $this->_primaryKey = $_primaryKey;
+//        $this->db_prefix = $db_prefix;
+//    }
+
+    /**
+     * 派发链接DB对象
+     */
+    public function distribution()
+    {
+        if (conf('database@many') === true)
+        {
+            foreach ($this->_dbInfo as $key => $value)
+            {
+                if ($this->use === $value['use'])
+                {
+                    $this->_dbInfo = $value;
+                    continue;
+                }
+            }
+        }
+    }
 
 
     /**
-     * Query constructor.
-     * @param Db $db
-     * @param    $_table
-     * @param    $_primaryKey
-     * @param    $db_prefix
+     * 链接数据库
      */
-    public function __construct(Db $db, $_table, $_primaryKey, $db_prefix)
+    protected function connection()
     {
-        $this->_db = $db;
-        $this->_table = $_table;
-        $this->_primaryKey = $_primaryKey;
-        $this->db_prefix = $db_prefix;
+        $this->db_prefix = $this->_dbInfo ['prefix'];
+        /**
+         * 设置表名
+         */
+        $this->setTableName($this->_table);
+
+        $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($this->_dbInfo);
+        p($this->_db);
+//        $this->_query = new Query($this->_db, $this->getTableName(), $this->_primaryKey, $this->db_prefix);
+    }
+
+
+    /**
+     * 设置表名称
+     * @param $table
+     */
+    private function setTableName($table)
+    {
+        if ($this->_table !== $this->db_prefix . $table)
+        {
+            $this->_table = $this->db_prefix . $table;
+        }
+    }
+
+    /**
+     * 获取表名
+     * @return unknown
+     */
+    protected function getTableName()
+    {
+        return $this->_table;
     }
 
     /**
@@ -58,7 +127,8 @@ class Query extends ProcessingSql
         return $_data;
     }
 
-    public function one($field = null)
+
+    protected function one($field = null)
     {
         if ($field) {
             $data = $this->find();
@@ -69,13 +139,12 @@ class Query extends ProcessingSql
         return false;
     }
 
-
     /**
      * 单行查询
      * @param null $_field
      * @return mixed
      */
-    public function find($_field = null)
+    protected function find($_field = null)
     {
         $this->joint_field($_field);
         $this->_db->_sql = 'SELECT ' . $this->mergeSqlLogic() . ';';
@@ -88,9 +157,9 @@ class Query extends ProcessingSql
      * 返回数据库所有的表名
      * @return mixed
      */
-    public function showTables()
+    protected function getTableAll()
     {
-        $this->_db->_sql = 'show tables';
+        $this->_db->_sql = 'Show Tables';
         $tmp = $this->_db->select();
         $list = [];
         if (count($tmp) > 1) {
@@ -106,7 +175,7 @@ class Query extends ProcessingSql
      * @param null $_field
      * @return mixed
      */
-    public function first($value, $_field = null)
+    protected function first($value, $_field = null)
     {
         return $this->where(array($this->_primaryKey => $value))->find($_field);
     }
@@ -116,7 +185,7 @@ class Query extends ProcessingSql
      * @param null $_table
      * @return $this
      */
-    public function join($_table = array())
+    protected function join($_table = array())
     {
         if (empty($_table)) {
             return false;
@@ -135,7 +204,7 @@ class Query extends ProcessingSql
      * @param data $_where as array|null|string
      * @return $this
      */
-    public function where($_where = null)
+    protected function where($_where = null)
     {
         $this->joint_where($_where);
         return $this;
@@ -144,13 +213,14 @@ class Query extends ProcessingSql
 
     /**
      * OR 类型查询
-     * @param array ...$or_where
+     * @param array $or_where
      * @return $this
      * @throws UpaddException
      */
-    public function or_where(...$or_where)
+    protected function or_where($or_where='')
     {
-        if (empty($or_where) || count($or_where) < 2) {
+        if (empty($or_where) || count($or_where) < 2)
+        {
             throw new UpaddException('or_where 类型,需要传至少两个参数');
         }
 
@@ -183,7 +253,7 @@ class Query extends ProcessingSql
      * @param string $type
      * @return $this
      */
-    public function in_where($key, $data = array())
+    protected function in_where($key, $data = array())
     {
         if (empty($key) && empty($data)) {
             throw new UpaddException('in_where 类型,需传key或data');
@@ -207,7 +277,7 @@ class Query extends ProcessingSql
      * @return $this
      * @throws UpaddException
      */
-    public function not_where($key = null, $data = null)
+    protected function not_where($key = null, $data = null)
     {
         if (empty($key) && empty($data)) {
             throw new UpaddException('not_where类型:传key或data');
@@ -229,7 +299,7 @@ class Query extends ProcessingSql
      * @param $key
      * @return $this
      */
-    public function count_distinct($key, $field = null)
+    protected function count_distinct($key, $field = null)
     {
         if ($key) {
             $tmp = null;
@@ -251,7 +321,7 @@ class Query extends ProcessingSql
      * @param $key
      * @return $this
      */
-    public function get_distinct($key, $field = null)
+    protected function get_distinct($key, $field = null)
     {
         if ($key) {
             $tmp = null;
@@ -279,7 +349,7 @@ class Query extends ProcessingSql
      * @param unknown $sort
      * @return string
      */
-    public function sort($sort, $by = true)
+    protected function sort($sort, $by = true)
     {
         if ($by) {
             $this->_sort = " ORDER BY {$sort} DESC";
@@ -296,7 +366,7 @@ class Query extends ProcessingSql
      * @param string  $_field
      * @return \Upadd\Frame\Model
      */
-    public function like($key, $_field = null)
+    protected function like($key, $_field = null)
     {
         $this->_like = $key . ' LIKE ' . " '{$_field}' ";
         return $this;
@@ -308,7 +378,7 @@ class Query extends ProcessingSql
      * @param int $pagesize
      * @return $this
      */
-    public function page($pagesize = 10)
+    protected function page($pagesize = 10)
     {
         //查询条件
         $getTotal = $this->getTotal();
@@ -324,7 +394,7 @@ class Query extends ProcessingSql
      * @param null $param in array,string
      * @return $this
      */
-    public function limit($param = null)
+    protected function limit($param = null)
     {
         $tmp = 'LIMIT ';
         if (is_array($param)) {
@@ -343,7 +413,7 @@ class Query extends ProcessingSql
      * 新增
      * @param array $_data
      */
-    public function add($_data)
+    protected function add($_data)
     {
         $field = array();
         $value = array();
@@ -365,7 +435,7 @@ class Query extends ProcessingSql
      * @param unknown $_data
      * @param unknown $where
      */
-    public function save($_data = array(), $where = null)
+    protected function save($_data = array(), $where = null)
     {
         if (!empty($this->_where) && !empty($_data)) {
             return $this->update($_data, $this->_where);
@@ -388,7 +458,7 @@ class Query extends ProcessingSql
      * @param $where
      * @return bool
      */
-    public function update($_data = [], $where = null)
+    protected function update($_data = [], $where = null)
     {
         if (!is_array($_data)) {
             return false;
@@ -409,7 +479,7 @@ class Query extends ProcessingSql
      * @param array $all
      * @return array|bool
      */
-    public function addAll($all = array())
+    protected function addAll($all = array())
     {
         if ($all) {
             $keyID = array();
@@ -425,7 +495,7 @@ class Query extends ProcessingSql
      * 删除信息
      * @param string $where
      */
-    public function del($where = null)
+    protected function del($where = null)
     {
         $_where = $this->joint_where($where);
         $this->_db->_sql = " DELETE FROM {$this->_table} WHERE {$_where};";
@@ -438,7 +508,7 @@ class Query extends ProcessingSql
      * @param null $sql
      * @return mixed
      */
-    public function sql($sql = null)
+    protected function sql($sql = null)
     {
         $this->_db->_sql = $sql;
         return $this->_db;
@@ -448,7 +518,7 @@ class Query extends ProcessingSql
     /**
      * 返回当前新增ID
      */
-    public function getId()
+    protected function getId()
     {
         return $this->_db->getId();
     }
@@ -456,7 +526,7 @@ class Query extends ProcessingSql
     /**
      * 获取表字段
      */
-    public function getField()
+    protected function getField()
     {
         $this->_db->_sql = "SHOW COLUMNS FROM {$this->_table};";
         return $this->_db->getField();
@@ -465,7 +535,7 @@ class Query extends ProcessingSql
     /**
      * 获取下条自增ID
      */
-    public function getNextId()
+    protected function getNextId()
     {
         $this->_db->_sql = "SHOW TABLE STATUS LIKE `{$this->_table}`;";
         return $this->_db->getNextId();
@@ -476,7 +546,7 @@ class Query extends ProcessingSql
      * 锁表 Mysql in MyISAM
      * @param number $type as true in 1 WRITE  && false in 0 READ
      */
-    public function lock($type = 1)
+    protected function lock($type = 1)
     {
         if ($type) {
             $this->_db->_sql = "LOCK TABLES `{$this->_table}` WRITE;";
@@ -489,7 +559,7 @@ class Query extends ProcessingSql
     /**
      * 解锁 Mysql in MyISAM
      */
-    public function unlock()
+    protected function unlock()
     {
         $this->_db->_sql = " UNLOCK TABLES;";
         return $this->_db->sql();
@@ -498,7 +568,7 @@ class Query extends ProcessingSql
     /**
      * 获取当前查询条件表总数
      */
-    public function getTotal()
+    protected function getTotal()
     {
         $this->joint_field('COUNT(*) AS `conut` ');
         $this->_db->_sql = 'SELECT ' . $this->mergeSqlLogic() . ';';
@@ -509,7 +579,7 @@ class Query extends ProcessingSql
      * getTotal别名
      * @return mixed
      */
-    public function count()
+    protected function count()
     {
         return $this->getTotal();
     }
@@ -517,18 +587,17 @@ class Query extends ProcessingSql
     /**
      * @return array
      */
-    public function getParameter()
+    protected function getParameter()
     {
         return $this->parameter;
     }
-
 
     /**
      * 打印当前运行的SQL
      * @param int $type
      * @return mixed
      */
-    public function p($status = true)
+    protected function p($status = true)
     {
         return $this->_db->p($status);
     }
@@ -538,7 +607,7 @@ class Query extends ProcessingSql
      * 开启事务
      * @return mixed
      */
-    public function begin()
+    protected function begin()
     {
         return $this->_db->begin();
     }
@@ -547,7 +616,7 @@ class Query extends ProcessingSql
      * 提交事务并结束
      * @return mixed
      */
-    public function commit()
+    protected function commit()
     {
         return $this->_db->commit();
     }
@@ -556,7 +625,7 @@ class Query extends ProcessingSql
      * 回滚事务
      * @return mixed
      */
-    public function rollback()
+    protected function rollback()
     {
         return $this->_db->rollBack();
     }
@@ -565,7 +634,7 @@ class Query extends ProcessingSql
      * 返回错误信息
      * @return mixed
      */
-    public function error()
+    protected function error()
     {
         return $this->_db->error();
     }
@@ -574,8 +643,11 @@ class Query extends ProcessingSql
      * 返回上一条影响行数
      * @return mixed
      */
-    public function rowCount()
+    protected function rowCount()
     {
         return $this->_db->rowCount();
     }
+
+
+
 }

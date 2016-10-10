@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zmq
- * Date: 2015/4/10
- * Time: 17:35.
- */
+
 
 return array(
 
@@ -18,5 +13,11 @@ return array(
         'charset' => 'UTF8',
         'prefix' => 'up_',
     ),
+
+
+    /**
+     * 单库为 false
+     */
+    'many'=>false,
 
 );

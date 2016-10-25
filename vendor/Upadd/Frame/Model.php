@@ -63,6 +63,7 @@ class Model extends Query
     public function __call($name, $parameters)
     {
         try {
+
             return call_user_func_array(array($this, $name), $parameters);
         }catch(\Exception $e){
             p($e);

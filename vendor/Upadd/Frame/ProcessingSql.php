@@ -41,7 +41,7 @@ class ProcessingSql
      * 外部参数
      * @var array
      */
-    protected $parameter = array();
+    public $parameter = array();
 
     /**
      * where判断语句

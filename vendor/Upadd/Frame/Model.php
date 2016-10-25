@@ -3,12 +3,13 @@
 namespace Upadd\Frame;
 
 use Upadd\Frame\Query;
+use Upadd\Frame\Multi;
 //use Upadd\Bin\Tool\Log;
 //use Upadd\Bin\UpaddException;
 
-class Model extends Query
+class Model
 {
-
+    public $Query="";
     /**
      * 初始化
      * Model constructor.
@@ -16,10 +17,12 @@ class Model extends Query
      */
     public function __construct($dbInfo = null)
     {
+        $this->Query=new Query();
+        $this->Query->_table=$this->_table;
         if ($dbInfo !== null) {
-            $this->_dbInfo = $dbInfo;
+            $this->Query->_dbInfo=$dbInfo;
         } else {
-            $this->_dbInfo = conf('database@db');
+            $this->Query->_dbInfo=conf('database@db');
             //派发数据库
             $this->distribution();
         }
@@ -63,7 +66,7 @@ class Model extends Query
     public function __call($name, $parameters)
     {
         try {
-            return call_user_func_array(array($this, $name), $parameters);
+            return call_user_func_array(array($this->Query, $name), $parameters);
         }catch(\Exception $e){
             p($e);
         }

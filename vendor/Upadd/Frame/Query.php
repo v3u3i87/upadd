@@ -16,7 +16,7 @@ class Query extends ProcessingSql
      *
      * @var unknown
      */
-    private $_db;
+    protected $_db;
 
     /**
      * DB信息
@@ -26,7 +26,7 @@ class Query extends ProcessingSql
 
     /**
      * 默认库
-     * @var string
+     * @var TestAction|WebApplication|ConsoleApplication the application instance
      */
     private $use = 'local';
 
@@ -35,7 +35,6 @@ class Query extends ProcessingSql
      * @var array
      */
     protected $_pageData = array();
-
 
 //    /**
 //     * Query constructor.
@@ -70,7 +69,6 @@ class Query extends ProcessingSql
         }
     }
 
-
     /**
      * 链接数据库
      */
@@ -81,9 +79,7 @@ class Query extends ProcessingSql
          * 设置表名
          */
         $this->setTableName($this->_table);
-
         $this->_db = new \Upadd\Bin\Db\LinkPdoMysql($this->_dbInfo);
-        p($this->_db);
 //        $this->_query = new Query($this->_db, $this->getTableName(), $this->_primaryKey, $this->db_prefix);
     }
 
@@ -648,6 +644,14 @@ class Query extends ProcessingSql
         return $this->_db->rowCount();
     }
 
+    public function __call($name, $parameters)
+    {
+        return call_user_func_array([$this, $name], $parameters);
+    }
 
+    function __set($property_name, $value)
+    {
+        $this->$property_name = $value;
+    }
 
 }

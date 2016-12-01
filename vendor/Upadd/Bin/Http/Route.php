@@ -13,7 +13,6 @@
 namespace Upadd\Bin\Http;
 
 use Config;
-use Upadd\Bin\Cache\CacheRoute;
 use Upadd\Bin\UpaddException;
 
 class Route extends Request

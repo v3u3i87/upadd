@@ -13,9 +13,9 @@ namespace Upadd\Bin\Http;
 
 use Config;
 use Data;
-use extend\Tools\Log;
-use Upadd\Bin\Tool\View;
 use Upadd\Bin\UpaddException;
+use Upadd\Bin\View\Error;
+
 
 class Request
 {
@@ -78,9 +78,8 @@ class Request
     public function run_cli()
     {
         $cli_action_autoload = Config::get('start@cli_action_autoload');
-        if (array_key_exists('u', $this->_cliData) && array_key_exists('p', $this->_cliData))
-        {
-            $this->getAction($cli_action_autoload .ucfirst($this->_cliData['u']) . 'Action' . '@' . $this->_cliData['p']);
+        if (array_key_exists('u', $this->_cliData) && array_key_exists('p', $this->_cliData)) {
+            $this->getAction($cli_action_autoload . ucfirst($this->_cliData['u']) . 'Action' . '@' . $this->_cliData['p']);
         }
         unset($this->_cliData['u']);
         unset($this->_cliData['p']);
@@ -94,10 +93,11 @@ class Request
      */
     public function run_cgi()
     {
-        if (APP_ROUTES) {
+        if (APP_ROUTES)
+        {
             $this->_routing = $this->getRoute()->resources();
-
-            if (is_callable($this->_routing['callbacks'])) {
+            if (is_callable($this->_routing['callbacks']))
+            {
                 return call_user_func_array($this->_routing['callbacks'], func_get_args());
             }
             $this->getAction($this->_routing['methods']);
@@ -154,38 +154,14 @@ class Request
         }
 
         $regex = '@' . $setResou . '((?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
-        if (preg_match($regex, $currentRequest, $m))
-        {
+        if (preg_match($regex, $currentRequest, $m)) {
             $arr = explode('/', $m[1]);
             $arr = array_associated_index($arr);
-            $arr &&  Data::accept($arr);
+            $arr && Data::accept($arr);
             return $setResou;
         }
         return false;
 
-
-//        //路由长度
-//        $_routeInt = strlen($setResou);
-//        //实际长度
-//        $_urlInt = strlen($currentRequest);
-//        //计算路由长度
-//        $nowNum = ($_urlInt - $_routeInt);
-//        //重新定义访问URL
-//        $nowSetResou = substr($currentRequest, 0, -$nowNum);
-//        //获取剩余URL地址参数
-//        $param = substr($currentRequest, -$nowNum);
-//
-//        if ($nowSetResou == $setResou)
-//        {
-//            $val = preg_replace('/\/(\w+)\/([^\/]+)/', '\\1' . ':' . '\\2' . ',', $param);
-//            $this->setGetParam($val);
-//            return $nowSetResou;;
-//        } elseif ($setResou == $currentRequest)
-//        {
-//            return $setResou;
-//        }else{
-//            return false;
-//        }
     }
 
     /**
@@ -224,17 +200,16 @@ class Request
      * 获取控制器
      * @throws UpaddException
      */
-    public function getAction($methods)
+    public function getAction($methods=null)
     {
-        try {
-            if ($_objAction = explode('@', $methods)) {
-                //路由设置控制器
-                $this->getRoute()->setAction($_objAction[0], $_objAction[1]);
-                return list($this->_action, $this->_method) = $_objAction;
-            }
-        } catch (\Exception $e) {
-            throw new UpaddException('The Action set wrong..');
+        if ($methods)
+        {
+            $_objAction = explode('@', $methods);
+            //路由设置控制器
+            $this->getRoute()->setAction($_objAction[0], $_objAction[1]);
+            return list($this->_action, $this->_method) = $_objAction;
         }
+        throw new UpaddException('The Action set wrong..');
     }
 
 
@@ -245,8 +220,8 @@ class Request
     public function Instantiation()
     {
         try {
-
-            if (class_exists($this->_action)) {
+            if (class_exists($this->_action))
+            {
                 Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
                 /**
                  * 实例化控制器
@@ -276,11 +251,18 @@ class Request
                 throw new UpaddException('There is no Action');
             }
 
-        } catch (UpaddException $e) {
-            if (is_run_evn()) {
-                p($e->getMessage());
+        } catch (UpaddException $e)
+        {
+            if (is_run_evn())
+            {
+                if(Config::get('tag@is_http_url_error'))
+                {
+                    Error::html();
+                }else{
+                    throw new UpaddException($e->getMessage());
+                }
             } else {
-                print_r($e->getMessage());
+                throw new UpaddException($e->getMessage());
             }
         }
 

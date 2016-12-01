@@ -101,6 +101,7 @@ class Templates {
         }else{
             $this->_htmlFile = $this->_path.'/'.$file;
         }
+
         if(!file_exists($this->_htmlFile))
         {
             throw new UpaddException('您的'.$file.'模板文件不存在!');
@@ -166,7 +167,7 @@ class Templates {
 	 */
 	public function val($key, $value)
     {
-		if (isset ( $key ) && ! empty ( $key ))
+		if (isset ( $key ) && !empty ( $key ))
         {
 			$this->_keyArr [$key] = $value;
 		} else {
@@ -227,6 +228,7 @@ class Templates {
 	 */
 	public function bound($file = '', $cache = false)
     {
+        //设置控制器目录
         $this->setAutoPath();
 
 		if ($cache)
@@ -234,6 +236,7 @@ class Templates {
             Config::get('sys@is_html_cache') ? ob_start () : null;
 		}
         extract ( $this->_keyArr );
+
         $this->isHtmlFile($file);
 
         // 赋值和判断读取

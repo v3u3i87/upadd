@@ -22,7 +22,7 @@ class Action
      * 模板对象
      * @var
      */
-    private $_templates;
+    protected $_templates;
 
     /**
      * 响应返回对象

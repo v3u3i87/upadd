@@ -1,7 +1,9 @@
 <?php
 namespace Upadd\Bin\Response;
 
-class Json extends Run
+use Upadd\Bin\Response\Run as ResponseRun;
+
+class Json extends ResponseRun
 {
 
     public function execute()

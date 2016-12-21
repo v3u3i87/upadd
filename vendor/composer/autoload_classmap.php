@@ -44,6 +44,7 @@ return array(
     'Upadd\\Bin\\Tool\\Verify' => $vendorDir . '/Upadd/Bin/Tool/Verify.php',
     'Upadd\\Bin\\Tool\\View' => $vendorDir . '/Upadd/Bin/Tool/View.php',
     'Upadd\\Bin\\UpaddException' => $vendorDir . '/Upadd/Bin/UpaddException.php',
+    'Upadd\\Bin\\View\\Error' => $vendorDir . '/Upadd/Bin/View/Error.php',
     'Upadd\\Bin\\View\\Tag' => $vendorDir . '/Upadd/Bin/View/Tag.php',
     'Upadd\\Bin\\View\\Templates' => $vendorDir . '/Upadd/Bin/View/Templates.php',
     'Upadd\\Frame\\Action' => $vendorDir . '/Upadd/Frame/Action.php',
@@ -51,4 +52,5 @@ return array(
     'Upadd\\Frame\\Model' => $vendorDir . '/Upadd/Frame/Model.php',
     'Upadd\\Frame\\ProcessingSql' => $vendorDir . '/Upadd/Frame/ProcessingSql.php',
     'Upadd\\Frame\\Query' => $vendorDir . '/Upadd/Frame/Query.php',
+    'Upadd\\Swoole\\Server' => $vendorDir . '/Upadd/Swoole/Server.php',
 );

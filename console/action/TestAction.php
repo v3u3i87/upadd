@@ -2,22 +2,43 @@
 
 namespace console\action;
 
+use console\bin\TestServer;
+use Swoole\Client;
+
 class TestAction extends \Upadd\Frame\Action
 {
+
+    public $client = null;
+
     public function main()
     {
-        return 'hi, welcome to use Upadd';
+        $test = new TestServer();
+        return $test->start();
     }
 
-    public function xml()
+
+    public function info()
     {
-        $this->setResponseType('xml');
+        $this->client = new Client(SWOOLE_SOCK_TCP);
+        if( !$this->client->connect("127.0.0.1", 9988,-1) )
+        {
+            echo "Error: {$this->client->errMsg}[{$this->client->errCode}]\n";
+        }
 
-        return ['info' => 'abc', 'key' => 1, 'to' => 11];
+        $this->client->send("wwewewewe");
+        $this->client->send("\r\n\r\n");
+        $message = $this->client->recv();
+        print_r($message);
+        if($message){
+            $this->client->close();
+            return true;
+        }else{
+            $this->client->close();
+            return false;
+        }
+
     }
 
-    public function json()
-    {
-        return ['info' => 'abc', 'key' => 1, 'to' => 11];
-    }
+
+
 }

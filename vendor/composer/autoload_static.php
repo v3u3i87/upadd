@@ -45,6 +45,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Tool\\Verify' => __DIR__ . '/..' . '/Upadd/Bin/Tool/Verify.php',
         'Upadd\\Bin\\Tool\\View' => __DIR__ . '/..' . '/Upadd/Bin/Tool/View.php',
         'Upadd\\Bin\\UpaddException' => __DIR__ . '/..' . '/Upadd/Bin/UpaddException.php',
+        'Upadd\\Bin\\View\\Error' => __DIR__ . '/..' . '/Upadd/Bin/View/Error.php',
         'Upadd\\Bin\\View\\Tag' => __DIR__ . '/..' . '/Upadd/Bin/View/Tag.php',
         'Upadd\\Bin\\View\\Templates' => __DIR__ . '/..' . '/Upadd/Bin/View/Templates.php',
         'Upadd\\Frame\\Action' => __DIR__ . '/..' . '/Upadd/Frame/Action.php',
@@ -52,6 +53,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Frame\\Model' => __DIR__ . '/..' . '/Upadd/Frame/Model.php',
         'Upadd\\Frame\\ProcessingSql' => __DIR__ . '/..' . '/Upadd/Frame/ProcessingSql.php',
         'Upadd\\Frame\\Query' => __DIR__ . '/..' . '/Upadd/Frame/Query.php',
+        'Upadd\\Swoole\\Server' => __DIR__ . '/..' . '/Upadd/Swoole/Server.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

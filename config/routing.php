@@ -1,6 +1,8 @@
 <?php
 
-Routes::get('/', 'demo\action\HomeAction@main');
+Routes::get('/', function(){
+    echo 'hi..';
+});
 
 Routes::group(array('prefix' => '/user'), function ()
 {

@@ -52,5 +52,8 @@ return array(
     'Upadd\\Frame\\Model' => $vendorDir . '/Upadd/Frame/Model.php',
     'Upadd\\Frame\\ProcessingSql' => $vendorDir . '/Upadd/Frame/ProcessingSql.php',
     'Upadd\\Frame\\Query' => $vendorDir . '/Upadd/Frame/Query.php',
+    'Upadd\\Swoole\\HttpServer' => $vendorDir . '/Upadd/Swoole/HttpServer.php',
     'Upadd\\Swoole\\Server' => $vendorDir . '/Upadd/Swoole/Server.php',
+    'Upadd\\Swoole\\TcpServer' => $vendorDir . '/Upadd/Swoole/TcpServer.php',
+    'Upadd\\Swoole\\WebSocketServer' => $vendorDir . '/Upadd/Swoole/WebSocketServer.php',
 );

@@ -20,7 +20,6 @@ class Loader
 
     public static function Run()
     {
-
         self::is_create_data_dir();
         spl_autoload_register(function ($className) {
 
@@ -36,15 +35,15 @@ class Loader
 
     }
 
-
     /**
      * 判断是否创建
      */
-    public static function is_create_data_dir()
+    private static function is_create_data_dir()
     {
         header('X-Powered-By:' . Config::get('sys@upadd_version'));
         $is_data = true;
-        if ($is_data) {
+        if ($is_data)
+        {
             self::is_create_confg_dir();
             $_data_dir = Config::get('sys@data_dir');
             // 数据资源文件夹

@@ -65,4 +65,11 @@ return array(
     'is_use_memcache' => false,
 
 
+    /**
+     * true = 开启
+     * false = 关闭
+     */
+    'is_swoole'=>true,
+
+
 );

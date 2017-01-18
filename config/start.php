@@ -6,6 +6,9 @@ return array(
         'local' => array('RR-ZMQ', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan','localhost'),
     ),
 
+    /**
+     * 判断是否自定义加载
+     */
     'is_autoload' => false,
 
     //CLI模式下命名空间
@@ -19,7 +22,7 @@ return array(
     /*
      * 自定义设置别名
      */
-    'alias' => array('main' => 'extend\admin\Main'),
+    'alias' => [],
 
     /*
      * 排除配置文件以外的定义文件
@@ -61,9 +64,5 @@ return array(
      */
     'is_use_memcache' => false,
 
-
-    'is_swoole'=>false,
-
-    'swoole'=>[],
 
 );

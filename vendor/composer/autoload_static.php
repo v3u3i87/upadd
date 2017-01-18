@@ -53,7 +53,10 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Frame\\Model' => __DIR__ . '/..' . '/Upadd/Frame/Model.php',
         'Upadd\\Frame\\ProcessingSql' => __DIR__ . '/..' . '/Upadd/Frame/ProcessingSql.php',
         'Upadd\\Frame\\Query' => __DIR__ . '/..' . '/Upadd/Frame/Query.php',
+        'Upadd\\Swoole\\HttpServer' => __DIR__ . '/..' . '/Upadd/Swoole/HttpServer.php',
         'Upadd\\Swoole\\Server' => __DIR__ . '/..' . '/Upadd/Swoole/Server.php',
+        'Upadd\\Swoole\\TcpServer' => __DIR__ . '/..' . '/Upadd/Swoole/TcpServer.php',
+        'Upadd\\Swoole\\WebSocketServer' => __DIR__ . '/..' . '/Upadd/Swoole/WebSocketServer.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

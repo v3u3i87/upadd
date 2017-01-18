@@ -25,8 +25,8 @@ abstract class TcpServer extends Server{
         {
             $this->tcpConfig = Config::get('swoole@tcpParam');
             $this->tcpConfig['daemonize'] = Config::get('swoole@daemonize');
-            $this->_obj->set($this->tcpConfig);
-            $this->_obj->start();
+            $this->tcpServer->set($this->tcpConfig);
+            $this->tcpServer->start();
         }else{
             throw new UpaddException('swoole tcp server There is no open');
         }

@@ -2,18 +2,24 @@
 
 namespace console\action;
 
-use console\bin\TestServer;
+use console\swoole\TestHtppServer;
+use console\swoole\TestServer;
 
 class TestAction extends \Upadd\Frame\Action
 {
 
     public $client = null;
 
-    public function main()
+    public function tcp()
     {
         $test = new TestServer();
-        $test->start();
-//        return $test->start();
+        return $test->start();
+    }
+
+
+    public function http(){
+        $test = new TestHtppServer('0.0.0.0',9988,8080);
+        return $test->start();
     }
 
 

@@ -9,14 +9,13 @@ namespace Upadd\Swoole;
  * Name:
  */
 use Config;
-
 use Upadd\Bin\UpaddException;
 
 abstract class HttpServer extends Server{
 
 
     /**
-     * 开启TCP服务
+     * 开启http服务
      * @throws UpaddException
      */
     public function start()
@@ -32,6 +31,37 @@ abstract class HttpServer extends Server{
         }
     }
 
+//    protected function request($request)
+//    {
+//        if (isset($request->post)) {
+//            $params = $request->post;
+//        }
+//        $url = trim($request->server["request_uri"]);
+//    }
 
+
+    protected function response($request,$response)
+    {
+        $url = trim($request->server["request_uri"]);
+        $params = [];
+        if (isset($request->get))
+        {
+            $params = $request->get;
+        }
+
+        if (isset($request->post))
+        {
+            if (count($params) >= 1)
+            {
+                $params = array_merge($params, $request->post);
+            }else{
+                $params = $request->post;
+            }
+        }
+
+//        Data::swooleData($params);
+        $response->status(200);
+        return $response->end('test----');
+    }
 
 }

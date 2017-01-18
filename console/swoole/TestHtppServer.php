@@ -1,16 +1,16 @@
 <?php
-namespace console\bin;
+namespace console\swoole;
 
 use Config;
 
-use Upadd\Swoole\TcpServer;
+use Upadd\Swoole\HttpServer;
 
 /**
- * 推送服务
- * @Cli php console.php --u=test --p=main
+ * 测试
+ * @Cli php console.php --u=test --p=http
  * @package console\swoole\server
  */
-class TestServer extends TcpServer
+class TestHtppServer extends HttpServer
 {
 
     /**
@@ -33,9 +33,6 @@ class TestServer extends TcpServer
      */
     protected function doWork($param=[],$client=[])
     {
-        echo "-----------------\r\n";
-        print_r([$param,$client]);
-        echo "================end=============\r\n";
         return $this->toFinish($param['fd'],json($param));
     }
 

@@ -23,8 +23,8 @@ class Alias
             'Log'=>'Upadd\Bin\Package\Log',
             'Data'=>'Upadd\Bin\Package\Data',
             'Model'=>'Upadd\Frame\Model',
-            'Cache'=>'Upadd\Bin\Cache',
-            'Async'=>'\Upadd\Bin\Async',
+//            'Cache'=>'Upadd\Bin\Cache',
+//            'Async'=>'\Upadd\Bin\Async',
     ];
 
     public function __construct(array $config)

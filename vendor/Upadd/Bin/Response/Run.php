@@ -55,7 +55,7 @@ class Run
      * 输出内容
      * @var null
      */
-    protected $content;
+    public $content;
 
     /**
      * 响应类型
@@ -151,8 +151,7 @@ class Run
                 header($name . ':' . $val);
             }
         }
-        echo $this->content;
-//        function_exists('fastcgi_finish_request') && fastcgi_finish_request();
+        return $this->content;
     }
 
 
@@ -177,7 +176,7 @@ class Run
      * @auth sys
      * @time 2016-7-20
      */
-    public function set_response_code($code)
+    public function set_response_code($code = 200)
     {
         $this->code = $code;
     }

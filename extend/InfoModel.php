@@ -8,12 +8,11 @@ use Model;
  * @package extend
  * test sql
 CREATE TABLE `up_info` (
-`id` int(70) unsigned NOT NULL,
-`name` char(50) NOT NULL,
-`code` varchar(6) NOT NULL COMMENT '区号',
-PRIMARY KEY (`id`),
-KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8
+`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+`name` varchar(255) DEFAULT NULL COMMENT 'name',
+`code` varchar(255) DEFAULT NULL COMMENT 'code',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='信息'
  *
  */
 class InfoModel extends Model

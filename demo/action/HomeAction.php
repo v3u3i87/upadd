@@ -11,8 +11,6 @@
 namespace demo\action;
 
 use Data;
-use Cache;
-use Async;
 use extend\InfoModel;
 
 class HomeAction extends \Upadd\Frame\Action
@@ -24,8 +22,11 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-        p(InfoModel::get());
+        InfoModel::add(['code'=>11212,'name'=>time()]);
+        return InfoModel::get();
     }
+
+
 
     protected function asyncGet()
     {

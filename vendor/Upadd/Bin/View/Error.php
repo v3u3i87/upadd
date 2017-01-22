@@ -8,7 +8,7 @@ class Error{
 
     public static function html($title='Sorry, the site now can not be accessed.')
     {
-        $url = Config::get('tag@http_url_error');
+        $url = Config::get('sys@http_url_error');
         $h = <<<HTML
 <!DOCTYPE html>
 <html lang="en">

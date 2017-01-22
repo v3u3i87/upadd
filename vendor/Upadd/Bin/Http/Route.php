@@ -1,21 +1,9 @@
 <?php
-
-/**
- * +----------------------------------------------------------------------
- * | UPADD [ Can be better to Up add]
- * +----------------------------------------------------------------------
- * | Copyright (c) 2011-2015 http://upadd.cn All rights reserved.
- * +----------------------------------------------------------------------
- * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
- * +----------------------------------------------------------------------
- * | Author: Richard.z <v3u3i87@gmail.com>
- **/
 namespace Upadd\Bin\Http;
 
-use Config;
 use Upadd\Bin\UpaddException;
 
-class Route extends Request
+class Route
 {
 
     public $prefix = '';
@@ -29,6 +17,17 @@ class Route extends Request
     public static $method = null;
 
     public $_tmp = array();
+
+    public $request = null;
+
+
+    /**
+     * @param $request
+     */
+    public function getRequest($request)
+    {
+        $this->request = $request;
+    }
 
     /**
      * URL组
@@ -57,7 +56,7 @@ class Route extends Request
      */
     public function filters($key, $_callback)
     {
-        $_urlKey = $this->setUrlHash();
+        $_urlKey = $this->request->setUrlHash();
         if (isset($this->_resou[$_urlKey])) {
             //获取本次请求路由资源
             $resou = $this->_resou[$_urlKey];
@@ -95,12 +94,12 @@ class Route extends Request
         $method = $this->is_method($method);
         $url = $this->setUrl($url);
         $this->_resou[$url] = array(
-            'methods'   => $method,
+            'methods' => $method,
             'callbacks' => $method,
-            'url'       => $url,
-            'type'      => $type,
-            'prefix'    => $this->prefix,
-            'filters'   => $this->filters
+            'url' => $url,
+            'type' => $type,
+            'prefix' => $this->prefix,
+            'filters' => $this->filters
         );
     }
 
@@ -111,7 +110,7 @@ class Route extends Request
      */
     private function setUrl($url)
     {
-        if ($this->getPathUrl() === $url) {
+        if ($this->request->getPathUrl() === $url) {
             return $url;
         } else {
             $url = $this->prefix . $url;
@@ -125,24 +124,21 @@ class Route extends Request
      */
     public function resources()
     {
-        $currentRequest = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        if ($this->_resou)
-        {
-            if(isset($this->_resou[$currentRequest]))
-            {
+        $currentRequest = $this->request->getPathUrl();
+        if ($this->_resou) {
+            if (isset($this->_resou[$currentRequest])) {
                 return $this->isRequestMethod($this->_resou[$currentRequest]);
-            }else{
-                foreach ($this->_resou as $name => $item)
-                {
-                    $key = $this->setRewrite($name,$currentRequest);
-                    if($key)
-                    {
+            } else {
+                foreach ($this->_resou as $name => $item) {
+                    $key = $this->setRewrite($name, $currentRequest);
+                    if ($key) {
                         return $this->isRequestMethod($this->_resou[$key]);
                     }
                 }
             }
+        }else{
+            throw new UpaddException("请设置路由");
         }
-        throw new UpaddException("请设置路由");
     }
 
 
@@ -154,11 +150,11 @@ class Route extends Request
      */
     private function isRequestMethod($request)
     {
-        if ($this->getRequestMethod() == $request['type'] || $request['type'] == 'ANY')
-        {
+        if ($this->request->getRequestMethod() == $request['type'] || $request['type'] == 'ANY') {
             return $request;
+        }else{
+            throw new UpaddException("Request the wrong way, your source is ({$this->request->getRequestMethod()}), the request is {$request['type']}.");
         }
-        throw new UpaddException("Request the wrong way, your source is ({$this->getRequestMethod()}), the request is {$request['type']}.");
     }
 
     /**

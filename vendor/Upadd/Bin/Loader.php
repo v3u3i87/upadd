@@ -32,7 +32,6 @@ class Loader
             }
 
         });
-
     }
 
     /**
@@ -85,10 +84,8 @@ class Loader
      */
     private static function is_create_confg_dir()
     {
-        if ($env = Config::get('sys@environment')) {
-            //merge in config array
-//            $oneEnv = array_merge_one($env);
-//            $osName = getMachineName();
+        if ($env = Config::get('sys@environment'))
+        {
             $configDir = Config::get('sys@config_dir');
             // 总目录
             is_create_dir($configDir);

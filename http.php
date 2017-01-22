@@ -1,9 +1,5 @@
 <?php
 
-function info($info){
-    echo "=== $info === \n";
-}
-
 define('RUNTIME', microtime(true));
 define('APP_NAME', 'http');
 define('APP_LANG', 'zh_cn');

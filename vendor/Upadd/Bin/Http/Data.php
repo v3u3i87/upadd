@@ -1,7 +1,11 @@
 <?php
-
 namespace Upadd\Bin\Http;
 
+/**
+ * 参数获取处理
+ * Class Data
+ * @package Upadd\Bin\Http
+ */
 class Data
 {
 

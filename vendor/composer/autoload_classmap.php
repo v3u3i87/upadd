@@ -22,6 +22,7 @@ return array(
     'Upadd\\Bin\\Factory' => $vendorDir . '/Upadd/Bin/Factory.php',
     'Upadd\\Bin\\Grab' => $vendorDir . '/Upadd/Bin/Grab.php',
     'Upadd\\Bin\\Http\\Data' => $vendorDir . '/Upadd/Bin/Http/Data.php',
+    'Upadd\\Bin\\Http\\Dispenser' => $vendorDir . '/Upadd/Bin/Http/Dispenser.php',
     'Upadd\\Bin\\Http\\Request' => $vendorDir . '/Upadd/Bin/Http/Request.php',
     'Upadd\\Bin\\Http\\Route' => $vendorDir . '/Upadd/Bin/Http/Route.php',
     'Upadd\\Bin\\Loader' => $vendorDir . '/Upadd/Bin/Loader.php',

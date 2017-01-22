@@ -9,7 +9,7 @@
  * +----------------------------------------------------------------------
  * | Author: Richard.z <v3u3i87@gmail.com>
  **/
-if (version_compare(PHP_VERSION, '5.5.0', '<')) exit ('require PHP > 5.5.0 !');
+if (version_compare(PHP_VERSION, '7.0.0', '<')) exit ('require PHP > 7.0.0!');
 
 
 define('VENDOR', 'vendor/Upadd');
@@ -57,8 +57,15 @@ Factory::Import($app->_work);
  */
 $app->getAlias()->run();
 
+/**
+ * 加载模块到配置文件
+ */
+$app->setWorkConfig();
+
+$app->setRoute();
 
 Grab::run();
+
 /**
  * 运行
  */
@@ -84,5 +91,5 @@ $app->run(function () use ($app) {
     $filters = $_hostConfigPath . '/filters.php';
     file_exists($filters) && require $filters;
 
-}, isset($argv) ? $argv : array());
+}, isset($argv) ? $argv : []);
 

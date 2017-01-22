@@ -23,6 +23,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Factory' => __DIR__ . '/..' . '/Upadd/Bin/Factory.php',
         'Upadd\\Bin\\Grab' => __DIR__ . '/..' . '/Upadd/Bin/Grab.php',
         'Upadd\\Bin\\Http\\Data' => __DIR__ . '/..' . '/Upadd/Bin/Http/Data.php',
+        'Upadd\\Bin\\Http\\Dispenser' => __DIR__ . '/..' . '/Upadd/Bin/Http/Dispenser.php',
         'Upadd\\Bin\\Http\\Request' => __DIR__ . '/..' . '/Upadd/Bin/Http/Request.php',
         'Upadd\\Bin\\Http\\Route' => __DIR__ . '/..' . '/Upadd/Bin/Http/Route.php',
         'Upadd\\Bin\\Loader' => __DIR__ . '/..' . '/Upadd/Bin/Loader.php',

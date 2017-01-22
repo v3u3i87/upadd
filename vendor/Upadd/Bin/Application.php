@@ -2,11 +2,10 @@
 namespace Upadd\Bin;
 
 use Upadd\Bin\Config\Configuration;
-use Upadd\Bin\Tool\Log;
-use Upadd\Bin\Response\Run as ResponseRun;
-use Upadd\Bin\Package\Data;
+use Upadd\Bin\Http\Dispenser;
 
-class Application{
+class Application
+{
 
     /**
      * 配置文件
@@ -20,84 +19,32 @@ class Application{
      */
     public $_work = [];
 
-    /**
-     * 响应数据
-     * @var
-     */
-    public $_responseData;
-
 
     /**
-     * 运行
+     * @param $callable
+     * @param array $argv
      */
-    public function run($callable,$argv=[])
+    public function run($callable, $argv = [])
     {
-        //日志
-        $this->setRequestLog();
 
-        // 设置时区
-        date_default_timezone_set ( 'Asia/Shanghai' );
+        date_default_timezone_set('Asia/Shanghai');
 
-        /**
-         * 实例化对象
-         */
-        $this->request()->getInit($this->_work,$argv);
+        $dispenser = new Dispenser();
 
-        /**
-         * 判断运行环境
-         */
-        if(is_run_evn())
-        {
-            if(is_callable($callable))
-            {
-                 call_user_func_array($callable,func_get_args());
-            }
-
-            $this->_responseData = $this->request()->run_cgi();
-        }else{
-            $this->_responseData = $this->request()->run_cli();
+        if (is_callable($callable)) {
+            call_user_func_array($callable, func_get_args());
         }
 
-        /**
-         * 发送响应数据
-         */
-        $_responseRun = new ResponseRun($this->_responseData,$this->request()->_responseType);
-        $_responseRun->send();
-    }
-
-
-    /**
-     * 请求日志
-     * @pamer
-     */
-    private function setRequestLog()
-    {
-        $_header = getHeader();
-        $Requset = '';
-        if (is_run_evn()) {
-            if (isset($_SERVER ['REQUEST_URI'])) $Requset =  $_SERVER ['REQUEST_URI'];
+        if (IS_SWOOLE_HTTP) {
+            $http = new \Upadd\Swoole\HttpServer('0.0.0.0', 9988, 8080);
+            $http->start($dispenser);
         } else {
-            $Requset = 'cli';
+
+            $this->_work['Request']->header = array_change_key_case(getHeader());
+            $this->_work['Request']->server = array_change_key_case($_SERVER);
+            $dispenser->http_fpm($argv);
         }
-        $body = 'Run Start'."\n";
-        $body.= 'Host:'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '')."\n";
-        $body.= 'Requset:'.$Requset."\n";
-        $body.= 'Ip:'.getClient_id()."\n";
-        $body.= 'Method:'.(isset($_SERVER["REQUEST_METHOD"]) ? $_SERVER["REQUEST_METHOD"] : 'cli')."\n";
-        $body.= 'Header:'.json($_header)."\n";
-        $body.= 'Parameter:'.json(Data::all())."\n";
-        Log::run($body);
     }
-
-    /**
-     * 获取请求对象
-     * @return mixed
-     */
-    public function request()
-    {
-        return $this->_work['Request'];
-    }
-
 
     /**
      * 实例化全局工作模块
@@ -106,14 +53,14 @@ class Application{
     public function getWorkModule()
     {
         return ($this->_work = [
-            'GetConfiguration'=>new \Upadd\Bin\Config\GetConfiguration,
-            'Request'=>new \Upadd\Bin\Http\Request,
-            'Route'=>new \Upadd\Bin\Http\Route,
-            'getSession'=>\Upadd\Bin\Session\getSession::init(),
-            'Log'=>new \Upadd\Bin\Tool\Log,
-            'Data'=>new \Upadd\Bin\Http\Data,
-            'Cache'=>new \Upadd\Bin\Cache,
-            'Async'=>new \Upadd\Bin\Async,
+            'GetConfiguration' => new \Upadd\Bin\Config\GetConfiguration,
+            'Request' => new \Upadd\Bin\Http\Request,
+            'Route' => new \Upadd\Bin\Http\Route,
+            'getSession' => \Upadd\Bin\Session\getSession::init(),
+            'Log' => new \Upadd\Bin\Tool\Log,
+            'Data' => new \Upadd\Bin\Http\Data,
+//            'Cache'=>new \Upadd\Bin\Cache,
+//            'Async'=>new \Upadd\Bin\Async,
         ]);
     }
 
@@ -147,6 +94,22 @@ class Application{
 
 
     /**
+     * 全局配置工作
+     * @return array
+     */
+    public function setWorkConfig()
+    {
+        static::$_config['sys'] = array_merge(static::$_config['sys'], ['work' => $this->_work]);
+    }
+
+
+    public function setRoute()
+    {
+        $route = $this->_work['Route'];
+        $route->getRequest($this->_work['Request']);
+    }
+
+    /**php
      * 获取Session配置状态
      * @return mixed
      */
@@ -161,26 +124,20 @@ class Application{
      */
     public function setSession()
     {
-        if(is_run_evn())
-        {
-            if ($this->getSessionStatus())
-            {
+        if (is_run_evn()) {
+            if ($this->getSessionStatus()) {
                 $config = static::$_config['sys']['session'];
-                if ($config['domain'])
-                {
+                if ($config['domain']) {
                     ini_set('session.cookie_domain', $config['domain']);
                 }
-                if ($config['expire'])
-                {
+                if ($config['expire']) {
                     ini_set('session.gc_maxlifetime', $config['expire']);
                     ini_set('session.cookie_lifetime', $config['expire']);
                 }
-                if ($config['use_cookies'])
-                {
+                if ($config['use_cookies']) {
                     ini_set('session.use_cookies', $config['use_cookies'] ? 1 : 0);
                 }
-                if ($config['cache_limiter'])
-                {
+                if ($config['cache_limiter']) {
                     session_cache_limiter($config['cache_limiter']);
                 }
                 if ($config['cache_expire']) {

@@ -9,16 +9,11 @@
  */
 namespace Upadd\Swoole;
 
-use swoole_server;
-use swoole_http_server;
-
 use Config;
-use Upadd\Bin\UpaddException;
-use Upadd\Swoole\Lib\Help;
-
 
 abstract class Server
 {
+
 
     /**
      * 原始对象
@@ -38,171 +33,209 @@ abstract class Server
      */
     protected $httpServer = null;
 
-    protected $server = null;
+    /**
+     * tcp 配置参数
+     * @var array
+     */
+    protected $tcpConfig = [];
 
-    protected $config = [];
+    /**
+     * http 配置参数
+     * @var array
+     */
+    protected $httpConfig = [];
 
-    protected $type = null;
+    /**
+     * 判断是否启动TCP
+     * @var null
+     */
+    protected $is_tcp = null;
 
-    protected $host = '127.0.0.1';
-
-    protected $port = '9988';
-
-    protected $name = 'upadd';
-
-    protected $pid = '';
-
-    protected $pidFile = '';
+    /**
+     * 判断是否启动HTTP
+     * @var null
+     */
+    protected $is_http = null;
 
 
     /**
      * Server constructor.
-     * @param $name
-     * @param null $address
+     * @param string $ip
+     * @param int $port
      */
-    public function __construct($name, $address = null)
+    public function __construct($ip = '0.0.0.0', $port = 9988, $httpPort = 8080)
     {
-        $this->name($name);
-        if (null === $address) {
-            $address = 'tcp://' . $this->host . ':' . $this->port;
+        $mode = Config::get('swoole@is_mode');
+        if ($mode == 1) {
+            $this->_obj = new \swoole_server($ip, $port);
+            $this->tcpServer = $this->_obj;
+            $this->tcpServer->on('Receive', array($this, 'onReceive'));
+        } elseif ($mode == 2) {
+            $this->_obj = new \swoole_http_server($ip, $httpPort);
+            $this->httpServer = $this->_obj;
+            $this->_obj->on('Request', array($this, 'onRequest'));
+        } elseif ($mode == 3) {
+            $this->_obj = new \swoole_http_server($ip, $httpPort);
+            $this->_obj->on('Request', array($this, 'onRequest'));
+            $this->tcpServer = $this->_obj->addListener($ip, $port, \SWOOLE_TCP);
+            $this->tcpServer->on('Receive', array($this, 'onReceive'));
         }
-        $addressParam = Help::parseAddress($address);
-        $this->type = $addressParam['sock'];
-        $this->host = $addressParam['host'];
-        $this->port = $addressParam['port'];
-        $this->config = array_merge($this->config, (array)$this->configure());
+
+        $this->_obj->on('Start', array($this, 'onStart'));
+        $this->_obj->on('ManagerStart', array($this, 'onManagerStart'));
+        $this->_obj->on('ManagerStop', array($this, 'onManagerStop'));
+        $this->_obj->on('WorkerStart', array($this, 'onWorkerStart'));
+        $this->_obj->on('WorkerError', array($this, 'onWorkerError'));
+        $this->_obj->on('Task', array($this, 'onTask'));
+        $this->_obj->on('Finish', array($this, 'onFinish'));
+        $this->initServer($this->_obj);
     }
-
-    /**
-     * @param $name
-     * @return $this;
-     */
-    public function name($name)
-    {
-        $this->name = $name;
-
-        $this->pid = '/tmp/' . str_replace(' ', '-', $this->name) . '.pid';
-
-        return $this;
-    }
-
-    /**
-     * 如果需要自定义自己的swoole服务器,重写此方法
-     * @return swoole_server
-     */
-    public function initSwoole()
-    {
-        return new swoole_server($this->host, $this->port);
-    }
-
-
-    protected function handleCallback()
-    {
-        $handles = get_class_methods($this);
-        $isListenerPort = false;
-        foreach ($handles as $value) {
-            if ('on' == substr($value, 0, 2)) {
-                if ($isListenerPort) {
-                    if (in_array($value, ['onConnect', 'onClose', 'onReceive', 'onPacket', 'onReceive'])) {
-                        $this->server->on(lcfirst(substr($value, 2)), [$this, $value]);
-                    }
-                } else {
-                    $this->server->on(lcfirst(substr($value, 2)), [$this, $value]);
-                }
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 引导服务，当启动是接收到 swoole server 信息，则默认以这个swoole 服务进行引导
-     * @param swoole_server|swoole_server_port $swoole
-     * @return $this
-     */
-    public function bootstrap($swoole = null)
-    {
-        $this->server = null === $swoole ? $this->initSwoole() : $swoole;
-        $this->server->set($this->config);
-        $this->handleCallback();
-        return $this;
-    }
-
-
-    public function start()
-    {
-        try {
-            $this->bootstrap();
-//            // 多端口监听
-//            foreach ($this->listens as $listen) {
-//                $swoole = $this->server->listen($listen->getHost(), $listen->getPort(), $this->swoole->type);
-//                $listen->bootstrap($swoole);
-//            }
-//            // 进程控制
-//            foreach ($this->processes as $process) {
-//                $this->server->addProcess($process->getProcess());
-//            }
-            $this->server->start();
-        } catch (UpaddException $e) {
-            print_r($e->getMessage());
-        }
-    }
-
-
-    /**
-     *
-     * @return mixed
-     */
-    abstract public function configure();
 
     /**
      * 启动服务
      * @param \swoole_server $serv
      */
-    public function onStart(swoole_server $serv)
+    final public function onStart(\swoole_server $serv)
     {
-        swoole_set_process_name($this->name . " Master");
+        swoole_set_process_name("upadd: master");
         echo "Start\n";
     }
 
-    public function onManagerStart(swoole_server $serv)
+    //application server first start
+    final public function onManagerStart(\swoole_server $serv)
     {
-        swoole_set_process_name($this->name . " Manager");
+        swoole_set_process_name("upadd: manager");
     }
 
-    public function onManagerStop(swoole_server $serv)
+    final public function onManagerStop(\swoole_server $serv)
     {
         echo "Manager Stop , shutdown server\n";
         $serv->shutdown();
     }
 
     //worker and task init
-    public function onWorkerStart(swoole_server $server, $worker_id)
+    final public function onWorkerStart($server, $worker_id)
     {
         $istask = $server->taskworker;
         if (!$istask) {
             //worker
-            swoole_set_process_name($this->name . " Worker {$worker_id}");
+            swoole_set_process_name("upadd: worker {$worker_id}");
         } else {
             //task
-            swoole_set_process_name($this->name . " Task {$worker_id}");
-//            $this->initTask($server, $worker_id);
+            swoole_set_process_name("upadd: task {$worker_id}");
+            $this->initTask($server, $worker_id);
         }
+
     }
 
-    public function onWorkerError(swoole_server $serv, $worker_id, $worker_pid, $exit_code)
+    final public function onWorkerError(\swoole_server $serv, $worker_id, $worker_pid, $exit_code)
     {
         //using the swoole error log output the error this will output to the swtmp log
-        var_dump($this->name . " Worker Error", array($serv, $worker_id, $worker_pid, $exit_code));
+        var_dump("workererror", array($serv, $worker_id, $worker_pid, $exit_code));
     }
 
     /**
-     * @param swoole_server $server
-     * @param int $worker_id
-     * @return void
+     * 响应HTTP请求
+     * @param \swoole_http_request $request
+     * @param \swoole_http_response $response
      */
-    public function onWorkerStop(swoole_server $server, $worker_id)
+    final public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
-        var_dump(sprintf('Server <info>%s</info> Worker[<info>#%s</info>] is shutdown', $this->name, $worker_id));
+        return $this->response($request,$response);
     }
+
+    /**
+     * http 响应处理
+     * @param $request
+     * @param $response
+     * @return mixed
+     */
+    abstract protected function response($request,$response);
+
+
+    /**
+     * 连接对象发送数据
+     * @param $serv
+     * @param $fd
+     * @param $from_id
+     */
+    final public function onConnect($serv, $fd, $from_id)
+    {
+    }
+
+
+    /**
+     * 响应客户端
+     * @param \swoole_server $serv
+     * @param $fd 数据ID
+     * @param $from_id
+     * @param $data
+     */
+    final public function onReceive($serv, $fd, $from_id, $data)
+    {
+        $serv->task(['fd' => $fd, 'from_id' => $from_id, 'results' => $data]);
+        return true;
+    }
+
+    /**
+     * 转发任务
+     * @param $serv
+     * @param $task_id
+     * @param $from_id
+     * @param $data
+     * @return mixed
+     */
+    final public function onTask($serv, $task_id, $from_id, $data)
+    {
+        echo "This Task {$task_id} from Worker {$from_id}\n";
+        return $this->doWork($data, ['connection_info' => $serv->connection_info($data['fd'])]);
+    }
+
+    /**
+     * 返回数据到客户端
+     * @param $serv
+     * @param $task_id
+     * @param $data
+     * @return bool
+     */
+    final public function onFinish($serv, $task_id, $data)
+    {
+        $fd = $data['fd'];
+        $results = $data['results'];
+        $serv->send($fd, $results);
+        return true;
+    }
+
+    final public function onClose($serv, $fd, $from_id)
+    {
+        echo "Client {$fd} close connection\n";
+    }
+
+
+    /**
+     * 完成
+     * @param $fd
+     * @param $results
+     * @return array
+     */
+    protected function toFinish($fd, $results)
+    {
+        return [
+            'fd' => $fd,
+            'results' => $results
+        ];
+    }
+
+    abstract protected function initServer($server);
+
+    abstract protected function initTask($server, $worker_id);
+
+    /**
+     * 具体业务逻辑代码
+     * 回调思路实现
+     * @param $param
+     * @return mixed
+     */
+    abstract protected function doWork($param = [], $client = []);
 
 }

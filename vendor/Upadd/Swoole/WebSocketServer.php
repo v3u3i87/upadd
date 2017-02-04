@@ -15,12 +15,21 @@ use Upadd\Bin\UpaddException;
 abstract class WebSocketServer extends Server{
 
 
-   public function configure()
-   {
-       $config = Config::get('swoole@webSocketParam');
-       $config['daemonize'] = Config::get('swoole@daemonize');
-       return $config;
-   }
-
+    /**
+     * 开启TCP服务
+     * @throws UpaddException
+     */
+    public function start()
+    {
+        if(Config::get('swoole@is_socket'))
+        {
+            $this->tcpConfig = Config::get('swoole@webSocketParam');
+            $this->_obj->set($this->tcpConfig);
+            $this->_obj->start();
+        }else{
+            throw new UpaddException('swoole web sockert server There is no open');
+        }
+    }
+    
 
 }

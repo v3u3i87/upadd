@@ -5,11 +5,9 @@ Routes::get('/', function(){
 });
 
 
-Routes::group(array('prefix' => '/test'), function ()
+Routes::group(array('prefix' => '/user'), function ()
 {
 
     Routes::any('/main', 'demo\action\HomeAction@main');
-
-    Routes::any('/file', 'demo\action\HomeAction@getFile');
 
 });

@@ -9,11 +9,10 @@ namespace Upadd\Bin\Http;
  * Time: 下午5:27
  * Name: 派发器
  */
-
-use Config;
-use Data;
 use Upadd\Bin\Response\Run as ResponseRun;
 use Upadd\Bin\Tool\Log;
+use Config;
+use Data;
 use Upadd\Bin\View\Error;
 use Upadd\Bin\UpaddException;
 
@@ -58,13 +57,10 @@ class Dispenser
     public function __construct()
     {
         $this->_work = Config::get('sys@work');
+
     }
 
 
-    /**
-     * php-fpm模式
-     * @param array $argv
-     */
     public function http_fpm($argv = [])
     {
         if ($argv) {
@@ -93,11 +89,6 @@ class Dispenser
     }
 
 
-    /**
-     * swoole 使用
-     * @param array $swoole_http_request
-     * @return null
-     */
     public function swoole($swoole_http_request = [])
     {
         $params = [];
@@ -157,10 +148,7 @@ class Dispenser
             $_routing = $this->getRoute()->resources();
             if (is_callable($_routing['callbacks'])) {
                 return call_user_func_array($_routing['callbacks'], func_get_args());
-            }
-
-            if($_routing['methods'])
-            {
+            } else {
                 $this->getAction($_routing['methods']);
             }
 
@@ -200,8 +188,7 @@ class Dispenser
     public function instantiation()
     {
         try {
-            if (class_exists($this->_action))
-            {
+            if (class_exists($this->_action)) {
                 Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
                 /**
                  * 实例化控制器
@@ -228,18 +215,16 @@ class Dispenser
 
                 return $result;
             } else {
-                if(IS_SWOOLE_HTTP)
-                {
-                    return Error::html();
-                }else{
-                    throw new UpaddException('There is no Action');
-                }
+                throw new UpaddException('There is no Action');
             }
 
         } catch (UpaddException $e) {
-            if (Config::get('error@is_http_url_error'))
-            {
-                return Error::html();
+            if (is_run_evn()) {
+                if (Config::get('sys@is_http_url_error')) {
+                    Error::html();
+                } else {
+                    throw new UpaddException($e->getMessage());
+                }
             } else {
                 throw new UpaddException($e->getMessage());
             }

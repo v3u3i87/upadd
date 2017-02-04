@@ -22,7 +22,8 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function main()
     {
-        return 11111;
+        InfoModel::add(['code'=>11212,'name'=>time()]);
+        return InfoModel::get();
     }
 
 

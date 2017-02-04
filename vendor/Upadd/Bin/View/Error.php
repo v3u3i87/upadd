@@ -8,10 +8,10 @@ class Error{
 
     public static function html($title='Sorry, the site now can not be accessed.')
     {
-        $url = Config::get('error@http_url_error');
+        $url = Config::get('sys@http_url_error');
         $h = <<<HTML
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	 <meta http-equiv="refresh" content="2;url=$url" />
@@ -28,13 +28,13 @@ class Error{
 </body>
 </html>
 HTML;
-        return $h;
+        echo $h;
     }
 
 
     public static function json($title = 'Sorry, the site now can not be accessed.')
     {
-        return json($title);
+        echo json($title);
     }
 
 

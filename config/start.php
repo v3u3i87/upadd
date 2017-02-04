@@ -65,6 +65,26 @@ return array(
     'is_use_memcache' => false,
 
 
+    /**
+     * true = 开启
+     * false = 关闭
+     */
+    'is_swoole'=>true,
+
+
+
+    /**
+     * 是否开启URL错误跳转
+     * true = 开启
+     * false = 关闭
+     */
+    'is_http_url_error'=>false,
+
+
+    /**
+     *  URL错误跳转
+     */
+    'http_url_error'=>'/',
 
 
 );

@@ -19,8 +19,6 @@ define('APP_ROUTES', false);
  */
 define('IS_SESSION', false);
 
-define('IS_SWOOLE_HTTP', false);
-
 //加载composer in vendor
 require __DIR__.'/vendor/autoload.php';
 //加载Upadd

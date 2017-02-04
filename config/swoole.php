@@ -8,33 +8,48 @@ return [
      */
     'daemonize'=>false,
 
-    /**
-     * 1 = 仅支持 tcp 模式
-     * 2 = 支持 http
-     * 3 = 支持 http 和 tcp,但必须开启http 才可以开启tcp
-     */
-    'is_mode'=>3,
+//    /**
+//     * 1 = 仅支持 tcp 模式
+//     * 2 = 支持 http
+//     * 3 = 支持 http 和 tcp,但必须开启http 才可以开启tcp
+//     */
+//    'is_mode'=>3,
+//
+//    /**
+//     * 判断是否开启TCP
+//     * true = 开启
+//     * false = 关闭
+//     */
+//    'is_tcp'=>true,
+//
+//    /**
+//     * 判断是否开启HTTP
+//     * true = 开启
+//     * false = 关闭
+//     */
+//    'is_http'=>true,
+//
+//    /**
+//     * 判断是否开启web socket
+//     * true = 开启
+//     * false = 关闭
+//     */
+//    'is_socket'=>false,
 
-    /**
-     * 判断是否开启TCP
-     * true = 开启
-     * false = 关闭
-     */
-    'is_tcp'=>true,
+    'tcp'=> [
+        'name'=>'rpc',
+        'host'=>'tcp://127.0.0.1:9988',
+    ],
 
-    /**
-     * 判断是否开启HTTP
-     * true = 开启
-     * false = 关闭
-     */
-    'is_http'=>true,
+    'http'=>[
+        'name'=>'http api',
+        'host'=>'tcp://127.0.0.1:8080',
+    ],
 
-    /**
-     * 判断是否开启web socket
-     * true = 开启
-     * false = 关闭
-     */
-    'is_socket'=>false,
+    'webSocket'=>[
+        'name'=>'webSocket',
+        'host'=>'ws://127.0.0.1:8081',
+    ],
 
     /**
      * TCP服务参数

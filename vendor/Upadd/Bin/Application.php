@@ -34,12 +34,12 @@ class Application
         if (is_callable($callable)) {
             call_user_func_array($callable, func_get_args());
         }
-
+        $swooleHtpp = Configuration::get('swoole@http');
         if (IS_SWOOLE_HTTP) {
-            $http = new \Upadd\Swoole\HttpServer('0.0.0.0', 9988, 8080);
-            $http->start($dispenser);
+            $http = new \Upadd\Swoole\HttpServer($swooleHtpp['name'],$swooleHtpp['host']);
+            $http->getDispenser($dispenser);
+            $http->start();
         } else {
-
             $this->_work['Request']->header = array_change_key_case(getHeader());
             $this->_work['Request']->server = array_change_key_case($_SERVER);
             $dispenser->http_fpm($argv);

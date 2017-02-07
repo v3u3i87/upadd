@@ -24,34 +24,23 @@ abstract class TaskServer extends TcpServer
      * @param $data
      * @return mixed
      */
-    public function onTask(swoole_server $serv, $task_id, $from_id, $data)
+    public function onTask(swoole_server $_server, $task_id, $from_id, $data)
     {
-        return $this->doWork($data, ['connection_info' => $serv->connection_info($data['fd'])]);
+        return $this->doWork($data, ['connection_info' => $_server->connection_info($data['fd'])]);
     }
 
 
     /**
-     * 返回数据到客户端
+     * 返回客户端
      * @param $serv
      * @param $task_id
      * @param $data
      * @return bool
      */
-    public function onFinish(swoole_server $serv, $task_id, $data)
+    public function onFinish(swoole_server $_server, $task_id, $data)
     {
-        $fd = $data['fd'];
-        $results = $data['results'];
-        return $serv->send($fd, $results);
+        return $_server->send($data['fd'], $data['results']);
     }
-
-
-    /**
-     * 具体业务逻辑代码
-     * 回调思路实现
-     * @param $param
-     * @return mixed
-     */
-    abstract protected function doWork($param = [], $client = []);
 
 
     /**
@@ -67,6 +56,15 @@ abstract class TaskServer extends TcpServer
             'results' => $results
         ];
     }
+
+
+    /**
+     * 具体业务逻辑代码
+     * 回调思路实现
+     * @param $param
+     * @return mixed
+     */
+    abstract protected function doWork($param = [], $client = []);
 
 
 }

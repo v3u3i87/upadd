@@ -34,11 +34,12 @@ abstract class TcpServer extends Server
      * @param $fd
      * @param $from_id
      */
-    public function onConnect(swoole_server $serv, $fd, $from_id)
+    public function onConnect(swoole_server $_server, $fd, $from_id)
     {
+
     }
 
-    public function onClose(swoole_server $serv, $fd, $from_id)
+    public function onClose(swoole_server $_server, $fd, $from_id)
     {
     }
 
@@ -51,9 +52,9 @@ abstract class TcpServer extends Server
      * @param $data 收到的数据内容，可能是文本或者二进制内容
      * @return bool
      */
-    public function onReceive(swoole_server $serv, $fd, $from_id, $data)
+    public function onReceive(swoole_server $_server, $fd, $from_id, $data)
     {
-        $serv->task(['fd' => $fd, 'from_id' => $from_id, 'results' => $data]);
+        $_server->task(['fd' => $fd, 'from_id' => $from_id, 'results' => $data]);
         return true;
     }
 

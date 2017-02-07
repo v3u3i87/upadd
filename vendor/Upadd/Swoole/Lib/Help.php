@@ -38,6 +38,10 @@ class Help
         return $data;
     }
 
+    /**
+     * 获取IP
+     * @return string
+     */
     public static function get_local_ip()
     {
         $serverIps = swoole_get_local_ip();

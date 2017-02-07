@@ -21,9 +21,9 @@ class TestAction extends \Upadd\Frame\Action
     public function info()
     {
         /**
-         * 大于2M数据,无法传送
+         * int 400000  in 大于2M数据,无法传送
          */
-        $int = 400000;
+        $int = 1000;
         unlink('b.log');
         //看看生产文件多大
         file_put_contents('b.log',str_repeat('-zmq-',$int));

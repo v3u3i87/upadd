@@ -30,9 +30,9 @@ return array(
     'exclude_config' => ['routing', 'filters', 'extend'],
 
     /*
-     * 是否开启
+     * 是否开启 session
      */
-    'is_session' => IS_SESSION,
+    'is_session' => false,
 
     /*
      * 控制器

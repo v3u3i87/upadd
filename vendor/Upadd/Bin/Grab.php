@@ -63,12 +63,13 @@ class Grab extends Debug
      */
     public static function setGlobalException($e)
     {
+
         $error = [
             'msg' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
             'code' => $e->getCode(),
-            'previous' => $e->getPrevious()
+            'previous' => $e->getPrevious(),
         ];
         if (Config::get('tag@debug'))
         {

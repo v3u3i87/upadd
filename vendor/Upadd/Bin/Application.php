@@ -3,6 +3,7 @@ namespace Upadd\Bin;
 
 use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Http\Dispenser;
+use Config;
 
 class Application
 {
@@ -19,31 +20,29 @@ class Application
      */
     public $_work = [];
 
-
     /**
      * @param $callable
      * @param array $argv
      */
     public function run($callable, $argv = [])
     {
-
         date_default_timezone_set('Asia/Shanghai');
-
-        $dispenser = new Dispenser();
-
+        $dispenser = $this->getDispenser();
         if (is_callable($callable)) {
             call_user_func_array($callable, func_get_args());
         }
-        $swooleHtpp = Configuration::get('swoole@http');
-        if (IS_SWOOLE_HTTP) {
-            $http = new \Upadd\Swoole\HttpServer($swooleHtpp['name'],$swooleHtpp['host']);
-            $http->getDispenser($dispenser);
-            $http->start();
-        } else {
+        if(!empty(getHeader()))
+        {
             $this->_work['Request']->header = array_change_key_case(getHeader());
             $this->_work['Request']->server = array_change_key_case($_SERVER);
             $dispenser->http_fpm($argv);
         }
+    }
+
+
+    public function getDispenser()
+    {
+        return new Dispenser();
     }
 
     /**

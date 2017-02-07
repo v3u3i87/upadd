@@ -7,10 +7,6 @@ define('RUNTIME', microtime(true));
 define('APP_NAME', 'demo');
 define('APP_LANG', 'zh_cn');
 define('APP_ROUTES', true);
-//是否开启 SESSION
-define('IS_SESSION', false);
-
-define('IS_SWOOLE_HTTP', false);
 
 //加载composer in vendor
 require __DIR__.'/vendor/autoload.php';

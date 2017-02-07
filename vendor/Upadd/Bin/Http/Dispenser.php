@@ -98,7 +98,7 @@ class Dispenser
      * @param array $swoole_http_request
      * @return null
      */
-    public function swoole($swoole_http_request = [])
+    public function swoole($swoole_http_request, $response)
     {
         $params = [];
         if (isset($swoole_http_request->get)) {
@@ -122,13 +122,10 @@ class Dispenser
         if ($request->server['request_uri'] !== '/favicon.ico') {
             //设置请求日志
             $request->setRequestLog();
-
             $this->_responseData = $this->http();
-
             $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
             return $_responseRun->send();
         }
-
     }
 
 
@@ -159,8 +156,7 @@ class Dispenser
                 return call_user_func_array($_routing['callbacks'], func_get_args());
             }
 
-            if($_routing['methods'])
-            {
+            if ($_routing['methods']) {
                 $this->getAction($_routing['methods']);
             }
 
@@ -199,51 +195,36 @@ class Dispenser
      */
     public function instantiation()
     {
-        try {
-            if (class_exists($this->_action))
-            {
-                Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
-                /**
-                 * 实例化控制器
-                 */
-                $class = new $this->_action();
+        if (class_exists($this->_action)) {
+            Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
+            /**
+             * 实例化控制器
+             */
+            $class = new $this->_action();
 
-                /**
-                 * 获取方法
-                 */
-                $method = $this->_method;
+            /**
+             * 获取方法
+             */
+            $method = $this->_method;
 
-                $tmpData = null;
+            $tmpData = null;
 
-                if (is_run_evn()) {
-                    $class->init();
-                    $tmpData = func_get_args();
-                } else {
-                    $tmpData = $this->_cliData;
-                }
-
-                $result = call_user_func_array(array($class, $method), $tmpData);
-
-                $this->_responseType = $class->getResponseType();
-
-                return $result;
+            if (is_run_evn()) {
+                $class->init();
+                $tmpData = func_get_args();
             } else {
-                if(IS_SWOOLE_HTTP)
-                {
-                    return Error::html();
-                }else{
-                    throw new UpaddException('There is no Action');
-                }
+                $tmpData = $this->_cliData;
             }
 
-        } catch (UpaddException $e) {
-            if (Config::get('error@is_http_url_error'))
-            {
-                return Error::html();
-            } else {
-                throw new UpaddException($e->getMessage());
-            }
+            $result = call_user_func_array(array($class, $method), $tmpData);
+
+            $this->_responseType = $class->getResponseType();
+
+            return $result;
+        } else {
+            throw new UpaddException('There is no Action');
         }
+
     }
 
 

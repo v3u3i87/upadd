@@ -11,7 +11,6 @@ namespace Upadd\Swoole;
 
 use swoole_server;
 use swoole_http_server;
-
 use Config;
 use Upadd\Bin\UpaddException;
 use Upadd\Swoole\Lib\Help;
@@ -21,37 +20,51 @@ abstract class Server
 {
 
     /**
-     * 原始对象
+     * swoole server对象
      * @var null
      */
-    protected $_obj = null;
-
-    /**
-     * tcp 服务对象
-     * @var null|\swoole_server
-     */
-    protected $tcpServer = null;
-
-    /**
-     * http 服务对象
-     * @var null
-     */
-    protected $httpServer = null;
-
     protected $server = null;
 
+    /**
+     * 配置文件
+     * @var array
+     */
     protected $config = [];
 
+    /**
+     * 服务类型协议
+     * @var null
+     */
     protected $type = null;
 
+    /**
+     * 地址
+     * @var string
+     */
     protected $host = '127.0.0.1';
 
+    /**
+     * 端口
+     * @var string
+     */
     protected $port = '9988';
 
+    /**
+     * 进程名称
+     * @var string
+     */
     protected $name = 'upadd';
 
+    /**
+     * 进程pid号
+     * @var string
+     */
     protected $pid = '';
 
+    /**
+     * 进程PID号文件
+     * @var string
+     */
     protected $pidFile = '';
 
 
@@ -70,8 +83,77 @@ abstract class Server
         $this->type = $addressParam['sock'];
         $this->host = $addressParam['host'];
         $this->port = $addressParam['port'];
-        $this->config = array_merge($this->config, (array)$this->configure());
+        $this->config = array_merge($this->config, (array) $this->configure());
     }
+
+
+    /**
+     *
+     * @return mixed
+     */
+    abstract public function configure();
+
+    /**
+     * 启动服务
+     * @param \swoole_server $_server
+     */
+    public function onStart(swoole_server $_server)
+    {
+        swoole_set_process_name($this->name . " Master");
+        echo "Start\n";
+    }
+
+    public function onManagerStart(swoole_server $_server)
+    {
+        swoole_set_process_name($this->name . " Manager");
+    }
+
+    public function onManagerStop(swoole_server $_server)
+    {
+        echo "Manager Stop , shutdown server\n";
+        $_server->shutdown();
+    }
+
+    //worker and task init
+    public function onWorkerStart(swoole_server $_server, $worker_id)
+    {
+        $istask = $_server->taskworker;
+        if (!$istask) {
+            //worker
+            swoole_set_process_name($this->name . " Worker {$worker_id}");
+        } else {
+            //task
+            swoole_set_process_name($this->name . " Task {$worker_id}");
+        }
+    }
+
+    public function onWorkerError(swoole_server $_server, $worker_id, $worker_pid, $exit_code)
+    {
+        var_dump($this->name . " Worker Error", array($_server, $worker_id, $worker_pid, $exit_code));
+    }
+
+    /**
+     * @param swoole_server $server
+     * @param int $worker_id
+     * @return void
+     */
+    public function onWorkerStop(swoole_server $_server, $worker_id)
+    {
+        var_dump(sprintf('Server %s Worker[ #%s ] is shutdown', $this->name, $worker_id));
+    }
+
+
+    /** 对外创建
+     * @param $name
+     * @param $address
+     * @return static
+     */
+    public static function create($name, $address)
+    {
+        return new static($name, $address);
+    }
+
+
 
     /**
      * @param $name
@@ -90,7 +172,7 @@ abstract class Server
      * 如果需要自定义自己的swoole服务器,重写此方法
      * @return swoole_server
      */
-    public function initSwoole()
+    public function initServer()
     {
         return new swoole_server($this->host, $this->port);
     }
@@ -121,7 +203,7 @@ abstract class Server
      */
     public function bootstrap($swoole = null)
     {
-        $this->server = null === $swoole ? $this->initSwoole() : $swoole;
+        $this->server = null === $swoole ? $this->initServer() : $swoole;
         $this->server->set($this->config);
         $this->handleCallback();
         return $this;
@@ -132,77 +214,11 @@ abstract class Server
     {
         try {
             $this->bootstrap();
-//            // 多端口监听
-//            foreach ($this->listens as $listen) {
-//                $swoole = $this->server->listen($listen->getHost(), $listen->getPort(), $this->swoole->type);
-//                $listen->bootstrap($swoole);
-//            }
-//            // 进程控制
-//            foreach ($this->processes as $process) {
-//                $this->server->addProcess($process->getProcess());
-//            }
             $this->server->start();
         } catch (UpaddException $e) {
             print_r($e->getMessage());
         }
     }
 
-
-    /**
-     *
-     * @return mixed
-     */
-    abstract public function configure();
-
-    /**
-     * 启动服务
-     * @param \swoole_server $serv
-     */
-    public function onStart(swoole_server $serv)
-    {
-        swoole_set_process_name($this->name . " Master");
-        echo "Start\n";
-    }
-
-    public function onManagerStart(swoole_server $serv)
-    {
-        swoole_set_process_name($this->name . " Manager");
-    }
-
-    public function onManagerStop(swoole_server $serv)
-    {
-        echo "Manager Stop , shutdown server\n";
-        $serv->shutdown();
-    }
-
-    //worker and task init
-    public function onWorkerStart(swoole_server $server, $worker_id)
-    {
-        $istask = $server->taskworker;
-        if (!$istask) {
-            //worker
-            swoole_set_process_name($this->name . " Worker {$worker_id}");
-        } else {
-            //task
-            swoole_set_process_name($this->name . " Task {$worker_id}");
-//            $this->initTask($server, $worker_id);
-        }
-    }
-
-    public function onWorkerError(swoole_server $serv, $worker_id, $worker_pid, $exit_code)
-    {
-        //using the swoole error log output the error this will output to the swtmp log
-        var_dump($this->name . " Worker Error", array($serv, $worker_id, $worker_pid, $exit_code));
-    }
-
-    /**
-     * @param swoole_server $server
-     * @param int $worker_id
-     * @return void
-     */
-    public function onWorkerStop(swoole_server $server, $worker_id)
-    {
-        var_dump(sprintf('Server <info>%s</info> Worker[<info>#%s</info>] is shutdown', $this->name, $worker_id));
-    }
 
 }

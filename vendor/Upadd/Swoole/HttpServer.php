@@ -1,18 +1,13 @@
 <?php
 namespace Upadd\Swoole;
 
-/**
- * About:Richard.z
- * Email:v3u3i87@gmail.com
- * Blog:https://www.zmq.cc
- * Date: 2017/1/18
- * Time: 下午8:51
- * Name:
- */
 use Config;
 use Upadd\Bin\UpaddException;
 use swoole_http_request;
 use swoole_http_response;
+use swoole_http_server;
+use swoole_server;
+
 
 class HttpServer extends Server
 {
@@ -32,10 +27,53 @@ class HttpServer extends Server
     }
 
 
+    /**
+     * @return \swoole_server
+     */
+    public function initServer()
+    {
+        return new swoole_http_server($this->host, $this->port);
+    }
+
+
     public function getDispenser($dispenser)
     {
         $this->dispenser = $dispenser;
     }
+
+    /**
+     * 转发任务
+     * @param $serv
+     * @param $task_id
+     * @param $from_id
+     * @param $data
+     * @return mixed
+     */
+    public function onTask(swoole_server $_server, $task_id, $from_id, $data)
+    {
+        return $this->doWork($data, ['connection_info' => $_server->connection_info($data['fd'])]);
+    }
+
+
+    /**
+     * 返回客户端
+     * @param $serv
+     * @param $task_id
+     * @param $data
+     * @return bool
+     */
+    public function onFinish(swoole_server $_server, $task_id, $data)
+    {
+        return $_server->send($data['fd'], $data['results']);
+    }
+
+    /**
+     * 具体业务逻辑代码
+     * 回调思路实现
+     * @param $param
+     * @return mixed
+     */
+    public function doWork($param = [], $client = []){}
 
     /**
      * 响应HTTP请求
@@ -56,9 +94,23 @@ class HttpServer extends Server
      */
     protected function response($request, $response)
     {
-        $data = $this->dispenser->swoole($request);
+        $data = $this->dispenser->swoole($request,$response);
         $response->status(200);
         return $response->end($data);
+    }
+
+    /**
+     * 完成
+     * @param $fd
+     * @param $results
+     * @return array
+     */
+    protected function results($fd, $results)
+    {
+        return [
+            'fd' => $fd,
+            'results' => $results
+        ];
     }
 
 

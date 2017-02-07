@@ -58,5 +58,6 @@ return array(
     'Upadd\\Swoole\\Server' => $vendorDir . '/Upadd/Swoole/Server.php',
     'Upadd\\Swoole\\TaskServer' => $vendorDir . '/Upadd/Swoole/TaskServer.php',
     'Upadd\\Swoole\\TcpServer' => $vendorDir . '/Upadd/Swoole/TcpServer.php',
+    'Upadd\\Swoole\\UpdServer' => $vendorDir . '/Upadd/Swoole/UpdServer.php',
     'Upadd\\Swoole\\WebSocketServer' => $vendorDir . '/Upadd/Swoole/WebSocketServer.php',
 );

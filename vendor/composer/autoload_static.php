@@ -59,6 +59,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Swoole\\Server' => __DIR__ . '/..' . '/Upadd/Swoole/Server.php',
         'Upadd\\Swoole\\TaskServer' => __DIR__ . '/..' . '/Upadd/Swoole/TaskServer.php',
         'Upadd\\Swoole\\TcpServer' => __DIR__ . '/..' . '/Upadd/Swoole/TcpServer.php',
+        'Upadd\\Swoole\\UpdServer' => __DIR__ . '/..' . '/Upadd/Swoole/UpdServer.php',
         'Upadd\\Swoole\\WebSocketServer' => __DIR__ . '/..' . '/Upadd/Swoole/WebSocketServer.php',
     );
 

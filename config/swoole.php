@@ -19,9 +19,16 @@ return [
     ],
 
     'webSocket'=>[
-        'name'=>'webSocket',
+        'name'=>'webSocketUpadd',
         'host'=>'ws://127.0.0.1:8081',
     ],
+
+    'udp'=>[
+        'name'=>'updUpadd',
+        'host'=>'upd://127.0.0.1:9978',
+    ],
+
+
 
     /**
      * TCP服务参数
@@ -89,5 +96,6 @@ return [
      */
     'webSocketParam'=>[],
 
+    'udpParam'=>[],
 
 ];

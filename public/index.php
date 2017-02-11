@@ -7,8 +7,9 @@ define('RUNTIME', microtime(true));
 define('APP_NAME', 'demo');
 define('APP_LANG', 'zh_cn');
 define('APP_ROUTES', true);
-
 //加载composer in vendor
-require __DIR__.'/vendor/autoload.php';
+require  '../vendor/autoload.php';
 //加载Upadd
-require __DIR__.'/vendor/Upadd/Upadd.conf.php';
+require  '../vendor/Upadd/Upadd.conf.php';
+
+$app->dispenser->fpm();

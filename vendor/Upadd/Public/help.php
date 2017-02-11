@@ -309,7 +309,7 @@ if (!function_exists('getArgs')) {
      * @param $argv
      * @return array
      */
-    function getArgs($argv, $out = array())
+    function getArgs($argv = [], $out = array())
     {
         if (!empty($argv)) {
             array_shift($argv);
@@ -333,7 +333,12 @@ if (!function_exists('getArgs')) {
 
 }
 
-if (!function_exists('host')) {
+if (!function_exists('host'))
+{
+    /**
+     * 获取绝对路径
+     * @return string
+     */
     function host()
     {
         return UPADD_HOST;

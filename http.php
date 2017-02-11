@@ -7,13 +7,11 @@ define('APP_ROUTES', true);
 
 //加载composer in vendor
 require __DIR__.'/vendor/autoload.php';
-
 //加载Upadd
 require __DIR__.'/vendor/Upadd/Upadd.conf.php';
 
 use Upadd\Swoole\HttpServer;
 
 $swooleHtpp = Config::get('swoole@http');
-$http = HttpServer::create($swooleHtpp['name'],$swooleHtpp['host']);
-$http->getDispenser($app->getDispenser());
-$http->start();
+
+HttpServer::create($swooleHtpp['name'],$swooleHtpp['host'])->start();

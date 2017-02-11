@@ -16,11 +16,12 @@ class HomeAction extends \Upadd\Frame\Action
 {
 
 
-
     public function test()
     {
-        echo 'hi, welcome to use Upadd';
+        return 'hi, welcome to use Upadd';
     }
 
-
+    public function testPath(){
+        return host();
+    }
 }

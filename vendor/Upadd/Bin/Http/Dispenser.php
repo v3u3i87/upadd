@@ -22,8 +22,6 @@ class Dispenser
 
     private $_work = null;
 
-    private $_argv = [];
-
     /**
      * 命令行数据
      * @var array
@@ -60,38 +58,36 @@ class Dispenser
         $this->_work = Config::get('sys@work');
     }
 
-
     /**
-     * php-fpm模式
+     * fpm模式
      * @param array $argv
      */
-    public function http_fpm($argv = [])
+    public function fpm()
     {
-        if ($argv) {
-            $this->_argv = $argv;
-            $this->_cliData = getArgs($argv);
-        }
-
         $request = $this->_work['Request'];
-
+        $request->header = array_change_key_case(getHeader());
+        $request->server = array_change_key_case($_SERVER);
         //日志
         $request->setRequestLog();
-
-        /**
-         * 判断运行环境
-         */
-        if (is_run_evn()) {
-            $this->_responseData = $this->http();
-
-        } else {
-            $this->_responseData = $this->command();
-        }
-
+        $this->_responseData = $this->http();
         $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
-
         echo $_responseRun->send();
     }
 
+    /**
+     * 命令行模式
+     * @param array $argv
+     */
+    public function console()
+    {
+        $argv = Config::get('sys@argv');
+        if ($this->_cliData = getArgs($argv))
+        {
+            $this->_responseData = $this->command();
+            $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
+            echo $_responseRun->send();
+        }
+    }
 
     /**
      * swoole 使用
@@ -112,12 +108,11 @@ class Dispenser
                 $params = $swoole_http_request->post;
             }
         }
-        Data::accept($params);
+        $params != null && Data::accept($params);
 
         $request = $this->_work['Request'];
-
-        $request->header = $swoole_http_request->header;
-        $request->server = $swoole_http_request->server;
+        $request->header = isset($swoole_http_request->header) ? $swoole_http_request->header : [];
+        $request->server = isset($swoole_http_request->server) ? $swoole_http_request->server : [];
         //过滤浏览器自动请求  favicon.ico
         if ($request->server['request_uri'] !== '/favicon.ico') {
             //设置请求日志
@@ -197,34 +192,21 @@ class Dispenser
     {
         if (class_exists($this->_action)) {
             Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
-            /**
-             * 实例化控制器
-             */
             $class = new $this->_action();
-
-            /**
-             * 获取方法
-             */
             $method = $this->_method;
-
             $tmpData = null;
-
             if (is_run_evn()) {
                 $class->init();
                 $tmpData = func_get_args();
             } else {
                 $tmpData = $this->_cliData;
             }
-
             $result = call_user_func_array(array($class, $method), $tmpData);
-
             $this->_responseType = $class->getResponseType();
-
             return $result;
         } else {
             throw new UpaddException('There is no Action');
         }
-
     }
 
 

@@ -20,6 +20,8 @@ class Application
      */
     public $_work = [];
 
+    public $dispenser;
+
     /**
      * @param $callable
      * @param array $argv
@@ -27,22 +29,13 @@ class Application
     public function run($callable, $argv = [])
     {
         date_default_timezone_set('Asia/Shanghai');
-        $dispenser = $this->getDispenser();
         if (is_callable($callable)) {
             call_user_func_array($callable, func_get_args());
         }
-        if(!empty(getHeader()))
-        {
-            $this->_work['Request']->header = array_change_key_case(getHeader());
-            $this->_work['Request']->server = array_change_key_case($_SERVER);
-            $dispenser->http_fpm($argv);
+        $this->dispenser = new Dispenser();
+        if($argv) {
+            static::$_config['sys'] = array_merge(static::$_config['sys'], ['argv' => $argv]);
         }
-    }
-
-
-    public function getDispenser()
-    {
-        return new Dispenser();
     }
 
     /**

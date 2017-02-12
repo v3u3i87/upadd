@@ -6,80 +6,8 @@ namespace Upadd\Bin\Http;
  * Class Data
  * @package Upadd\Bin\Http
  */
-class Data
+class Data extends Input
 {
-
-    public $_setData = array();
-
-    /**
-     * Data constructor.
-     */
-    public function __construct()
-    {
-        $this->setGet();
-        $this->setPost();
-        $this->setFiles();
-        $this->getStream();
-        $this->setJson();
-    }
-
-    /**
-     * 设置json
-     */
-    private function setJson()
-    {
-        $json = $this->getStream();
-        if ($json) {
-            $data = json_decode($json, true);
-            if (count($data) >= 1) {
-                $this->_setData = array_merge($this->_setData, $data);
-            }
-        }
-    }
-
-    /**
-     * 设置POST参数
-     */
-    private function setPost()
-    {
-        if (count($_POST) >= 1) {
-            $this->_setData = array_merge($this->_setData, $_POST);
-        }
-    }
-
-    /**
-     * 设置GET参数
-     */
-    private function setGet()
-    {
-        if (count($_GET) >= 1) {
-            $this->_setData = array_merge($this->_setData, $_GET);
-        }
-    }
-
-    /**
-     * 设置文件
-     */
-    private function setFiles()
-    {
-        if (count($_FILES) >= 1) {
-            $this->_setData = array_merge($this->_setData, $_FILES);
-        }
-    }
-
-
-    /**
-     * 获取数据流
-     * @return array|string
-     */
-    private function getStream()
-    {
-        $data = file_get_contents("php://input");
-        if ($data) {
-            return $data;
-        }
-        return [];
-    }
 
     /**
      * 对外获取的方法
@@ -91,8 +19,8 @@ class Data
     public function get($name = null, $default = null, $method = null)
     {
 
-        if (isset($this->_setData[$name])) {
-            $default = $this->_setData[$name];
+        if (isset($this->data[$name])) {
+            $default = $this->data[$name];
         }
 
         if (is_callable($method)) {
@@ -103,23 +31,45 @@ class Data
     }
 
     /**
-     * 返回所有的请求数据
+     * 获取数据流
+     * @return array
+     */
+    public function stream()
+    {
+        if ($this->stream) {
+            return $this->stream;
+        }
+        return null;
+    }
+
+    /**
+     * 返回PHP数组
+     * @return array|null
+     */
+    public function json()
+    {
+        if (is_array($this->json)) {
+            return $this->json;
+        }
+        return null;
+    }
+
+
+    /**
+     * 返回所有数据
      * @return array
      */
     public function all()
     {
-        return $this->_setData;
+        if (is_array($this->json)) {
+            $this->data = array_merge($this->data, $this->json);
+        }
+
+        if (!empty($this->stream)) {
+            $this->data = array_merge($this->data, ['stream' => $this->stream]);
+        }
+        return $this->data;
     }
 
-    /**
-     * 接受数据
-     * @param array $data
-     */
-    public function accept($data = [])
-    {
-        if (count($data) >= 1) {
-            return ($this->_setData = array_merge($this->_setData, $data));
-        }
-    }
 
 }

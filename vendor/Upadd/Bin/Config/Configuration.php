@@ -150,8 +150,7 @@ class Configuration{
      */
     protected function getSys()
     {
-        $sys = host().VENDOR.'/Public/config.php';
-        return (require $sys);
+        return (require host().VENDOR.'/Public/config.php');
     }
 
     /**

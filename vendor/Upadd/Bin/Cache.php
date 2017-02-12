@@ -18,20 +18,18 @@ class Cache
     public static function __callStatic($method, $parameters)
     {
 
-        if($method == 'redis') {
+        if ($method == 'redis') {
             if (Configuration::get('sys@is_use_redis')) {
                 return (new getRedis());
             }
         }
 
-        if($method == 'memcache')
-        {
+        if ($method == 'memcache') {
             if (Configuration::get('sys@is_use_memcache')) {
                 return (new getMemcache());
             }
         }
     }
-
 
 
 }

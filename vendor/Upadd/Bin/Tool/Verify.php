@@ -96,7 +96,7 @@ class Verify {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 验证输入的邮件地址是否合法
 	 *

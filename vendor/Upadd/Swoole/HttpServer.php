@@ -90,9 +90,15 @@ class HttpServer extends Server
      */
     protected function response($request, $response)
     {
-        $data = $this->dispenser->swoole($request,$response);
-        $response->status(200);
-        return $response->end($data);
+        $content = $this->dispenser->swoole($request);
+        $response->status($content['code']);
+        if(count($content['header']) >=1 ){
+            foreach ($content['header'] as $key=>$val)
+            {
+                $response->header($key, $val);
+            }
+        }
+        return $response->end($content['data']);
     }
 
     /**

@@ -2,20 +2,20 @@
 
 namespace Upadd\Bin;
 
-abstract class Factory{
+abstract class Factory
+{
 
     public static $instance = array();
 
 
     /**
      * 导入项目
-     * @param $_work
+     * @param $init
      */
-    public static function Import($_work)
+    public static function Import($init)
     {
-        static::$instance = $_work;
+        static::$instance = $init;
     }
-
 
     /**
      * 获取名称
@@ -23,8 +23,7 @@ abstract class Factory{
      */
     public static function getName()
     {
-        if(isset(static::$instance[static::getClassObj()]))
-        {
+        if (isset(static::$instance[static::getClassObj()])) {
             return static::$instance[static::getClassObj()];
         }
         return static::getClassObj();
@@ -35,8 +34,7 @@ abstract class Factory{
     {
 
         $action = static::getName();
-        switch (count($args))
-        {
+        switch (count($args)) {
             case 0:
                 return $action->$method();
 

@@ -2,7 +2,8 @@
 namespace Upadd\Bin\Tool;
 
 
-class Upload {
+class Upload
+{
 
     private $_fileTypeArr;
     private $_path = null;
@@ -21,8 +22,7 @@ class Upload {
     private $_getFile = null;
 
 
-
-    public function __construct($file,$max_file_siz=6120,$_fileType=array(),$_setPath=null)
+    public function __construct($file, $max_file_siz = 6120, $_fileType = array(), $_setPath = null)
     {
         $this->_getFile = $file;
         //获取文件参数
@@ -43,7 +43,7 @@ class Upload {
         //获取连接目录设置
         $this->_linkDir = date('Ymd') . '/';
         //创建子目录名称
-        $this->_today = $this->_path .'/'. $this->_linkDir;
+        $this->_today = $this->_path . '/' . $this->_linkDir;
         $this->checkErrorCode();
         $this->checkType();
         $this->checkPath();
@@ -55,9 +55,8 @@ class Upload {
      */
     public function setLoadFilePath()
     {
-        if($this->_path===null)
-        {
-            $this->_path = host().'data/upload';
+        if ($this->_path === null) {
+            $this->_path = host() . 'data/upload';
         }
     }
 
@@ -72,16 +71,14 @@ class Upload {
     //移动文件
     private function moveload()
     {
-        if (is_uploaded_file($this->_tmp_name))
-        {
+        if (is_uploaded_file($this->_tmp_name)) {
             umask(0022);
-            chmod($this->_tmp_name,0777);
-            if (!move_uploaded_file($this->_tmp_name, $this->setFileNewName()))
-            {
-                msg(206,'警告:上传失败!');
+            chmod($this->_tmp_name, 0777);
+            if (!move_uploaded_file($this->_tmp_name, $this->setFileNewName())) {
+                msg(206, '警告:上传失败!');
             }
-        }else {
-            msg(206,'警告:临时文件不存在!');
+        } else {
+            msg(206, '警告:临时文件不存在!');
         }
     }
 
@@ -89,32 +86,29 @@ class Upload {
     private function setFileNewName()
     {
         $fileArray = lode('.', $this->_name);
-        $fileAttr =  $fileArray[count($fileArray)-1];
+        $fileAttr = $fileArray[count($fileArray) - 1];
         //设置文件新名称
-        $newName = md5(date('YmdHis')).mt_rand(3, 999).'.'.$fileAttr;
+        $newName = md5(date('YmdHis')) . mt_rand(3, 999) . '.' . $fileAttr;
         //返回的是文件目录，不含有根目录
-        $this->_linkPath = $this->_linkDir.$newName;
-        return $this->_today.$newName;
+        $this->_linkPath = $this->_linkDir . $newName;
+        return $this->_today . $newName;
     }
 
 
     //判断目录
-    private function checkPath(){
+    private function checkPath()
+    {
         //设置总目录
-        if (!is_dir($this->_path) || !is_writeable($this->_path))
-        {
-            if(!mkdir($this->_path,0777))
-            {
-                msg(206,'警告:处理的总目录没有创建成功!');
+        if (!is_dir($this->_path) || !is_writeable($this->_path)) {
+            if (!mkdir($this->_path, 0777)) {
+                msg(206, '警告:处理的总目录没有创建成功!');
             }
         }
 
         //设置子目录
-        if (!is_dir($this->_today) || !is_writeable($this->_today))
-        {
-            if(!mkdir($this->_today,0777))
-            {
-                msg(206,'警告:处理的子目录没有创建成功!');
+        if (!is_dir($this->_today) || !is_writeable($this->_today)) {
+            if (!mkdir($this->_today, 0777)) {
+                msg(206, '警告:处理的子目录没有创建成功!');
             }
         }
     }
@@ -122,34 +116,32 @@ class Upload {
     //判断类型
     private function checkType()
     {
-        $type = lode('/',$this->_type);
+        $type = lode('/', $this->_type);
         $this->_type = $type[1];
 //        p([$this->_getFile,$this->_fileTypeArr,$this->_type,$type,$this->_tmp_name,$this->_name]);
-        if(!in_array($this->_type,$this->_fileTypeArr))
-        {
-            msg(206,'警告:上传的类型不合法');
+        if (!in_array($this->_type, $this->_fileTypeArr)) {
+            msg(206, '警告:上传的类型不合法');
         }
     }
 
     //判断上传错误代码
     private function checkErrorCode()
     {
-        switch ($this->_error >=1 )
-        {
+        switch ($this->_error >= 1) {
             case 1 :
-                msg(206,'警告:上传值超过了约定最大值!');
+                msg(206, '警告:上传值超过了约定最大值!');
                 break;
 
             case 2 :
-                msg(206,'警告:上传值超过了最大'.$this->_max_file_size.'KB');
+                msg(206, '警告:上传值超过了最大' . $this->_max_file_size . 'KB');
                 break;
 
             case 3 :
-                msg(206,'警告:上传值超过了约定最大值!');
+                msg(206, '警告:上传值超过了约定最大值!');
                 break;
 
             case 4 :
-                msg(206,'警告:没有任何文件被上传!');
+                msg(206, '警告:没有任何文件被上传!');
                 break;
 
         }

@@ -97,12 +97,8 @@ class Log
         }
 
         $size = filesize($log);
-        /**
-         * 判断是否大于
-         * 1G=1099511627776
-         * 10M=10485760
-         */
-        if ($size <= 10485760) {
+
+        if ($size <= (int)10485760) {
             return $log;
         }
 

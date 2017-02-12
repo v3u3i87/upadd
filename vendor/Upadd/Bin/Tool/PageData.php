@@ -1,19 +1,20 @@
 <?php
 /**
- +----------------------------------------------------------------------
-| UPADD [ Can be better to Up add]
-+----------------------------------------------------------------------
-| Copyright (c) 20011-2014 http://upadd.cn All rights reserved.
-+----------------------------------------------------------------------
-| Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-+----------------------------------------------------------------------
-| Author: Richard.z <v3u3i87@gmail.com>
-**/
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 20011-2014 http://upadd.cn All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
+ **/
 namespace Upadd\Bin\Tool;
 
 use Data;
 
-class PageData {
+class PageData
+{
     /**
      * 总记录
      * @var int
@@ -67,8 +68,8 @@ class PageData {
     public function setLimit()
     {
         $tmp = 'LIMIT ';
-        $tmp.= ($this->_page-1)*$this->_pagesize;
-        return $tmp.= ",$this->_pagesize";
+        $tmp .= ($this->_page - 1) * $this->_pagesize;
+        return $tmp .= ",$this->_pagesize";
     }
 
 
@@ -78,16 +79,13 @@ class PageData {
      */
     private function setPage()
     {
-        $pageNumeber = (int) Data::get('page',1);
-        if(!is_numeric($pageNumeber))
-        {
+        $pageNumeber = (int)Data::get('page', 1);
+        if (!is_numeric($pageNumeber)) {
             $pageNumeber = 1;
-        }elseif(empty($pageNumeber))
-        {
+        } elseif (empty($pageNumeber)) {
             $pageNumeber = 1;
         }
-        if ( $pageNumeber > $this->_pagenum)
-        {
+        if ($pageNumeber > $this->_pagenum) {
             return $this->_pagenum;
         }
         return $pageNumeber;
@@ -107,11 +105,10 @@ class PageData {
      */
     private function prev()
     {
-        if ($this->_page == 1)
-        {
+        if ($this->_page == 1) {
             return $this->_page;
         }
-        return $this->_page-1;
+        return $this->_page - 1;
     }
 
 
@@ -121,11 +118,10 @@ class PageData {
      */
     private function next()
     {
-        if ($this->_page == $this->_pagenum)
-        {
+        if ($this->_page == $this->_pagenum) {
             return $this->_page;
         }
-        return $this->_page+1;
+        return $this->_page + 1;
     }
 
     /**
@@ -134,9 +130,8 @@ class PageData {
      */
     private function last()
     {
-        if ($this->_pagenum - $this->_page > $this->_bothnum)
-        {
-           return $this->_pagenum;
+        if ($this->_pagenum - $this->_page > $this->_bothnum) {
+            return $this->_pagenum;
         }
         return 1;
     }
@@ -145,19 +140,19 @@ class PageData {
     public function show()
     {
         $info['limit'] = $this->_limit;
-        $info['data'] =  array(
+        $info['data'] = array(
             //当前页
-            'current'=>$this->_page,
+            'current' => $this->_page,
             //上一页
-            'prev'=>$this->prev(),
+            'prev' => $this->prev(),
             //下一页
-            'next'=>$this->next(),
+            'next' => $this->next(),
             //末尾页
-            'last'=>$this->last(),
+            'last' => $this->last(),
             //总数
-            'total'=>$this->_total,
+            'total' => $this->_total,
             //默认条数
-            'per_page'=>$this->_pagesize,
+            'per_page' => $this->_pagesize,
         );
         return $info;
     }

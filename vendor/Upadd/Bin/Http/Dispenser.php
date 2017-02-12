@@ -12,9 +12,9 @@ namespace Upadd\Bin\Http;
 
 use Config;
 use Data;
-use Upadd\Bin\Response\Run as ResponseRun;
-use Upadd\Bin\Tool\Log;
-use Upadd\Bin\View\Error;
+use Log;
+use Upadd\Bin\Response\Execute as response;
+use Upadd\Bin\View\Prompt;
 use Upadd\Bin\UpaddException;
 
 class Dispenser
@@ -42,15 +42,19 @@ class Dispenser
 
     /**
      * 响应类型
-     * @var null
+     * @var string
      */
-    public $_responseType;
+    protected $_responseType = 'json';
+
+    protected $_responseCode = 200;
+
+    protected $_responseHeader = [];
 
     /**
      * 相应数据
      * @var
      */
-    public $_responseData;
+    private $_responseData;
 
 
     public function __construct()
@@ -70,8 +74,12 @@ class Dispenser
         //日志
         $request->setRequestLog();
         $this->_responseData = $this->http();
-        $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
-        echo $_responseRun->send();
+        $response = new response();
+        $response->type = $this->_responseType;
+        $response->code = $this->_responseCode;
+        $response->header = $this->_responseHeader;
+        $response->content = $this->_responseData;
+        echo $response->sendHttp();
     }
 
     /**
@@ -84,8 +92,13 @@ class Dispenser
         if ($this->_cliData = getArgs($argv))
         {
             $this->_responseData = $this->command();
-            $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
-            echo $_responseRun->send();
+            $response = new response();
+            $response->type = $this->_responseType;
+            $response->code = $this->_responseCode;
+            $response->header = $this->_responseHeader;
+            return $this->_responseData;
+        }else{
+            throw new UpaddException('console Cant get the data');
         }
     }
 
@@ -94,7 +107,7 @@ class Dispenser
      * @param array $swoole_http_request
      * @return null
      */
-    public function swoole($swoole_http_request, $response)
+    public function swoole($swoole_http_request)
     {
         $params = [];
         if (isset($swoole_http_request->get)) {
@@ -108,8 +121,20 @@ class Dispenser
                 $params = $swoole_http_request->post;
             }
         }
-        $params != null && Data::accept($params);
 
+        if(isset($swoole_http_request->files)){
+            if (count($params) >= 1) {
+                $params = array_merge($params, $swoole_http_request->files);
+            } else {
+                $params = $swoole_http_request->files;
+            }
+        }
+
+        $rawContent = $swoole_http_request->rawContent();
+        if($rawContent){
+            Data::setStream($rawContent);
+        }
+        Data::accept($params);
         $request = $this->_work['Request'];
         $request->header = isset($swoole_http_request->header) ? $swoole_http_request->header : [];
         $request->server = isset($swoole_http_request->server) ? $swoole_http_request->server : [];
@@ -118,8 +143,12 @@ class Dispenser
             //设置请求日志
             $request->setRequestLog();
             $this->_responseData = $this->http();
-            $_responseRun = new ResponseRun($this->_responseData, $this->_responseType);
-            return $_responseRun->send();
+            $response = new response();
+            $response->type = $this->_responseType;
+            $response->code = $this->_responseCode;
+            $response->header = $this->_responseHeader;
+            $response->content = $this->_responseData;
+            return $response->sendSwooleHtpp();
         }
     }
 
@@ -203,6 +232,8 @@ class Dispenser
             }
             $result = call_user_func_array(array($class, $method), $tmpData);
             $this->_responseType = $class->getResponseType();
+            $this->_responseHeader = $class->getResponseHeader();
+            $this->getResponseCode = $class->getResponseCode();
             return $result;
         } else {
             throw new UpaddException('There is no Action');

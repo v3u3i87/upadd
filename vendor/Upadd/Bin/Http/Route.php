@@ -24,9 +24,9 @@ class Route
     /**
      * @param $request
      */
-    public function getRequest($request)
+    public function getRequest($Request)
     {
-        $this->request = $request;
+        $this->request = $Request;
     }
 
     /**
@@ -136,7 +136,7 @@ class Route
                     }
                 }
             }
-        }else{
+        } else {
             throw new UpaddException("请设置路由");
         }
     }
@@ -152,7 +152,7 @@ class Route
     {
         if ($this->request->getRequestMethod() == $request['type'] || $request['type'] == 'ANY') {
             return $request;
-        }else{
+        } else {
             throw new UpaddException("Request the wrong way, your source is ({$this->request->getRequestMethod()}), the request is {$request['type']}.");
         }
     }

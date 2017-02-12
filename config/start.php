@@ -64,7 +64,12 @@ return array(
      */
     'is_use_memcache' => false,
 
-
+    /**
+     * 设置日志文件最大容量
+     * 1G=1099511627776
+     * 10M=10485760
+     */
+    'log_maximum'=> 10485760,
 
 
 );

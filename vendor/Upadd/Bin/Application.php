@@ -20,6 +20,10 @@ class Application
      */
     public $_work = [];
 
+    /**
+     * 派发器
+     * @var
+     */
     public $dispenser;
 
     /**
@@ -33,7 +37,7 @@ class Application
             call_user_func_array($callable, func_get_args());
         }
         $this->dispenser = new Dispenser();
-        if($argv) {
+        if ($argv) {
             static::$_config['sys'] = array_merge(static::$_config['sys'], ['argv' => $argv]);
         }
     }

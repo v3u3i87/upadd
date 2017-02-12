@@ -12,7 +12,7 @@ namespace demo\action;
 
 use Data;
 
-class HomeAction extends \Upadd\Frame\Action
+class TestDataAction extends \Upadd\Frame\Action
 {
 
 
@@ -26,10 +26,19 @@ class HomeAction extends \Upadd\Frame\Action
         return host();
     }
 
-    public function json()
+    public function getJson()
     {
-        return $this->msg(200, 'ok');
+        $json = Data::json();
+        return $this->msg(200, 'ok',$json);
     }
+
+
+    public function stream()
+    {
+        $json = Data::stream();
+        return $this->msg(200, 'ok',json($json));
+    }
+
 
     public function xml()
     {

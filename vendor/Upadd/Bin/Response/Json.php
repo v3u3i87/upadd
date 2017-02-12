@@ -1,12 +1,13 @@
 <?php
 namespace Upadd\Bin\Response;
 
-class Json extends Run
+class Json extends Factory
 {
+    public $contentType = 'application/json';
 
-    public function execute()
+    public function setContent($data=null)
     {
-        return (json_encode($this->content,JSON_UNESCAPED_UNICODE));
+        return (json_encode($data,JSON_UNESCAPED_UNICODE));
     }
 
 

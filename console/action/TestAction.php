@@ -29,8 +29,9 @@ class TestAction extends \Upadd\Frame\Action
         return HttpServer::create($swooleHtpp['name'], $swooleHtpp['host'])->start();
     }
 
-    public function test_http(){
-        //http://11.22.33.105:9821/
+    public function a()
+    {
+       echo  json(['zmq'=>'zhang mao qiang','test'=>123,'Info'=>'to upadd']);
     }
 
     //php console.php --u=test --p=info
@@ -44,7 +45,7 @@ class TestAction extends \Upadd\Frame\Action
         //看看生产文件多大
         file_put_contents('b.log', str_repeat('-zmq-', $int));
 //        exit;
-        for ($i = 0; $i < 10000; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $this->client = new \swoole_client(SWOOLE_SOCK_TCP);
             if (!$this->client->connect("127.0.0.1", 9988, -1)) {
                 echo "Error: {$this->client->errMsg}[{$this->client->errCode}]\n";

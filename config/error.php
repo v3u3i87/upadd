@@ -1,6 +1,11 @@
 <?php
 return [
 
+    /*
+    * 生产环境
+    */
+    'debug'=>true,
+
     /**
      * 是否开启URL错误跳转
      * true = 开启

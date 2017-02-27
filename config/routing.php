@@ -22,5 +22,6 @@ Routes::group(array('prefix' => '/test'), function ()
     //提交数据流 stream
     Routes::post('/data/stream', 'demo\action\TestDataAction@stream');
 
+    Routes::any('/model/add', 'demo\action\TestModelAction@add');
 
 });

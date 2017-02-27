@@ -6,7 +6,7 @@ return array(
         'type' => 'pdo_mysql',
         'host' => '127.0.0.1',
         'user' => 'root',
-        'pass' => 'root',
+        'pass' => 'maoqiang',
         'name' => 'demo',
         'port' => 3306,
         'charset' => 'UTF8',

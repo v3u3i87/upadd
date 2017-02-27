@@ -2,10 +2,12 @@
 namespace Upadd\Bin\Db;
 
 use PDO;
+use Config;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\UpaddException;
 
-class LinkPdoMysql implements Db{
+class LinkPdoMysql implements Db
+{
 
     /**
      * 对象
@@ -24,8 +26,8 @@ class LinkPdoMysql implements Db{
     {
         try {
             $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
-            $this->_linkID = new PDO($dns,$link ['user'], $link ['pass']);
-            $this->_linkID->exec('SET NAMES '.$link ['charset']);
+            $this->_linkID = new PDO($dns, $link ['user'], $link ['pass']);
+            $this->_linkID->exec('SET NAMES ' . $link ['charset']);
         } catch (PDOException $e) {
             throw new UpaddException($e->getMessage());
         }
@@ -38,8 +40,7 @@ class LinkPdoMysql implements Db{
     public function select()
     {
         $result = $this->query();
-        if($result)
-        {
+        if ($result) {
             return $result->fetchAll(PDO::FETCH_ASSOC);
         }
         return false;
@@ -53,8 +54,7 @@ class LinkPdoMysql implements Db{
     public function find()
     {
         $result = $this->query();
-        if($result)
-        {
+        if ($result) {
             return $result->fetch(PDO::FETCH_ASSOC);
         }
     }
@@ -67,8 +67,7 @@ class LinkPdoMysql implements Db{
     public function getNextId()
     {
         $_result = $this->select();
-        if(isset($_result [0] ['Auto_increment']))
-        {
+        if (isset($_result [0] ['Auto_increment'])) {
             return $_result [0] ['Auto_increment'];
         }
         throw new UpaddException('获取下条自增ID失败');
@@ -81,8 +80,7 @@ class LinkPdoMysql implements Db{
     public function getTotal()
     {
         $query = $this->query();
-        if($query)
-        {
+        if ($query) {
             return $query->fetchColumn();
         }
         return 0;
@@ -96,14 +94,13 @@ class LinkPdoMysql implements Db{
      */
     public function getField()
     {
-        $_result = $this->select ();
+        $_result = $this->select();
         $field = '';
-        foreach ( $_result as $k => $v )
-        {
+        foreach ($_result as $k => $v) {
             $field .= $v ['Field'] . ',';
         }
-        $field = substr ( $field, 0, - 1 );
-        $field = explode ( ',', $field );
+        $field = substr($field, 0, -1);
+        $field = explode(',', $field);
         return $field;
     }
 
@@ -122,19 +119,17 @@ class LinkPdoMysql implements Db{
      * @return bool
      * @throws UpaddException
      */
-    public function sql($sql=null)
+    public function sql($sql = null)
     {
-        if($sql)
-        {
+        if ($sql) {
             $this->_sql = $sql;
         }
         $this->log();
-        $result = $this->_linkID->exec( $this->_sql );
-        if($result)
-        {
+        $result = $this->_linkID->exec($this->_sql);
+        if ($result) {
             return true;
         }
-        return false;
+        return $this->debug();
     }
 
     /**
@@ -146,21 +141,23 @@ class LinkPdoMysql implements Db{
     {
         $this->log();
         $result = $this->_linkID->query($this->_sql);
-        if($result)
-        {
+        if ($result) {
             return $result;
         }
-        return false;
+        return $this->debug();
     }
 
     /**
-     * 记录SQL错误
+     * 日志
      */
-    public function log()
+    public function log($info = '')
     {
-        Log::run($this->_sql."\n");
+        if (empty($info)) {
+            Log::run($this->_sql . "\n");
+        } else {
+            Log::run($info . "\n");
+        }
     }
-
 
     /**
      * 开启事务
@@ -194,13 +191,12 @@ class LinkPdoMysql implements Db{
      * @param $type as exit or
      * @return mixed
      */
-    public function p($status=true)
+    public function p($status = true)
     {
-        if($status)
-        {
+        if ($status) {
             p($this->_sql);
-        }else{
-            p($this->_sql,true);
+        } else {
+            p($this->_sql, true);
         }
     }
 
@@ -218,11 +214,28 @@ class LinkPdoMysql implements Db{
      */
     public function debug()
     {
-        var_dump($this->error());
+        $error = $this->error();
+        $content = "======SqlError\n";
+        $content .= $this->_sql . "\n";
+        $content .= "SQLSTATE:" . (isset($error[0]) ? $error[0] : 'null') . "\n";
+        $content .= "Code:" . (isset($error[1]) ? $error[1] : 'null') . "\n";
+        $content .= "Msg:" . (isset($error[2]) ? $error[2] : 'null') . "\n";
+        $content .= "======EndSql\n";
+        $this->log($content);
+        if (Config::get('error@debug')) {
+            header('Content-Type:text/html;charset=utf-8');
+            echo '<pre>';
+            echo($content);
+            echo '</pre>';
+        }
+        return false;
     }
+
 
     public function close()
     {
-        $this->_linkID = null;
+        return $this->_linkID = null;
     }
+
+
 }

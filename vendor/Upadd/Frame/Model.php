@@ -64,6 +64,7 @@ class Model
      */
     protected $use = 'local';
 
+    protected $_dbName = '';
 
     /**
      * 初始化

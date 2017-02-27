@@ -40,10 +40,6 @@ class Grab extends Debug
     public static function setError($errno, $errstr, $errfile = '', $errline = 0, $errcontext = [])
     {
         $error = [$errno, $errstr, $errfile, $errline, $errcontext];
-        if (Config::get('tag@debug'))
-        {
-            self::printError($error);
-        }
         $body = "Error\n";
         $body .= "---\n";
         $body .= "Level:" . $error[0] . "\n";
@@ -55,6 +51,7 @@ class Grab extends Debug
         }
         $body .= "---\n";
         Log::run($body);
+        self::__print($error);
     }
 
     /**
@@ -71,10 +68,7 @@ class Grab extends Debug
             'code' => $e->getCode(),
             'previous' => $e->getPrevious(),
         ];
-        if (Config::get('tag@debug'))
-        {
-            self::printError($error);
-        }
+        self::__print($error);
     }
 
 
@@ -87,7 +81,6 @@ class Grab extends Debug
          * type,message,fileline
          */
         $error = error_get_last();
-        self::printError($error);
         /**
          * 检测是否有错误
          */
@@ -102,21 +95,25 @@ class Grab extends Debug
         $endtime .= 'End Run Time consuming ' . round($time, 3) . ' second';
         $endtime .= "\r\n" . "======\n\r";
         Log::run($endtime);
+        self::__print($error);
     }
 
     /**
      * 打印错误或是异常
      * @param array $error
      */
-    private static function printError($error = [])
+    private static function __print($error = [])
     {
-        if ($error) {
-            if (is_run_evn()) {
-                echo '<pre>';
-                print_r($error);
-                echo '</pre>';
-            } else {
-                print_r($error);
+        if (Config::get('error@debug'))
+        {
+            if ($error) {
+                if (is_run_evn()) {
+                    echo '<pre>';
+                    print_r($error);
+                    echo '</pre>';
+                } else {
+                    print_r($error);
+                }
             }
         }
     }

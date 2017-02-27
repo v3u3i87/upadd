@@ -54,7 +54,6 @@ class Query extends ProcessingSql
             $this->_pageData['data'] = $_data;
             $_data = $this->_pageData;
         }
-//        $this->clear_where();
         return $_data;
     }
 
@@ -79,7 +78,6 @@ class Query extends ProcessingSql
     {
         $this->joint_field($_field);
         $this->_db->_sql = 'SELECT ' . $this->mergeSqlLogic() . ';';
-//        $this->clear_where();
         return $this->_db->find();
     }
 
@@ -251,7 +249,7 @@ class Query extends ProcessingSql
             if ($tmp) {
                 $sql .= $tmp;
             }
-            $this->_db->_sql = 'SELECT ' .$sql. $this->mergeSqlLogic() . ';';
+            $this->_db->_sql = 'SELECT ' . $sql . $this->mergeSqlLogic() . ';';
             return $this->_db->getTotal();
         }
     }
@@ -273,16 +271,15 @@ class Query extends ProcessingSql
             if ($tmp) {
                 $sql .= $tmp;
             }
-            $this->_db->_sql = 'SELECT ' .$sql. $this->mergeSqlLogic() . ';';
+            $this->_db->_sql = 'SELECT ' . $sql . $this->mergeSqlLogic() . ';';
             $_data = $this->_db->select();
 //            $this->clear_where();
-            if($_data) {
+            if ($_data) {
                 return $_data;
             }
         }
         return [];
     }
-
 
 
     /**
@@ -304,7 +301,7 @@ class Query extends ProcessingSql
     /**
      * 模糊查询
      * @param unknown $key
-     * @param string  $_field
+     * @param string $_field
      * @return \Upadd\Frame\Model
      */
     public function like($key, $_field = null)

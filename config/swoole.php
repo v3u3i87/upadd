@@ -6,7 +6,7 @@ return [
      * true 进程服务
      * false = 会话模式
      */
-    'daemonize'=>false,
+    'daemonize'=>1,
 
     'tcp'=> [
         'name'=>'rpcUpadd',
@@ -15,7 +15,7 @@ return [
 
     'http'=>[
         'name'=>'httpUpadd',
-        'host'=>'http://0.0.0.0:8080',
+        'host'=>'http://0.0.0.0:9090',
     ],
 
     'webSocket'=>[

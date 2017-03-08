@@ -1,7 +1,7 @@
 <?php
 
 Routes::get('/', function(){
-    return 'hi, welcome to use upadd in Anonymous functions';
+    return 'hi, welcome to use upadd in Anonymous functions...';
 });
 
 

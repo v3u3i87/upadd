@@ -15,6 +15,8 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Cache\\CacheRoute' => __DIR__ . '/..' . '/Upadd/Bin/Cache/CacheRoute.php',
         'Upadd\\Bin\\Cache\\getMemcache' => __DIR__ . '/..' . '/Upadd/Bin/Cache/getMemcache.php',
         'Upadd\\Bin\\Cache\\getRedis' => __DIR__ . '/..' . '/Upadd/Bin/Cache/getRedis.php',
+        'Upadd\\Bin\\Client' => __DIR__ . '/..' . '/Upadd/Bin/Client.php',
+        'Upadd\\Bin\\Client\\Http' => __DIR__ . '/..' . '/Upadd/Bin/Client/Http.php',
         'Upadd\\Bin\\Config\\Configuration' => __DIR__ . '/..' . '/Upadd/Bin/Config/Configuration.php',
         'Upadd\\Bin\\Config\\GetConfiguration' => __DIR__ . '/..' . '/Upadd/Bin/Config/GetConfiguration.php',
         'Upadd\\Bin\\Db\\Db' => __DIR__ . '/..' . '/Upadd/Bin/Db/Db.php',

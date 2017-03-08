@@ -6,11 +6,19 @@ namespace console\action;
 use Config;
 use console\swoole\TestServer;
 use Upadd\Swoole\HttpServer;
+use Upadd\Bin\Client\Http;
+
 
 class TestAction extends \Upadd\Frame\Action
 {
 
     public $client = null;
+
+
+    public function zmq(){
+        $client = new Http('http://zmq.cc:80',[]);
+    }
+
 
     /**
      * php console.php --u=test --p=tcp

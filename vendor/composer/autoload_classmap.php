@@ -14,6 +14,8 @@ return array(
     'Upadd\\Bin\\Cache\\CacheRoute' => $vendorDir . '/Upadd/Bin/Cache/CacheRoute.php',
     'Upadd\\Bin\\Cache\\getMemcache' => $vendorDir . '/Upadd/Bin/Cache/getMemcache.php',
     'Upadd\\Bin\\Cache\\getRedis' => $vendorDir . '/Upadd/Bin/Cache/getRedis.php',
+    'Upadd\\Bin\\Client' => $vendorDir . '/Upadd/Bin/Client.php',
+    'Upadd\\Bin\\Client\\Http' => $vendorDir . '/Upadd/Bin/Client/Http.php',
     'Upadd\\Bin\\Config\\Configuration' => $vendorDir . '/Upadd/Bin/Config/Configuration.php',
     'Upadd\\Bin\\Config\\GetConfiguration' => $vendorDir . '/Upadd/Bin/Config/GetConfiguration.php',
     'Upadd\\Bin\\Db\\Db' => $vendorDir . '/Upadd/Bin/Db/Db.php',

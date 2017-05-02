@@ -6,15 +6,21 @@ use Upadd\Swoole\Lib\Help;
 abstract class Client{
 
 
-    public $host = null;
+    /**
+     * @var null
+     */
+    protected $host = null;
 
-    public $type = null;
+    /**
+     * @var null
+     */
+    protected $type = null;
 
     /**
      * set in port
      * @var null
      */
-    public $port = null;
+    protected $port = null;
 
 
     /**
@@ -26,7 +32,6 @@ abstract class Client{
     {
         $parse  = Help::parseAddress($address);
         print_r($parse);
-
     }
 
     /**
@@ -43,12 +48,12 @@ abstract class Client{
     /**
      * @return mixed
      */
-   abstract public function asyncHttp();
+   abstract public function sync();
 
     /**
      * @return mixed
      */
-   abstract public function asyncTcp();
+   abstract public function async();
 
     /**
      * @return mixed

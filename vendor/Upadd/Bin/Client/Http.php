@@ -5,19 +5,21 @@ use Upadd\Bin\Client;
 
 class Http extends Client{
 
-    public function asyncHttp()
+
+    public function async()
     {
-        // TODO: Implement asyncHttp() method.
+        // TODO: Implement async() method.
     }
 
-    public function asyncTcp()
+    public function sync()
     {
-        // TODO: Implement asyncTcp() method.
+        // TODO: Implement async() method.
     }
 
     public function close(){
 
     }
+
 
 
 

@@ -57,6 +57,10 @@ class Dispenser
     private $_responseData;
 
 
+    /**
+     * 实例化 work
+     * Dispenser constructor.
+     */
     public function __construct()
     {
         $this->_work = Config::get('sys@work');
@@ -81,6 +85,7 @@ class Dispenser
         $response->content = $this->_responseData;
         echo $response->sendHttp();
     }
+
 
     /**
      * 命令行模式
@@ -174,7 +179,8 @@ class Dispenser
      */
     public function http()
     {
-        if (APP_ROUTES) {
+        if (APP_ROUTES)
+        {
             $_routing = $this->getRoute()->resources();
             if (is_callable($_routing['callbacks'])) {
                 return call_user_func_array($_routing['callbacks'], func_get_args());

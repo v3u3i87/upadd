@@ -60,7 +60,6 @@ class Grab extends Debug
      */
     public static function setGlobalException($e)
     {
-
         $error = [
             'msg' => $e->getMessage(),
             'file' => $e->getFile(),
@@ -68,6 +67,7 @@ class Grab extends Debug
             'code' => $e->getCode(),
             'previous' => $e->getPrevious(),
         ];
+        Log::run($error);
         self::__print($error);
     }
 

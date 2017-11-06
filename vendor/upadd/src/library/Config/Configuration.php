@@ -150,7 +150,7 @@ class Configuration{
      */
     protected function getSys()
     {
-        return (require host().VENDOR.'/Public/config.php');
+        return (require host().VENDOR.'/src/public/config.php');
     }
 
     /**
@@ -159,8 +159,7 @@ class Configuration{
      */
     protected function getStart()
     {
-        $start = host().'/config/start.php';
-        return (require $start);
+        return (require host().'/config/start.php');
     }
 
     /**

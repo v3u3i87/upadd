@@ -9,8 +9,8 @@
  */
 namespace Upadd\Swoole;
 
-use swoole_server;
-use swoole_http_server;
+use Swoole\Server as swoole_server;
+use Swoole\Http\Server as swoole_http_server;
 use Config;
 use Upadd\Bin\UpaddException;
 use Upadd\Swoole\Lib\Help;

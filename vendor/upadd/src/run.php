@@ -9,11 +9,14 @@
  * +----------------------------------------------------------------------
  * | Author: Richard.z <v3u3i87@gmail.com>
  **/
+
 if (version_compare(PHP_VERSION, '7.0.0', '<')) exit ('require PHP > 7.0.0!');
-define('VENDOR', 'vendor/Upadd');
-define('UPADD_HOST', substr(dirname(__FILE__), 0, -12));
+define('VENDOR', '/vendor/upadd');
+define('UPADD_HOST', substr(dirname(__FILE__), 0, -17));
+
 // 函数库
-require UPADD_HOST . VENDOR . '/Public/help.php';
+require UPADD_HOST . VENDOR . '/src/public/help.php';
+
 use Upadd\Bin\Grab;
 use Upadd\Bin\Factory;
 use Upadd\Bin\Loader;
@@ -26,6 +29,7 @@ $app = new \Upadd\Bin\Application();
  * 设置配置文件
  */
 $app->getConfig();
+
 /**
  * 加载组件
  */
@@ -56,7 +60,8 @@ Grab::run();
  * 运行
  */
 $app->run(function () use ($app) {
-    $_hostConfigPath = host() . 'config';
+
+    $_hostConfigPath = host() . '/config';
     /**
      * 扩展文件
      */
@@ -72,4 +77,6 @@ $app->run(function () use ($app) {
      */
     $filters = $_hostConfigPath . '/filters.php';
     file_exists($filters) && require $filters;
+
+
 }, isset($argv) ? $argv : []);

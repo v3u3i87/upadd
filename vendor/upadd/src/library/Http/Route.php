@@ -101,6 +101,7 @@ class Route
             'prefix' => $this->prefix,
             'filters' => $this->filters
         );
+
     }
 
     /**
@@ -125,7 +126,8 @@ class Route
     public function resources()
     {
         $currentRequest = $this->request->getPathUrl();
-        if ($this->_resou) {
+        if ($this->_resou)
+        {
             if (isset($this->_resou[$currentRequest])) {
                 return $this->isRequestMethod($this->_resou[$currentRequest]);
             } else {
@@ -137,7 +139,7 @@ class Route
                 }
             }
         } else {
-            throw new UpaddException("请设置路由");
+            throw new UpaddException('Please set routing');
         }
     }
 

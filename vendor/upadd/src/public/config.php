@@ -11,18 +11,18 @@
  **/
 
 return [
-    'IMG_PATH'=>UPADD_HOST.'data/upload/',
+    'IMG_PATH'=>UPADD_HOST.'/data/upload/',
     'is_html_tag'=>true,
     'is_html_cache'=>false,
     //数据文件夹目录
-    'data_dir'=>UPADD_HOST.'data/',
-    'log_path'=>UPADD_HOST.'data/'.APP_NAME.'/log/',
-    'config_dir'=>UPADD_HOST.'config/',
+    'data_dir'=>UPADD_HOST.'/data/',
+    'log_path'=>UPADD_HOST.'/data/'.APP_NAME.'/log/',
+    'config_dir'=>UPADD_HOST.'/config/',
     'upadd_version'=>'Upadd-0.5',
     //判断是否启用插件
     'is_plug'=>false,
     //系统缓存
-    'system_dir'=>UPADD_HOST.'data/system/',
+    'system_dir'=>UPADD_HOST.'/data/system/',
     //http协议
     'http_header'=>[
         100 => "HTTP/1.1 100 Continue",

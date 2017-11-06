@@ -153,8 +153,7 @@ if (!function_exists('array_merge_one')) {
  * 序列化函数
  *
  * @param 序列化的数据 $data
- * @param 类型 $type
- *            as true 序列化 | false 反序列化
+ * @param 类型 $type as true 序列化 | false 反序列化
  * @return string|mixed
  */
 function sequence($data, $type)
@@ -167,7 +166,8 @@ function sequence($data, $type)
 }
 
 
-if (!function_exists('conf')) {
+if (!function_exists('conf'))
+{
     /**
      * 调用配置数组参数
      * @param string $name
@@ -181,7 +181,8 @@ if (!function_exists('conf')) {
 }
 
 
-if (!function_exists('is_json')) {
+if (!function_exists('is_json'))
+{
     /**
      * 判断JSON是否合法
      * @param null $string
@@ -197,7 +198,8 @@ if (!function_exists('is_json')) {
     }
 }
 
-if (!function_exists('json')) {
+if (!function_exists('json'))
+{
 
     /**
      * 对json进行编码或解码
@@ -215,7 +217,8 @@ if (!function_exists('json')) {
     }
 }
 
-if (!function_exists('is_create_dir')) {
+if (!function_exists('is_create_dir'))
+{
     /**
      * 判断目录是否存在，如果不存在就创建
      * @param unknown $path
@@ -233,7 +236,8 @@ if (!function_exists('is_create_dir')) {
 }
 
 
-if (!function_exists('array_sort_field')) {
+if (!function_exists('array_sort_field'))
+{
     /**
      * 二维字数组排序
      * @param array $array 数据
@@ -283,11 +287,12 @@ if (!function_exists('msg')) {
     function msg($code = 10001, $message = 'Unauthorized access', $data = [], $type = 'json')
     {
         header('Content-type: application/json; charset=utf-8');
-        exit(json(['code' => (int)$code, 'msg' => (string)$message, 'result' => (array)$data]));
+        exit(json(['code' => (int) $code, 'msg' => (string)$message, 'result' => (array)$data]));
     }
 }
 
-if (!function_exists('jump')) {
+if (!function_exists('jump'))
+{
     /**
      * 转跳
      * @param $url
@@ -333,8 +338,7 @@ if (!function_exists('getArgs')) {
 
 }
 
-if (!function_exists('host'))
-{
+if (!function_exists('host')) {
     /**
      * 获取绝对路径
      * @return string
@@ -396,10 +400,11 @@ if (!function_exists('getClient_id')) {
 
 }
 
-if (!function_exists('verificationCode')) {
+if (!function_exists('verificationCode'))
+{
     /**
      * 随机生成6位验证码
-     * @param int $num 默认是6位
+     * @param int $num 默认6位
      * @return string
      */
     function verificationCode($num = 6)
@@ -427,7 +432,8 @@ if (!function_exists('get_hash')) {
     }
 }
 
-if (!function_exists('pp')) {
+if (!function_exists('pp'))
+{
     function pp($val = null, $status = true)
     {
         print_r($val);
@@ -436,56 +442,88 @@ if (!function_exists('pp')) {
     }
 }
 
-/**
- * @param $multi
- * @return array
- */
-function arrayToOne($multi)
-{
-    $arr = array();
-    foreach ($multi as $key => $val) {
-        if (is_array($val)) {
-            $arr = array_merge($arr, arrayToOne($val));
-        } else {
-            $arr[] = $val;
-        }
-    }
-    return $arr;
-}
-
-/**
- * 索引转关联数组
- * @param array $arr
- * @return array|bool
- */
-function array_associated_index($arr=[])
-{
-    if (count($arr) % 2 == 0)
+if(!function_exists('arrayToOne')) {
+    /**
+     * 多维数组转一维数组
+     * @param $multi
+     * @return array
+     */
+    function arrayToOne($multi)
     {
-        $data = [];
-        for ($i = 0; $i < count($arr); $i++)
-        {
-            $val = $i + 1;
-            if (isset($arr[$val]))
-            {
-                $data[$arr[$i]] = $arr[$val];
+        $arr = array();
+        foreach ($multi as $key => $val) {
+            if (is_array($val)) {
+                $arr = array_merge($arr, arrayToOne($val));
+            } else {
+                $arr[] = $val;
             }
         }
-        return $data;
+        return $arr;
     }
-    return false;
 }
 
-/**
- * 判断是否SSL协议
- * @return boolean
- */
-function is_ssl()
-{
-    if (isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) {
-        return true;
-    } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
-        return true;
+
+
+if (!function_exists('is_array_length')) {
+    /**
+     * 判断数组长度为几维
+     * @param array $data
+     * @param int $num
+     * @return bool
+     */
+    function is_array_length($data = [], $num = 1)
+    {
+        if (empty($data)) {
+            return false;
+        }
+        if (count($data) == count($data, $num)) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    return false;
+}
+
+
+if(!function_exists('array_associated_index'))
+{
+    /**
+     * 索引转关联数组
+     * @param array $arr
+     * @return array|bool
+     */
+    function array_associated_index($arr = [])
+    {
+        if (count($arr) % 2 == 0)
+        {
+            $data = [];
+            for ($i = 0; $i < count($arr); $i++)
+            {
+                $val = $i + 1;
+                if (isset($arr[$val])) {
+                    $data[$arr[$i]] = $arr[$val];
+                }
+            }
+            return $data;
+        }
+        return false;
+    }
+}
+
+
+if (!function_exists('is_ssl'))
+{
+    /**
+     * 判断是否SSL协议
+     * @return boolean
+     */
+    function is_ssl()
+    {
+        if (isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) {
+            return true;
+        } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
+            return true;
+        }
+        return false;
+    }
 }

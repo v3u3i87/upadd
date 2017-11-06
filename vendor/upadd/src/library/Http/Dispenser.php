@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin\Http;
 
 /**
@@ -94,15 +95,14 @@ class Dispenser
     public function console()
     {
         $argv = Config::get('sys@argv');
-        if ($this->_cliData = getArgs($argv))
-        {
+        if ($this->_cliData = getArgs($argv)) {
             $this->_responseData = $this->command();
             $response = new response();
             $response->type = $this->_responseType;
             $response->code = $this->_responseCode;
             $response->header = $this->_responseHeader;
             return $this->_responseData;
-        }else{
+        } else {
             throw new UpaddException('console Cant get the data');
         }
     }
@@ -127,7 +127,7 @@ class Dispenser
             }
         }
 
-        if(isset($swoole_http_request->files)){
+        if (isset($swoole_http_request->files)) {
             if (count($params) >= 1) {
                 $params = array_merge($params, $swoole_http_request->files);
             } else {
@@ -136,13 +136,14 @@ class Dispenser
         }
 
         $rawContent = $swoole_http_request->rawContent();
-        if($rawContent){
+        if ($rawContent) {
             Data::setStream($rawContent);
         }
         Data::accept($params);
         $request = $this->_work['Request'];
         $request->header = isset($swoole_http_request->header) ? $swoole_http_request->header : [];
         $request->server = isset($swoole_http_request->server) ? $swoole_http_request->server : [];
+        Log::notes([$request->header, $request->server]);
         //过滤浏览器自动请求  favicon.ico
         if ($request->server['request_uri'] !== '/favicon.ico') {
             //设置请求日志
@@ -170,7 +171,7 @@ class Dispenser
             $this->getRoute()->setAction($_objAction[0], $_objAction[1]);
             return (list($this->_action, $this->_method) = $_objAction);
         }
-        throw new UpaddException('The Action set wrong..');
+        throw new UpaddException('[ The Action set wrong.. ]');
     }
 
     /**
@@ -179,8 +180,7 @@ class Dispenser
      */
     public function http()
     {
-        if (APP_ROUTES)
-        {
+        if (APP_ROUTES) {
             $_routing = $this->getRoute()->resources();
             if (is_callable($_routing['callbacks'])) {
                 return call_user_func_array($_routing['callbacks'], func_get_args());
@@ -225,6 +225,7 @@ class Dispenser
      */
     public function instantiation()
     {
+        $result = null;
         if (class_exists($this->_action)) {
             Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
             $class = new $this->_action();
@@ -240,10 +241,11 @@ class Dispenser
             $this->_responseType = $class->getResponseType();
             $this->_responseHeader = $class->getResponseHeader();
             $this->getResponseCode = $class->getResponseCode();
-            return $result;
         } else {
-            throw new UpaddException('There is no Action');
+            $result = Prompt::error_html('The wrong url');
         }
+
+        return $result;
     }
 
 

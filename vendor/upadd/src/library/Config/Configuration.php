@@ -31,7 +31,7 @@ class Configuration{
             $evn = $this->_sys['environment'];
             $this->_evn = $this->getEvnName($evn);
         }
-        $configPath = host().'config';
+        $configPath = host().'/config';
         if($this->_evn)
         {
             //获取配置目录的所有文件
@@ -107,7 +107,7 @@ class Configuration{
     {
         try {
 
-            $file = host().'config/'.$fileNmae.'.php';
+            $file = host().'/config/'.$fileNmae.'.php';
 
             if(file_exists($file) && is_file($file))
             {
@@ -115,7 +115,7 @@ class Configuration{
             }
         }catch (\Exception $e)
         {
-            p($e->getMessage());
+            throw new UpaddException($e->getMessage());
         }
     }
 

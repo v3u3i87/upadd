@@ -12,6 +12,6 @@ require __DIR__ . '/vendor/upadd/src/run.php';
 
 use Upadd\Swoole\HttpServer;
 
-$swooleHtpp = Config::get('swoole@http');
+$http = Config::get('swoole@http');
 
-HttpServer::create($swooleHtpp['name'],$swooleHtpp['host'])->start();
+HttpServer::create($http['name'],$http['host'])->start();

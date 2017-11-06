@@ -76,7 +76,8 @@ abstract class Server
     public function __construct($name, $address = null)
     {
         $this->name($name);
-        if (null === $address) {
+        if (null === $address)
+        {
             $address = 'tcp://' . $this->host . ':' . $this->port;
         }
         $addressParam = Help::parseAddress($address);
@@ -163,7 +164,7 @@ abstract class Server
     {
         $this->name = $name;
 
-        $this->pid = '/tmp/' . str_replace(' ', '-', $this->name) . '.pid';
+        $this->pid = host().'/tmp/' . str_replace(' ', '-', $this->name) . '.pid';
 
         return $this;
     }
@@ -212,11 +213,14 @@ abstract class Server
 
     public function start()
     {
-        try {
+        try
+        {
             $this->bootstrap();
             $this->server->start();
-        } catch (UpaddException $e) {
-            print_r($e->getMessage());
+
+        } catch (UpaddException $e)
+        {
+            throw new UpaddException($e->getMessage());
         }
     }
 

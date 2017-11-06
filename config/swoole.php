@@ -6,7 +6,7 @@ return [
      * true 进程服务
      * false = 会话模式
      */
-    'daemonize'=>false,
+    'daemonize'=>true,
 
     'tcp'=> [
         'name'=>'rpcUpadd',
@@ -14,8 +14,8 @@ return [
     ],
 
     'http'=>[
-        'name'=>'httpUpadd',
-        'host'=>'http://0.0.0.0:5003',
+        'name'=>'upadd_http',
+        'host'=>'http://0.0.0.0:9090',
     ],
 
     'webSocket'=>[
@@ -36,7 +36,7 @@ return [
     'tcpParam'=>[
         'worker_num' => 2,
         'max_request'=>10000,
-        'log_file'=>host().'data/console/swoole.logs',
+        'log_file'=>host().'/data/console/swoole.logs',
         'task_tmpdir'=>host().'data/console/task/',
         'debug_mode'=> 1,
         'daemonize' => false,
@@ -69,6 +69,7 @@ return [
         'max_request' => 10000,
         'dispatch_mode' => 2,
         'debug_mode'=> 1,
+        'log_file'=>host().'/data/swoole.logs',
 
 
 //        'dispatch_mode' => 3,

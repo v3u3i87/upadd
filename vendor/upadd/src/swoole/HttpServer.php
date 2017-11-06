@@ -4,10 +4,10 @@ namespace Upadd\Swoole;
 use Config;
 use Upadd\Bin\Http\Dispenser;
 use Upadd\Bin\UpaddException;
-use swoole_http_request;
-use swoole_http_response;
-use swoole_http_server;
-use swoole_server;
+use Swoole\Server as swoole_server;
+use Swoole\Http\Request as swoole_http_request;
+use Swoole\Http\Response as swoole_http_response;
+use Swoole\Http\Server as swoole_http_server;
 
 
 class HttpServer extends Server
@@ -37,39 +37,6 @@ class HttpServer extends Server
         return new swoole_http_server($this->host, $this->port);
     }
 
-//    /**
-//     * 转发任务
-//     * @param $serv
-//     * @param $task_id
-//     * @param $from_id
-//     * @param $data
-//     * @return mixed
-//     */
-//    public function onTask(swoole_server $_server, $task_id, $from_id, $data)
-//    {
-//        return $this->doWork($data, ['connection_info' => $_server->connection_info($data['fd'])]);
-//    }
-//
-//
-//    /**
-//     * 返回客户端
-//     * @param $serv
-//     * @param $task_id
-//     * @param $data
-//     * @return bool
-//     */
-//    public function onFinish(swoole_server $_server, $task_id, $data)
-//    {
-//        return $_server->send($data['fd'], $data['results']);
-//    }
-//
-//    /**
-//     * 具体业务逻辑代码
-//     * 回调思路实现
-//     * @param $param
-//     * @return mixed
-//     */
-//    public function doWork($param = [], $client = []){}
 
     /**
      * 响应HTTP请求

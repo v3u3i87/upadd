@@ -18,6 +18,6 @@ define('APP_ROUTES', true);
 //加载composer in vendor
 require __DIR__.'/vendor/autoload.php';
 //加载Upadd
-require __DIR__ . '/vendor/Upadd/Upadd.conf.php';
+require __DIR__ . '/vendor/upadd/src/run.php';
 
 $app->dispenser->console();

@@ -5,7 +5,8 @@ return array(
 
     'db' => array(
         'type' => 'pdo_mysql',
-        'host' => '127.0.0.1',
+        //192.168.1.107
+        'host' => 'localhost',
         'user' => 'root',
         'pass' => 'maoqiang',
         'name' => 'demo',

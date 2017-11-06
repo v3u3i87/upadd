@@ -3,7 +3,7 @@
 return array(
 
     'environment' => array(
-        'local' => array('z.local', 'demo', 'Mac-zmq.local', 'Mac-zmq.lan','localhost'),
+        'local' => array('z.local', '2d56c0b26270', 'Mac-zmq.local', 'Mac-zmq.lan','localhost'),
     ),
 
     /**

@@ -24,4 +24,5 @@ Routes::group(array('prefix' => '/test'), function ()
 
     Routes::any('/model/add', 'demo\action\TestModelAction@add');
 
+
 });

@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Swoole;
 
 /**
@@ -10,20 +11,18 @@ namespace Upadd\Swoole;
  * Name:
  */
 use Config;
-use swoole_server;
+use Swoole\Server as swoole_server;
 use Upadd\Bin\UpaddException;
 
 abstract class TcpServer extends Server
 {
-
-
     /**
      * 配置文件
      * @return mixed
      */
     public function configure()
     {
-        $config = Config::get('swoole@tcpParam');
+        $config = Config::get('swoole@tcp_param');
         $config['daemonize'] = Config::get('swoole@daemonize');
         return $config;
     }
@@ -41,7 +40,17 @@ abstract class TcpServer extends Server
 
     public function onClose(swoole_server $_server, $fd, $from_id)
     {
+
     }
+
+
+    /**
+     * 具体业务逻辑代码
+     * 回调思路实现
+     * @param $param
+     * @return mixed
+     */
+    abstract protected function doWork($param = [], $client = []);
 
 
     /**
@@ -54,8 +63,25 @@ abstract class TcpServer extends Server
      */
     public function onReceive(swoole_server $_server, $fd, $from_id, $data)
     {
-        $_server->task(['fd' => $fd, 'from_id' => $from_id, 'results' => $data]);
-        return true;
+         return $_server->send($fd, $this->doWork(
+            ['fd' => $fd, 'from_id' => $from_id, 'results' => $data],
+            //客户端信息
+            ['connection_info' => $_server->connection_info($data['fd'])]
+        ));
+    }
+
+    /**
+     * 完成
+     * @param $fd
+     * @param $results
+     * @return array
+     */
+    protected function results($fd, $results)
+    {
+        return [
+            'fd' => $fd,
+            'results' => $results
+        ];
     }
 
 

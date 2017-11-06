@@ -6,11 +6,11 @@ return [
      * true 进程服务
      * false = 会话模式
      */
-    'daemonize'=>true,
+    'daemonize'=>false,
 
     'tcp'=> [
-        'name'=>'rpcUpadd',
-        'host'=>'tcp://127.0.0.1:9988',
+        'name'=>'upadd_tcp',
+        'host'=>'tcp://127.0.0.1:9090',
     ],
 
     'http'=>[
@@ -19,25 +19,53 @@ return [
     ],
 
     'webSocket'=>[
-        'name'=>'webSocketUpadd',
+        'name'=>'upadd_webSocket',
         'host'=>'ws://127.0.0.1:8081',
     ],
 
     'udp'=>[
-        'name'=>'updUpadd',
+        'name'=>'upadd_upd',
         'host'=>'upd://127.0.0.1:9978',
     ],
-
 
 
     /**
      * TCP服务参数
      */
-    'tcpParam'=>[
+    'tcp_param'=>[
         'worker_num' => 2,
         'max_request'=>10000,
         'log_file'=>host().'/data/console/swoole.logs',
-        'task_tmpdir'=>host().'data/console/task/',
+        'debug_mode'=> 1,
+        'daemonize' => false,
+//        'task_worker_num' =>4,
+        'dispatch_mode'=>3,
+        //收发问题
+        'open_eof_check'=>true,
+        'open_eof_split' => true,
+        //关闭Nagle合并算法
+        'open_tcp_nodelay'     =>  true,
+        'package_length_type' => 'N',
+        'package_length_offset' => 0,
+        'package_body_offset' => 0,
+
+        //最大包长度
+        'package_max_length'=>2097152,
+        'buffer_output_size' => 3145728, //1024 * 1024 * 3,
+        'pipe_buffer_size' => 33554432, // 1024 * 1024 * 32,
+        'package_eof'=>"\r\n\r\n",
+        'backlog'=>3000,
+    ],
+
+
+    /**
+     * TCP任务服务参数
+     */
+    'tcp_task_param'=>[
+        'worker_num' => 2,
+        'max_request'=>10000,
+        'log_file'=>host().'/data/console/swoole.logs',
+        'task_tmpdir'=>host().'/data/console/task',
         'debug_mode'=> 1,
         'daemonize' => false,
         'task_worker_num' =>4,
@@ -59,6 +87,7 @@ return [
         'package_eof'=>"\r\n\r\n",
         'backlog'=>3000,
     ],
+
 
     /**
      * http服务参数

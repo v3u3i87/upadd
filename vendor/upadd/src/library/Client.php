@@ -31,7 +31,6 @@ abstract class Client{
     public function __construct($address,$data=null)
     {
         $parse  = Help::parseAddress($address);
-        print_r($parse);
     }
 
     /**

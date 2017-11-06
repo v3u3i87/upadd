@@ -20,9 +20,10 @@ class TestModelAction extends \Upadd\Frame\Action
     {
         InfoModel::add([
             'name'=>mt_rand(1111,3333),
-            'code'=>1,
+            'code'=>verificationCode(4),
+            'add_time'=>time(),
         ]);
-        return InfoModel::sort('id')->limit('0,10')->get();
+        return InfoModel::sort('id')->page()->get();
     }
 
 

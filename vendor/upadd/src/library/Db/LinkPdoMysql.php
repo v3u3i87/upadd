@@ -1,8 +1,8 @@
 <?php
+
 namespace Upadd\Bin\Db;
 
 use PDO;
-use Config;
 use Upadd\Bin\Tool\Log;
 use Upadd\Bin\UpaddException;
 
@@ -22,15 +22,48 @@ class LinkPdoMysql implements Db
 
     protected $_logSql = [];
 
-    public function __construct($link)
+    protected static $links = [];
+
+//    public function __construct($link)
+//    {
+//        try {
+//            $this->_linkID = self::getDbInstance($link);
+//        } catch (PDOException $e) {
+//            throw new UpaddException($e->getMessage());
+//        }
+//    }
+
+    public function init($link)
     {
         try {
-            $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
-            $this->_linkID = new PDO($dns, $link ['user'], $link ['pass']);
-            $this->_linkID->exec('SET NAMES ' . $link ['charset']);
+            $this->_linkID = self::getDbInstance($link);
         } catch (PDOException $e) {
             throw new UpaddException($e->getMessage());
         }
+    }
+
+
+    public static function getDbInstance($link)
+    {
+        $name = $link ['name'];
+        if (is_run_evn()) {//非命令行
+            if (!isset(self::$links[$name])) {
+                self::$links[$name] = self::getLink($link);
+            }
+            return self::$links[$name];
+        } else {//命令行模式
+            return self::getLink($link);;
+        }
+    }
+
+
+    public static function getLink($link)
+    {
+        $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
+        $tmpLink = new PDO($dns, $link ['user'], $link ['pass']);
+        $tmpLink->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $tmpLink->exec('SET NAMES ' . $link ['charset']);
+        return $tmpLink;
     }
 
 
@@ -51,7 +84,7 @@ class LinkPdoMysql implements Db
      * @param unknown $sql
      * @return $data or bool
      */
-    public function find()
+    public function fetch()
     {
         $result = $this->query();
         if ($result) {
@@ -129,7 +162,12 @@ class LinkPdoMysql implements Db
         if ($result) {
             return true;
         }
-        return $this->debug();
+        return false;
+    }
+
+    public function obj()
+    {
+        return $this->_linkID;
     }
 
     /**
@@ -144,20 +182,17 @@ class LinkPdoMysql implements Db
         if ($result) {
             return $result;
         }
-        return $this->debug();
+        return false;
     }
 
     /**
-     * 日志
+     * 记录SQL错误
      */
-    public function log($info = '')
+    public function log()
     {
-        if (empty($info)) {
-            Log::run($this->_sql . "\n");
-        } else {
-            Log::run($info . "\n");
-        }
+        Log::run($this->_sql . "\n");
     }
+
 
     /**
      * 开启事务
@@ -214,28 +249,18 @@ class LinkPdoMysql implements Db
      */
     public function debug()
     {
-        $error = $this->error();
-        $content = "======SqlError\n";
-        $content .= $this->_sql . "\n";
-        $content .= "SQLSTATE:" . (isset($error[0]) ? $error[0] : 'null') . "\n";
-        $content .= "Code:" . (isset($error[1]) ? $error[1] : 'null') . "\n";
-        $content .= "Msg:" . (isset($error[2]) ? $error[2] : 'null') . "\n";
-        $content .= "======EndSql\n";
-        $this->log($content);
-        if (Config::get('error@debug')) {
-            header('Content-Type:text/html;charset=utf-8');
-            echo '<pre>';
-            echo($content);
-            echo '</pre>';
-        }
-        return false;
+        var_dump($this->error());
     }
-
 
     public function close()
     {
-        return $this->_linkID = null;
+        $this->_linkID = null;
     }
 
+//    private function __destruct()
+//    {
+//        // TODO: Implement __destruct() method.
+//        $this->close();
+//    }
 
 }

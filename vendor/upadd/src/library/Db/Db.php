@@ -1,16 +1,16 @@
 <?php
 namespace Upadd\Bin\Db;
-
 /**
- +----------------------------------------------------------------------
- | UPADD [ Can be better to Up add]
- +----------------------------------------------------------------------
- | Copyright (c) 20011-2014 http://upadd.cn All rights reserved.
- +----------------------------------------------------------------------
- | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
- +----------------------------------------------------------------------
-  | Author: Richard.z <v3u3i87@gmail.com>
- */
+ * +----------------------------------------------------------------------
+ * | UPADD [ Can be better to Up add]
+ * +----------------------------------------------------------------------
+ * | Copyright (c) 2011-2017 https://github.com/v3u3i87/upadd All rights reserved.
+ * +----------------------------------------------------------------------
+ * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ * +----------------------------------------------------------------------
+ * | Author: Richard.z <v3u3i87@gmail.com>
+ **/
+
 interface Db {
 
     /**
@@ -64,7 +64,7 @@ interface Db {
 	 *
 	 * @param unknown $sql        	
 	 */
-    public function find();
+    public function fetch();
 	
 	/**
 	 * 提交SQL

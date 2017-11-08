@@ -4,23 +4,22 @@ namespace example\model;
 use Upadd\Frame\Model;
 
 /**
- * Class InfoModel
+ * Class InfoAboutModel
  * @package example\model
-CREATE TABLE `up_info` (
+CREATE TABLE `up_info_about` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键自增',
-    `name` varchar(100) DEFAULT NULL COMMENT '名称',
-    `code` varchar(30) DEFAULT '0' COMMENT 'code',
-    `add_time` int(10) unsigned NOT NULL COMMENT '添加时间',
+    `info_id` int(10) NOT NULL COMMENT '信息ID',
+    `uname` varchar(30) NOT NULL COMMENT '姓名',
+    `add_time` int(10) NOT NULL COMMENT '添加时间',
     `update_time` int(10) DEFAULT NULL,
     `delete_time` int(10) DEFAULT NULL,
     `is_delete` tinyint(1) DEFAULT NULL,
 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8 COMMENT='信息测试';
- *
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='关于';
  */
-class InfoModel extends Model{
+class InfoAboutModel extends Model{
 
-    protected $_table = 'info';
+    protected $_table = 'info_about';
 
     protected $_primaryKey = 'id';
 

@@ -24,15 +24,6 @@ class LinkPdoMysql implements Db
 
     protected static $links = [];
 
-//    public function __construct($link)
-//    {
-//        try {
-//            $this->_linkID = self::getDbInstance($link);
-//        } catch (PDOException $e) {
-//            throw new UpaddException($e->getMessage());
-//        }
-//    }
-
     public function init($link)
     {
         try {
@@ -62,6 +53,7 @@ class LinkPdoMysql implements Db
         $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
         $tmpLink = new PDO($dns, $link ['user'], $link ['pass']);
         $tmpLink->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $tmpLink->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $tmpLink->exec('SET NAMES ' . $link ['charset']);
         return $tmpLink;
     }

@@ -258,7 +258,7 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
      * 新增
      * @param array $_data
      */
-    public function add($data)
+    public function add($data, $debug = false)
     {
         if ($this->_automaticityTime == true) {
             $data['add_time'] = time();
@@ -276,11 +276,19 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         $field = implode("`,`", $field);
         $value = implode(",", $value);
         $this->_sql = "INSERT INTO `{$this->dbName}`.`{$this->_table}` (`$field`) VALUES ({$value});";
+        Log::run($this->_sql);
         $prepare = $this->db->prepare($this->_sql);
-        if ($prepare->execute($val)) {
-            return $this->getId();
+        if ($prepare->execute($val))
+        {
+            if(empty($prepare->rowCount()))
+            {
+                return false;
+            }else{
+                return $this->getId();
+            }
+        }else{
+            throw new \PDOException();
         }
-        return false;
     }
 
     /**
@@ -313,11 +321,19 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
             $_where = $this->joint_where($where);
         }
         $this->_sql = "UPDATE `{$this->dbName}`.`{$this->_table}` SET {$upField}  WHERE {$_where};";
+        Log::run($this->_sql);
         $prepare = $this->db->prepare($this->_sql);
-        if ($prepare->execute($upValue)) {
-            return true;
+        if ($prepare->execute($upValue))
+        {
+            if(empty($prepare->rowCount()))
+            {
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            throw new \PDOException();
         }
-        return false;
     }
 
     /**
@@ -810,6 +826,7 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
             $sql[] = $this->_limit;
         }
         $sql = implode(" ", $sql);
+        Log::run($sql);
         return $sql;
     }
 

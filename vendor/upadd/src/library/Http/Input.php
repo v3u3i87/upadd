@@ -1,7 +1,9 @@
 <?php
+
 namespace Upadd\Bin\Http;
 
-abstract class Input{
+abstract class Input
+{
 
     /**
      * 数据
@@ -21,6 +23,7 @@ abstract class Input{
      */
     protected $json = null;
 
+
     /**
      * Data constructor.
      */
@@ -32,6 +35,7 @@ abstract class Input{
         $this->setStream();
         $this->setJson();
     }
+
 
     /**
      * 设置json
@@ -84,8 +88,7 @@ abstract class Input{
      */
     public function setStream($data = null)
     {
-        if(empty($data))
-        {
+        if (empty($data)) {
             $data = !empty(file_get_contents("php://input")) ? file_get_contents("php://input") : null;
         }
         $this->stream = $data;

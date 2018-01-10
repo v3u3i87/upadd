@@ -101,7 +101,6 @@ class Templates {
         }else{
             $this->_htmlFile = $this->_path.'/'.$file;
         }
-
         if(!file_exists($this->_htmlFile))
         {
             throw new UpaddException('您的'.$file.'模板文件不存在!');
@@ -116,13 +115,13 @@ class Templates {
      */
     protected function createDataFile($file,$cache)
     {
-        $dirCompiled = host().'data/'.APP_NAME . '/compiled/'.$this->_actionName;
+        $dirCompiled = host().'/'.'data/'.APP_NAME . '/compiled/'.$this->_actionName;
         //编译目录
         if(is_create_dir ($dirCompiled))
         {
             $this->_compiled = $dirCompiled.'/'.md5 ( $file ) . $file . '.php';
         }
-        $dirCache = host().'data/'.APP_NAME . '/cache/'.$this->_actionName;
+        $dirCache = host().'/'.'data/'.APP_NAME . '/cache/'.$this->_actionName;
         if($cache && is_create_dir($dirCache))
         {
             $this->_cache = $dirCache.'/'.md5($file) . $file . '.html';
@@ -190,7 +189,7 @@ class Templates {
             {
                 $this->_actionName = strtolower(substr($name, 0,-6));
             }
-            $this->_path = host().APP_NAME.'/view/'.$this->_actionName;
+            $this->_path = host().'/'.APP_NAME.'/view/'.$this->_actionName;
         }else{
             throw new UpaddException('控制器模板目录设置失败');
         }
@@ -215,9 +214,9 @@ class Templates {
     {
         if($path)
         {
-            $this->_setPath = host().APP_NAME.'/view/'.$path;
+            $this->_setPath = host().'/'.APP_NAME.'/view/'.$path;
         }else{
-            $this->_setPath = host().APP_NAME.'/view/public';
+            $this->_setPath = host().'/'.APP_NAME.'/view/public';
         }
     }
 

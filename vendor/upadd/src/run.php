@@ -56,6 +56,7 @@ $app->getAlias()->run();
 $app->setWorkConfig();
 $app->setRoute();
 Grab::run();
+
 /**
  * 运行
  */
@@ -77,6 +78,4 @@ $app->run(function () use ($app) {
      */
     $filters = $_hostConfigPath . '/filters.php';
     file_exists($filters) && require $filters;
-
-
-}, isset($argv) ? $argv : []);
+});

@@ -9,6 +9,7 @@
  * +----------------------------------------------------------------------
  * | Author: Richard.z <v3u3i87@gmail.com>
  **/
+
 namespace Upadd\Bin\Tool;
 
 use Config;
@@ -22,7 +23,7 @@ class Log
      * @param array $cont
      * @param string $fileName
      */
-    public function notes($cont = array(), $fileName = 'notes.logs')
+    public function notes($cont = array(), $fileName = 'notes.log')
     {
         if (is_array($cont) || is_object($cont)) {
             $info = json($cont) . "\r\n";
@@ -49,9 +50,7 @@ class Log
         $info .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
         $info .= $cont . "\r\r\r";
         $file = self::isBak($fileName);
-        $fh = fopen($file, 'a+');
-        fwrite($fh, $info);
-        fclose($fh);
+        self::addContent($file,$info);
     }
 
 
@@ -60,7 +59,7 @@ class Log
      * @param 内容 $cont
      * @param 文件名称以及格式 $file
      */
-    public static function request($cont, $fileName = 'request.logs')
+    public static function request($cont, $fileName = 'request.log')
     {
         $cont['url'] = self::getHttpUrl();
         $cont['time'] = date('Y-m-d H:i:s');
@@ -75,12 +74,28 @@ class Log
      * @param string $cont
      * @param string $fileName
      */
-    public static function run($cont, $fileName = 'run.logs')
+    public static function run($cont, $fileName = 'run.log')
     {
-        $content = $cont;
+        $content = $cont."\n\r";
         $file = self::isBak($fileName);
         file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
     }
+
+
+    /**
+     * 添加内容
+     * @param $file
+     * @param $content
+     * @return bool
+     */
+    private static function addContent($file, $content)
+    {
+        $fh = fopen($file, 'a+');
+        fwrite($fh, $content);
+        fclose($fh);
+        return true;
+    }
+
 
     /**
      * 验证文件大小

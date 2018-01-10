@@ -190,9 +190,24 @@ class LinkPdoMysql implements Db
      * 开启事务
      * @return mixed
      */
-    public function begin()
+    public function begin($callable = null)
     {
-        return $this->_linkID->beginTransaction();
+        if (is_callable($callable)) {
+            try {
+                $this->_linkID->beginTransaction();
+                $isOk = call_user_func_array($callable, func_get_args());
+                if ($isOk !== false)
+                {
+                    $this->_linkID->commit();
+                    return $isOk;
+                }
+            } catch (\PDOException $e) {
+                $this->_linkID->rollBack();
+                return false;
+            }
+        } else {
+            return $this->_linkID->beginTransaction();
+        }
     }
 
     /**

@@ -228,6 +228,7 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
                 $numbe += 1;
             }
         }
+
         if ($numbe == $count) {
             return $count;
         } else {
@@ -278,15 +279,13 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         $this->_sql = "INSERT INTO `{$this->dbName}`.`{$this->_table}` (`$field`) VALUES ({$value});";
         Log::run($this->_sql);
         $prepare = $this->db->prepare($this->_sql);
-        if ($prepare->execute($val))
-        {
-            if(empty($prepare->rowCount()))
-            {
+        if ($prepare->execute($val)) {
+            if (empty($prepare->rowCount())) {
                 return false;
-            }else{
+            } else {
                 return $this->getId();
             }
-        }else{
+        } else {
             throw new \PDOException();
         }
     }
@@ -320,21 +319,82 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         } else {
             $_where = $this->joint_where($where);
         }
-        $this->_sql = "UPDATE `{$this->dbName}`.`{$this->_table}` SET {$upField}  WHERE {$_where};";
+        $so = '';
+        if(!empty($_where)){
+            $so = " WHERE {$_where};";
+        }
+
+        $this->_sql = "UPDATE `{$this->dbName}`.`{$this->_table}` SET {$upField} {$so}";
         Log::run($this->_sql);
         $prepare = $this->db->prepare($this->_sql);
-        if ($prepare->execute($upValue))
-        {
-            if(empty($prepare->rowCount()))
-            {
+        if ($prepare->execute($upValue)) {
+            if (empty($prepare->rowCount())) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
-        }else{
+        } else {
             throw new \PDOException();
         }
     }
+
+
+    /**
+     * 自增数值
+     * @param $field
+     * @param int $number
+     * @return bool
+     * @throws UpaddException
+     */
+    public function since($field,$number=1)
+    {
+        if (!is_string($field))
+        {
+            throw new UpaddException('自增类型必须是字符串参数');
+        }
+
+        if ($this->_automaticityTime == true) {
+            $_data['update_time'] = time();
+        }
+
+        $_editdata = " `$field` = `{$field}`+{$number}";
+        $_where = '';
+        if (!empty($this->_where)) {
+            $_where = $this->_where;
+        }
+        $this->_sql = "UPDATE `{$this->_table}` SET {$_editdata}  WHERE {$_where};";
+        Log::run($this->_sql);
+        return $this->sql();
+    }
+
+    /**
+     * @param $field
+     * @param int $number
+     * @return bool
+     * @throws UpaddException
+     */
+    public function reduction($field,$number=1)
+    {
+        if (!is_string($field))
+        {
+            throw new UpaddException('自减类型必须是字符串参数');
+        }
+
+        if ($this->_automaticityTime == true) {
+            $_data['update_time'] = time();
+        }
+
+        $_editdata = " `{$field}` = IF(`{$field}`<1, 0, `{$field}`-{$number})";
+        $_where = '';
+        if (!empty($this->_where)) {
+            $_where = $this->_where;
+        }
+        $this->_sql = "UPDATE `{$this->_table}` SET {$_editdata}  WHERE {$_where};";
+        Log::run($this->_sql);
+        return $this->sql();
+    }
+
+
 
     /**
      * 保存数据
@@ -380,9 +440,9 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
     public function sort($key, $by = true)
     {
         if ($by) {
-            $this->_sort = " ORDER BY `{$key}` DESC";
+            $this->_sort = " ORDER BY {$key} DESC";
         } else {
-            $this->_sort = " ORDER BY `{$key}` ASC";
+            $this->_sort = " ORDER BY {$key} ASC";
         }
         return $this;
     }
@@ -423,6 +483,18 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         return $this->where(array($this->_primaryKey => $value))->find($_field);
     }
 
+
+    /**
+     * 根据数组分割
+     * @param array $where
+     * @return Pretreatment
+     */
+    public function byWhere($where=[])
+    {
+        $where = lode(' AND ',$where);
+        return $this->where($where);
+    }
+
     /**
      *  多表查询
      * @param null $_table
@@ -438,6 +510,35 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
             $name .= $this->db_prefix . $k . ' as ' . $v . ' ,';
         }
         $this->_join = $name;
+        return $this;
+    }
+
+    /**
+     *  多表左边查询
+     * @param null $_table
+     * @return $this
+     */
+    public function join_left($_table = array())
+    {
+        if (empty($_table)) {
+            return false;
+        }
+        $name = '';
+        foreach ($_table as $k => $v)
+        {
+            if($k=='on'){
+                $name .= ' ON '.$v.' ';
+            }else{
+                $name .= ' LEFT JOIN '.$this->db_prefix . $k . ' as ' . $v . ' ';
+            }
+        }
+
+        if($this->_join)
+        {
+            $this->_join = substr($this->_join, 0, -1);
+            $this->_join.= $name;
+        }
+
         return $this;
     }
 
@@ -504,9 +605,9 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
             $data = lode(',', $data);
         }
         if ($this->_where) {
-            $this->_in_where = " AND `{$key}` IN ({$data}) ";
+            $this->_in_where = " AND {$key} IN ({$data}) ";
         } else {
-            $this->_in_where = " WHERE `{$key}` IN ({$data}) ";
+            $this->_in_where = " WHERE {$key} IN ({$data}) ";
         }
         return $this;
     }
@@ -535,6 +636,72 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         return $this;
     }
 
+
+    /**
+     * 批量更新函数
+     * @param $data array 待更新的数据，二维数组格式
+     * @param array $params array 扩展where and 类型判断
+     * @param string $field string 值不同的条件，默认为id int 类型
+     * @return bool|string
+     */
+    public function batchUpdate($data, $fieldIn, $andParams = [])
+    {
+        if (!is_array($data) || !$fieldIn || !is_array($andParams)) {
+            return false;
+        }
+        $updates = $this->parseUpdate($data, $fieldIn);
+        $where = $this->parseParams($andParams);
+        // 获取所有键名为$field列的值，值两边加上单引号，保存在$fields数组中
+        // array_column()函数需要PHP5.5.0+，如果小于这个版本，可以自己实现，
+        $fields = array_column($data, $fieldIn);
+        $fields = implode(',', array_map(function ($value) {
+            return "'" . $value . "'";
+        }, $fields));
+
+        $this->_sql = sprintf("UPDATE `%s` SET %s WHERE `%s` IN (%s) %s ;", $this->_table, $updates, $fieldIn, $fields, $where);
+        $result = $this->sql($this->_sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 将二维数组转换成CASE WHEN THEN的批量更新条件
+     * @param $data array 二维数组
+     * @param $field string 列名
+     * @return string sql语句
+     */
+    private function parseUpdate($data, $field)
+    {
+        $sql = '';
+        $keys = array_keys(current($data));
+        foreach ($keys as $column) {
+
+            $sql .= sprintf("`%s` = CASE `%s` \n", $column, $field);
+            foreach ($data as $line) {
+                $sql .= sprintf("WHEN '%s' THEN '%s' \n", $line[$field], $line[$column]);
+            }
+            $sql .= "END,";
+        }
+
+        return rtrim($sql, ',');
+    }
+
+    /**
+     * 解析where条件
+     * @param $params
+     * @return array|string
+     */
+    private function parseParams($params)
+    {
+        $where = [];
+        foreach ($params as $key => $value) {
+            $where[] = sprintf("`%s` = '%s'", $key, $value);
+        }
+        return $where ? ' AND ' . implode(' AND ', $where) : '';
+    }
 
     /**
      * 获取表字段
@@ -655,6 +822,21 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
 
 
     /**
+     * 求和
+     * @param $field
+     * @return mixed
+     */
+    public function sum($field)
+    {
+        $this->joint_field(" SUM({$field}) as `sum` ");
+        $merge = $this->mergeSqlLogic();
+        $this->_sql = 'SELECT ' . $merge . ';';
+        return $this->fetch();
+    }
+
+
+
+    /**
      * 构造分页参数
      * @param int $pagesize
      * @return $this
@@ -662,7 +844,7 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
     public function page($pagesize = 10)
     {
         //查询条件
-        $getTotal = $this->getTotal();
+        $getTotal = $this->count();
         $page = new PageData($getTotal, $pagesize);
         $pageArr = $page->show();
         $this->setLimit($pageArr['limit']);
@@ -825,8 +1007,8 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         if ($this->_limit) {
             $sql[] = $this->_limit;
         }
+
         $sql = implode(" ", $sql);
-        Log::run($sql);
         return $sql;
     }
 

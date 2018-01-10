@@ -14,7 +14,8 @@ class Check {
 	 */
 	public function __info()
     {
-		if (isset ( $this->_message ) && is_array ( $this->_message )) {
+		if (isset ( $this->_message ) && is_array ( $this->_message ))
+		{
 			return $this->_message;
 		}
 	}

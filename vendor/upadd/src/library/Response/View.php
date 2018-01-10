@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin\Response;
 
 
@@ -10,7 +11,8 @@ class View extends Factory
      */
     public $contentType = 'text/html';
 
-    public function setContent($data=null){
+    public function setContent($data = null)
+    {
         return $data;
     }
 

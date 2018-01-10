@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin;
 
 use Upadd\Bin\Config\Configuration;
@@ -30,16 +31,13 @@ class Application
      * @param $callable
      * @param array $argv
      */
-    public function run($callable, $argv = [])
+    public function run($callable)
     {
         date_default_timezone_set('Asia/Shanghai');
         if (is_callable($callable)) {
             call_user_func_array($callable, func_get_args());
         }
         $this->dispenser = new Dispenser();
-        if ($argv) {
-            static::$_config['sys'] = array_merge(static::$_config['sys'], ['argv' => $argv]);
-        }
     }
 
     /**

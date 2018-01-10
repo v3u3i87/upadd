@@ -27,7 +27,7 @@ class Dispenser
      * 命令行数据
      * @var array
      */
-    public $_cliData = array();
+    private $commandData = array();
 
     /**
      * 控制器
@@ -92,10 +92,17 @@ class Dispenser
      * 命令行模式
      * @param array $argv
      */
-    public function console()
+    public function console($args = [])
     {
-        $argv = Config::get('sys@argv');
-        if ($this->_cliData = getArgs($argv)) {
+        $this->commandData = getArgs($args);
+        if ($this->commandData) {
+            /**
+             * is the command line
+             */
+            if (array_key_exists('is_command_line', $this->commandData)) {
+                unset($this->commandData['is_command_line']);
+                return $this->commandLine();
+            }
             $this->_responseData = $this->command();
             $response = new response();
             $response->type = $this->_responseType;
@@ -105,6 +112,16 @@ class Dispenser
         } else {
             throw new UpaddException('console Cant get the data');
         }
+    }
+
+
+    /**
+     * 命令行相关
+     */
+    private function commandLine()
+    {
+        print_r(['这里是新输出', $this->commandData]);
+        echo "\n\r";
     }
 
     /**
@@ -209,12 +226,12 @@ class Dispenser
     public function command()
     {
         $cli_action_autoload = Config::get('start@cli_action_autoload');
-        if (array_key_exists('u', $this->_cliData) && array_key_exists('p', $this->_cliData)) {
-            $this->getAction($cli_action_autoload . ucfirst($this->_cliData['u']) . 'Action' . '@' . $this->_cliData['p']);
+        if (array_key_exists('u', $this->commandData) && array_key_exists('p', $this->commandData)) {
+            $this->getAction($cli_action_autoload . ucfirst($this->commandData['u']) . 'Action' . '@' . $this->commandData['p']);
         }
-        unset($this->_cliData['u']);
-        unset($this->_cliData['p']);
-        Data::accept($this->_cliData);
+        unset($this->commandData['u']);
+        unset($this->commandData['p']);
+        Data::accept($this->commandData);
         return $this->instantiation();
     }
 
@@ -225,7 +242,6 @@ class Dispenser
      */
     public function instantiation()
     {
-        $result = null;
         if (class_exists($this->_action)) {
             Config::setFileVal('sys', 'request', ['action' => $this->_action, 'method' => $this->_method]);
             $class = new $this->_action();
@@ -235,19 +251,21 @@ class Dispenser
                 $class->init();
                 $tmpData = func_get_args();
             } else {
-                $tmpData = $this->_cliData;
+                $tmpData = $this->commandData;
             }
-            $result = call_user_func_array(array($class, $method), $tmpData);
+            /**
+             * 响应
+             */
             $this->_responseType = $class->getResponseType();
-            $this->_responseHeader = $class->getResponseHeader();
             $this->getResponseCode = $class->getResponseCode();
+            $this->_responseHeader = $class->getResponseHeader();
+            $this->_responseData = call_user_func_array(array($class, $method), $tmpData);
+            $class->setResponseContent($this->_responseData);
         } else {
-            $result = Prompt::error_html('The wrong url');
+            $this->_responseData = Prompt::error_html('The wrong url');
         }
-
-        return $result;
+        return $this->_responseData;
     }
-
 
     /**
      * 获取路由
@@ -256,7 +274,7 @@ class Dispenser
      */
     public function getRoute()
     {
-        if (isset($this->_work['Route'])) {
+        if (array_key_exists('Route', $this->_work)) {
             return $this->_work['Route'];
         }
         throw new UpaddException('请求获取路由失败');

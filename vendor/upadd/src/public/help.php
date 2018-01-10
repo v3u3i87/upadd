@@ -80,7 +80,7 @@ if (!function_exists('lang')) {
         if ($key) {
             // 程序语言包
             if (defined('APP_LANG')) {
-                $lang = require UPADD_HOST . VENDOR . '/Lang/' . APP_LANG . '.php';
+                $lang = require UPADD_HOST . VENDOR . '/lang/' . APP_LANG . '.php';
                 return $lang [$key];
             } else {
                 exit('Sorry, you have not set the language pack!');
@@ -166,8 +166,7 @@ function sequence($data, $type)
 }
 
 
-if (!function_exists('conf'))
-{
+if (!function_exists('conf')) {
     /**
      * 调用配置数组参数
      * @param string $name
@@ -181,8 +180,7 @@ if (!function_exists('conf'))
 }
 
 
-if (!function_exists('is_json'))
-{
+if (!function_exists('is_json')) {
     /**
      * 判断JSON是否合法
      * @param null $string
@@ -198,8 +196,7 @@ if (!function_exists('is_json'))
     }
 }
 
-if (!function_exists('json'))
-{
+if (!function_exists('json')) {
 
     /**
      * 对json进行编码或解码
@@ -217,8 +214,7 @@ if (!function_exists('json'))
     }
 }
 
-if (!function_exists('is_create_dir'))
-{
+if (!function_exists('is_create_dir')) {
     /**
      * 判断目录是否存在，如果不存在就创建
      * @param unknown $path
@@ -236,8 +232,7 @@ if (!function_exists('is_create_dir'))
 }
 
 
-if (!function_exists('array_sort_field'))
-{
+if (!function_exists('array_sort_field')) {
     /**
      * 二维字数组排序
      * @param array $array 数据
@@ -287,12 +282,11 @@ if (!function_exists('msg')) {
     function msg($code = 10001, $message = 'Unauthorized access', $data = [], $type = 'json')
     {
         header('Content-type: application/json; charset=utf-8');
-        exit(json(['code' => (int) $code, 'msg' => (string)$message, 'result' => (array)$data]));
+        exit(json(['code' => (int)$code, 'msg' => (string)$message, 'result' => (array)$data]));
     }
 }
 
-if (!function_exists('jump'))
-{
+if (!function_exists('jump')) {
     /**
      * 转跳
      * @param $url
@@ -314,9 +308,11 @@ if (!function_exists('getArgs')) {
      * @param $argv
      * @return array
      */
-    function getArgs($argv = [], $out = array())
+    function getArgs($argv=[],$out = array())
     {
-        if (!empty($argv)) {
+
+        if (!empty($argv))
+        {
             array_shift($argv);
             foreach ($argv as $arg) {
                 if (substr($arg, 0, 2) == '--') {
@@ -328,6 +324,18 @@ if (!function_exists('getArgs')) {
                         $key = substr($arg, 2, $eqPos - 2);
                         $out[$key] = substr($arg, $eqPos + 1);
                     }
+                } else if (substr($arg, 0, 1) == '-') {
+
+                    //查询解析字段
+                    $eqPos = strpos($arg, '=');
+                    if ($eqPos === false) {
+                        $key = substr($arg, 1);
+                        $out[$key] = isset($out[$key]) ? $out[$key] : $key;
+                    } else {
+                        $key = substr($arg, 1, $eqPos - 1);
+                        $out[$key] = substr($arg, $eqPos + 1);
+                    }
+                    $out['is_command_line'] = 'yes';
                 } else {
                     exit('you input parameters have a problem' . "\r\n" . 'exit the program...' . "\r\n" . 'If you have questions, can contact me.' . "\r\n" . 'my email: v3u3i87@gmail.com' . "\r\n");
                 }
@@ -400,8 +408,7 @@ if (!function_exists('getClient_id')) {
 
 }
 
-if (!function_exists('verificationCode'))
-{
+if (!function_exists('verificationCode')) {
     /**
      * 随机生成6位验证码
      * @param int $num 默认6位
@@ -432,8 +439,7 @@ if (!function_exists('get_hash')) {
     }
 }
 
-if (!function_exists('pp'))
-{
+if (!function_exists('pp')) {
     function pp($val = null, $status = true)
     {
         print_r($val);
@@ -442,7 +448,7 @@ if (!function_exists('pp'))
     }
 }
 
-if(!function_exists('arrayToOne')) {
+if (!function_exists('arrayToOne')) {
     /**
      * 多维数组转一维数组
      * @param $multi
@@ -461,7 +467,6 @@ if(!function_exists('arrayToOne')) {
         return $arr;
     }
 }
-
 
 
 if (!function_exists('is_array_length')) {
@@ -485,8 +490,7 @@ if (!function_exists('is_array_length')) {
 }
 
 
-if(!function_exists('array_associated_index'))
-{
+if (!function_exists('array_associated_index')) {
     /**
      * 索引转关联数组
      * @param array $arr
@@ -494,11 +498,9 @@ if(!function_exists('array_associated_index'))
      */
     function array_associated_index($arr = [])
     {
-        if (count($arr) % 2 == 0)
-        {
+        if (count($arr) % 2 == 0) {
             $data = [];
-            for ($i = 0; $i < count($arr); $i++)
-            {
+            for ($i = 0; $i < count($arr); $i++) {
                 $val = $i + 1;
                 if (isset($arr[$val])) {
                     $data[$arr[$i]] = $arr[$val];
@@ -511,8 +513,7 @@ if(!function_exists('array_associated_index'))
 }
 
 
-if (!function_exists('is_ssl'))
-{
+if (!function_exists('is_ssl')) {
     /**
      * 判断是否SSL协议
      * @return boolean

@@ -24,15 +24,6 @@ class LinkPdoMysql implements Db
 
     protected static $links = [];
 
-//    public function __construct($link)
-//    {
-//        try {
-//            $this->_linkID = self::getDbInstance($link);
-//        } catch (PDOException $e) {
-//            throw new UpaddException($e->getMessage());
-//        }
-//    }
-
     public function init($link)
     {
         try {
@@ -62,6 +53,7 @@ class LinkPdoMysql implements Db
         $dns = "mysql:dbname={$link ['name']};host={$link ['host']};port={$link ['port']};";
         $tmpLink = new PDO($dns, $link ['user'], $link ['pass']);
         $tmpLink->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $tmpLink->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $tmpLink->exec('SET NAMES ' . $link ['charset']);
         return $tmpLink;
     }
@@ -198,9 +190,24 @@ class LinkPdoMysql implements Db
      * 开启事务
      * @return mixed
      */
-    public function begin()
+    public function begin($callable = null)
     {
-        return $this->_linkID->beginTransaction();
+        if (is_callable($callable)) {
+            try {
+                $this->_linkID->beginTransaction();
+                $isOk = call_user_func_array($callable, func_get_args());
+                if ($isOk !== false)
+                {
+                    $this->_linkID->commit();
+                    return $isOk;
+                }
+            } catch (\PDOException $e) {
+                $this->_linkID->rollBack();
+                return false;
+            }
+        } else {
+            return $this->_linkID->beginTransaction();
+        }
     }
 
     /**

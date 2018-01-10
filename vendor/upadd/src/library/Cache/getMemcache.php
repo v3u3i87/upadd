@@ -31,7 +31,7 @@ class getMemcache
         {
             throw new UpaddException('Load memcache extension failure!');
 		}
-        $this->config = Configuration::get('tag@memcache');
+        $this->config = Configuration::get('cache@memcache');
         $this->connect();
 	}
 

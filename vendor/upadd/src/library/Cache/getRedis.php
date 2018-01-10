@@ -1,7 +1,8 @@
 <?php
+
 namespace Upadd\Bin\Cache;
 
-use Upadd\Bin\Config\Configuration;
+use Config;
 use Upadd\Bin\UpaddException;
 
 class getRedis
@@ -16,13 +17,11 @@ class getRedis
 
     public function __construct($config = array())
     {
-        if (! extension_loaded ( 'Redis' ))
-        {
+        if (!extension_loaded('Redis')) {
             throw new UpaddException('Load Redis extension failure!');
         }
 
-        if ($this->redis !== null)
-        {
+        if ($this->redis !== null) {
             return $this->redis;
         }
 
@@ -35,7 +34,7 @@ class getRedis
      */
     protected function connect()
     {
-        $config = Configuration::get('tag@redis');
+        $config = Config::get('cache@redis');
         $this->redis = new \Redis();
         $this->redis->connect($config['host'], $config['port']);
     }
@@ -49,8 +48,7 @@ class getRedis
     public function set($key, $value, $timeOut = 0)
     {
         $retRes = $this->redis->set($key, $value);
-        if ($timeOut > 0)
-        {
+        if ($timeOut > 0) {
             $this->redis->setTimeout($key, $timeOut);
         }
         return $retRes;
@@ -88,7 +86,7 @@ class getRedis
      * @param string|array $value 获取得到的数据
      * @param bool $right 是否从右边开始入
      */
-    public function push($key, $value ,$right = true)
+    public function push($key, $value, $right = true)
     {
         $value = json_encode($value);
         return $right ? $this->redis->rPush($key, $value) : $this->redis->lPush($key, $value);
@@ -99,7 +97,7 @@ class getRedis
      * @param string $key KEY名称
      * @param bool $left 是否从左边开始出数据
      */
-    public function pop($key , $left = true)
+    public function pop($key, $left = true)
     {
         $val = $left ? $this->redis->lPop($key) : $this->redis->rPop($key);
         return json_decode($val);
@@ -131,6 +129,41 @@ class getRedis
     {
         return $this->redis->exists($key);
     }
+
+
+    /**
+     * 判断剩余时间
+     * @param $key
+     * @return bool
+     */
+    public function ttl($key)
+    {
+        $ttl = $this->redis->ttl($key);
+        if ($ttl > 1) {
+            return $ttl;
+        }
+        return false;
+    }
+
+
+    /**
+     * 更新时间
+     * @param $key
+     * @param $time
+     * @return bool
+     */
+    public function expire($key, $time)
+    {
+        if ($this->exists($key))
+        {
+            if ($this->redis->expire($key, $time))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 返回redis对象

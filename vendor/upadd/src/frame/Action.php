@@ -35,12 +35,22 @@ class Action
     private $_responseHeader = [];
 
 
+    public $setResponseContent;
+
+    protected $getResponseContent;
+
     /**
      * 实例化
      */
     public function init()
     {
         $this->_templates = new Templates();
+    }
+
+
+    protected function setInit()
+    {
+
     }
 
     /**
@@ -125,6 +135,17 @@ class Action
     {
         return $this->_responseCode;
     }
+
+    /**
+     * 设置响应输出
+     */
+    public function setResponseContent($content=null)
+    {
+        if($content){
+            $this->getResponseContent = $content;
+        }
+    }
+
 
     /**
      * @param int $code

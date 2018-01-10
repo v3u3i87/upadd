@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin\Http;
 
 /**
@@ -53,7 +54,6 @@ class Data extends Input
         }
         return null;
     }
-
 
     /**
      * 返回所有数据

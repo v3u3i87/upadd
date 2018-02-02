@@ -3,7 +3,7 @@
  * +----------------------------------------------------------------------
  * | UPADD [ Can be better to Up add]
  * +----------------------------------------------------------------------
- * | Copyright (c) 2011-2017 http://upadd.cn All rights reserved.
+ * | Copyright (c) 2011-2018 http://upadd.cn All rights reserved.
  * +----------------------------------------------------------------------
  * | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
  * +----------------------------------------------------------------------
@@ -20,15 +20,15 @@ require UPADD_HOST . VENDOR . '/src/public/help.php';
 use Upadd\Bin\Grab;
 use Upadd\Bin\Factory;
 use Upadd\Bin\Loader;
-
+use Upadd\Bin\Application;
 /**
  * 实例化APP
  */
-$app = new \Upadd\Bin\Application();
+$app = new Application();
 /**
  * 设置配置文件
  */
-$app->getConfig();
+$app->loadConfig();
 
 /**
  * 加载组件
@@ -41,7 +41,7 @@ $app->setSession();
 /**
  * 实例化模块
  */
-$app->getWorkModule();
+$app->runWorkModule();
 /**
  * 导入实例化模块
  */

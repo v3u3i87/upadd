@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Upadd\\Bin\\Alias' => $vendorDir . '/Upadd/src/library/Alias.php',
+    'Upadd\\Bin\\Api\\DiInterface' => $vendorDir . '/Upadd/src/library/Api/DiInterface.php',
     'Upadd\\Bin\\Application' => $vendorDir . '/Upadd/src/library/Application.php',
     'Upadd\\Bin\\Async' => $vendorDir . '/Upadd/src/library/Async.php',
     'Upadd\\Bin\\Async\\Http' => $vendorDir . '/Upadd/src/library/Async/Http.php',
@@ -22,6 +23,7 @@ return array(
     'Upadd\\Bin\\Db\\LinkPdoMysql' => $vendorDir . '/Upadd/src/library/Db/LinkPdoMysql.php',
     'Upadd\\Bin\\Db\\Pretreatment' => $vendorDir . '/Upadd/src/library/Db/Pretreatment.php',
     'Upadd\\Bin\\Debug' => $vendorDir . '/Upadd/src/library/Debug.php',
+    'Upadd\\Bin\\Di' => $vendorDir . '/Upadd/src/library/Di.php',
     'Upadd\\Bin\\Factory' => $vendorDir . '/Upadd/src/library/Factory.php',
     'Upadd\\Bin\\Grab' => $vendorDir . '/Upadd/src/library/Grab.php',
     'Upadd\\Bin\\Http\\Data' => $vendorDir . '/Upadd/src/library/Http/Data.php',
@@ -32,6 +34,7 @@ return array(
     'Upadd\\Bin\\Loader' => $vendorDir . '/Upadd/src/library/Loader.php',
     'Upadd\\Bin\\Package\\Config' => $vendorDir . '/Upadd/src/library/Package/Config.php',
     'Upadd\\Bin\\Package\\Data' => $vendorDir . '/Upadd/src/library/Package/Data.php',
+    'Upadd\\Bin\\Package\\Di' => $vendorDir . '/Upadd/src/library/Package/Di.php',
     'Upadd\\Bin\\Package\\Log' => $vendorDir . '/Upadd/src/library/Package/Log.php',
     'Upadd\\Bin\\Package\\Routes' => $vendorDir . '/Upadd/src/library/Package/Routes.php',
     'Upadd\\Bin\\Package\\Session' => $vendorDir . '/Upadd/src/library/Package/Session.php',

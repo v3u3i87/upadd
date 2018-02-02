@@ -22,7 +22,9 @@ return array(
     /*
      * 自定义设置别名
      */
-    'alias' => [],
+    'alias' => [
+//        'Di'=>'Upadd\Bin\Package\Di',
+    ],
 
     /*
      * 排除配置文件以外的定义文件

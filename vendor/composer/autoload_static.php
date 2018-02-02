@@ -8,6 +8,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
 {
     public static $classMap = array (
         'Upadd\\Bin\\Alias' => __DIR__ . '/..' . '/Upadd/src/library/Alias.php',
+        'Upadd\\Bin\\Api\\DiInterface' => __DIR__ . '/..' . '/Upadd/src/library/Api/DiInterface.php',
         'Upadd\\Bin\\Application' => __DIR__ . '/..' . '/Upadd/src/library/Application.php',
         'Upadd\\Bin\\Async' => __DIR__ . '/..' . '/Upadd/src/library/Async.php',
         'Upadd\\Bin\\Async\\Http' => __DIR__ . '/..' . '/Upadd/src/library/Async/Http.php',
@@ -23,6 +24,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Db\\LinkPdoMysql' => __DIR__ . '/..' . '/Upadd/src/library/Db/LinkPdoMysql.php',
         'Upadd\\Bin\\Db\\Pretreatment' => __DIR__ . '/..' . '/Upadd/src/library/Db/Pretreatment.php',
         'Upadd\\Bin\\Debug' => __DIR__ . '/..' . '/Upadd/src/library/Debug.php',
+        'Upadd\\Bin\\Di' => __DIR__ . '/..' . '/Upadd/src/library/Di.php',
         'Upadd\\Bin\\Factory' => __DIR__ . '/..' . '/Upadd/src/library/Factory.php',
         'Upadd\\Bin\\Grab' => __DIR__ . '/..' . '/Upadd/src/library/Grab.php',
         'Upadd\\Bin\\Http\\Data' => __DIR__ . '/..' . '/Upadd/src/library/Http/Data.php',
@@ -33,6 +35,7 @@ class ComposerStaticInit5748b66abe6b6367eae34e451e2ed586
         'Upadd\\Bin\\Loader' => __DIR__ . '/..' . '/Upadd/src/library/Loader.php',
         'Upadd\\Bin\\Package\\Config' => __DIR__ . '/..' . '/Upadd/src/library/Package/Config.php',
         'Upadd\\Bin\\Package\\Data' => __DIR__ . '/..' . '/Upadd/src/library/Package/Data.php',
+        'Upadd\\Bin\\Package\\Di' => __DIR__ . '/..' . '/Upadd/src/library/Package/Di.php',
         'Upadd\\Bin\\Package\\Log' => __DIR__ . '/..' . '/Upadd/src/library/Package/Log.php',
         'Upadd\\Bin\\Package\\Routes' => __DIR__ . '/..' . '/Upadd/src/library/Package/Routes.php',
         'Upadd\\Bin\\Package\\Session' => __DIR__ . '/..' . '/Upadd/src/library/Package/Session.php',

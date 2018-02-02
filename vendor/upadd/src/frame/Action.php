@@ -14,7 +14,10 @@ namespace Upadd\Frame;
 use Upadd\Bin\UpaddException;
 use Upadd\Bin\View\Templates;
 
-// 控制器
+/**
+ * Class Action
+ * @package Upadd\Frame
+ */
 class Action
 {
 
@@ -155,7 +158,8 @@ class Action
      */
     protected function msg($code = 200, $msg = '', $data = [])
     {
-        return ['code' => $code, 'msg' => $msg, 'data' => $data];
+        return ['code' => $code, 'msg' => $msg, 'result' => $data];
     }
+
 
 }

@@ -178,6 +178,18 @@ if (!function_exists('conf')) {
         return \Upadd\Bin\Config\Configuration::get($key);
     }
 }
+if (!function_exists('objectToArray')) {
+    /**
+     * 对象转数组
+     * @param $object
+     * @return mixed
+     */
+    function objectToArray(&$object)
+    {
+        $object = json_decode(json_encode($object), true);
+        return $object;
+    }
+}
 
 
 if (!function_exists('is_json')) {
@@ -308,11 +320,10 @@ if (!function_exists('getArgs')) {
      * @param $argv
      * @return array
      */
-    function getArgs($argv=[],$out = array())
+    function getArgs($argv = [], $out = array())
     {
 
-        if (!empty($argv))
-        {
+        if (!empty($argv)) {
             array_shift($argv);
             foreach ($argv as $arg) {
                 if (substr($arg, 0, 2) == '--') {

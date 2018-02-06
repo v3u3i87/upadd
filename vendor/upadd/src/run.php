@@ -20,11 +20,10 @@ require UPADD_HOST . VENDOR . '/src/public/help.php';
 use Upadd\Bin\Grab;
 use Upadd\Bin\Factory;
 use Upadd\Bin\Loader;
-use Upadd\Bin\Application;
 /**
  * 实例化APP
  */
-$app = new Application();
+$app = new \Upadd\Bin\Application();
 /**
  * 设置配置文件
  */

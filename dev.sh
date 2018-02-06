@@ -2,4 +2,4 @@
 
 git add -A
 git commit -m "test dev"
-git push origin dev
+git push github dev

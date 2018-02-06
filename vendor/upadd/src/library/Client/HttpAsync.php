@@ -1,10 +1,9 @@
 <?php
-namespace Upadd\Bin\Async;
+namespace Upadd\Bin\Client;
 
 use Data;
-use Upadd\Bin\Config\Configuration as Config;
 
-class Http
+class HttpAsync
 {
 
     private $is_monitor = false;

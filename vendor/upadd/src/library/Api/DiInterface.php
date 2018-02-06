@@ -13,8 +13,16 @@ namespace Upadd\Bin\Api;
 interface DiInterface{
 
 
+    /**
+     * @param $name
+     * @return mixed
+     */
     public function binding($name);
 
+    /**
+     * @param $name
+     * @return mixed
+     */
     public function getBinding($name);
 
 }

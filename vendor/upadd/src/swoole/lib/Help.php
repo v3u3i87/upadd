@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Swoole\Lib;
 
 /**
@@ -24,7 +25,7 @@ class Help
         switch (strtolower($data['scheme'])) {
             case 'tcp':
             case 'unix':
-            $type = SWOOLE_SOCK_TCP;
+                $type = SWOOLE_SOCK_TCP;
                 break;
             case 'udp':
                 $type = SWOOLE_SOCK_UDP;
@@ -32,7 +33,7 @@ class Help
             case 'http':
             case 'ws':
             default:
-            $type = null;
+                $type = null;
         }
         $data['sock'] = $type;
         return $data;

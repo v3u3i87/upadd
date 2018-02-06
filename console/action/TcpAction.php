@@ -2,29 +2,21 @@
 
 namespace console\action;
 
-//use console\swoole\TestHtppServer;
 use Config;
 use console\swoole\TestServer;
-use Upadd\Swoole\HttpServer;
-use Upadd\Bin\Client\Http;
+use Upadd\Swoole\ClientConnect\AsyncTcp;
+use Upadd\Swoole\ClientConnect\SyncTcp;
 
-
-class TestAction extends \Upadd\Frame\Action
+class TcpAction extends \Upadd\Frame\Action
 {
 
     public $client = null;
 
 
-    public function zmq(){
-        $client = Http::create('http://zmq.cc');
-        $client->asyncHttp();
-    }
-
-
     /**
-     * php console.php --u=test --p=tcp
+     * php console.php --u=tcp --p=create
      */
-    public function tcp()
+    public function create()
     {
         echo 'tcp';
         echo "\n";
@@ -34,48 +26,27 @@ class TestAction extends \Upadd\Frame\Action
         $test->start();
     }
 
-    //php console.php --u=test --p=http
-    public function http()
+    /**
+     * php console.php --u=tcp --p=async
+     */
+    public function async()
     {
-        $swooleHtpp = Config::get('swoole@http');
-        return HttpServer::create($swooleHtpp['name'], $swooleHtpp['host'])->start();
+        $async = AsyncTcp::create('tcp://127.0.0.1:9090');
+        $async->connect();
+        $async->send(str_repeat('-zmq-', 100));
+        $async->send("\r\n\r\n");
     }
 
-    public function a()
+    /**
+     * php console.php --u=tcp --p=sync
+     */
+    public function sync()
     {
-       echo  json(['zmq'=>'zhang mao qiang','test'=>123,'Info'=>'to upadd']);
-    }
-
-    //php console.php --u=test --p=info
-    public function info()
-    {
-        /**
-         * int 400000  in 大于2M数据,无法传送
-         */
-        $int = 1000;
-//        unlink('tcp.log');
-        //看看生产文件多大
-        $this->client = new \swoole_client(SWOOLE_SOCK_TCP);
-        if (!$this->client->connect("127.0.0.1", 9090, -1)) {
-            echo "Error: {$this->client->errMsg}[{$this->client->errCode}]\n";
-        }
-//        $this->client->send(str_repeat('-zmq-', $int));
-        $this->client->send(verificationCode(4));
-        $this->client->send("\r\n\r\n");
-        $message = $this->client->recv();
-        echo $message;
-        echo "\n";
-        if ($message) {
-            $this->client->close();
-            echo "\r\n";
-            $endtime = (microtime(true)) - RUNTIME;
-            echo $endtime;
-            echo "\r\n";
-            exit('--exit the program--' . "\r\n");
-        } else {
-            echo "等待返回 \r\n";
-        }
-
+        $sync = SyncTcp::create('tcp://127.0.0.1:9090');
+        $sync->connect();
+        $sync->send(str_repeat('-zmq-', 100));
+        $sync->send("\r\n\r\n");
+        print_r($sync->getResponse());
     }
 
 

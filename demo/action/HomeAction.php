@@ -35,6 +35,7 @@ class HomeAction extends \Upadd\Frame\Action
         return $this->msg(200, 'ok');
     }
 
+
     public function xml()
     {
         $this->setResponseType('xml');

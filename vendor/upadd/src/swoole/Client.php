@@ -1,19 +1,33 @@
 <?php
 
-namespace extend\tool;
+namespace Upadd\Swoole;
 
-/**
- * About:Richard.z
- * Email:v3u3i87@gmail.com
- * Blog:https://www.zmq.cc
- * Date: 2018/1/12
- * Time: 下午3:57
- * Name:
- */
-use Log;
+use Config;
+use Upadd\Bin\UpaddException;
+use Upadd\Swoole\Lib\Help;
 
-class HttpClinet
+class Client
 {
+    /**
+     * @var null
+     */
+    protected $host = null;
+
+    /**
+     * @var null
+     */
+    protected $type = null;
+
+    /**
+     * set in port
+     * @var null
+     */
+    protected $port = null;
+
+    /**
+     * @var
+     */
+    protected $client;
 
     /**
      * 提交url
@@ -70,20 +84,107 @@ class HttpClinet
     public $responseType = 'json';
 
 
+    /**
+     * 操作
+     * @var array
+     */
+    protected $operation = [];
+
+
+    /**
+     * 监听状态
+     * @var bool
+     */
+    protected $is_monitor = false;
+
+
+    /**
+     *
+     */
+    public function monitor()
+    {
+        $this->is_monitor = true;
+    }
+
+    protected $is_ssl = false;
+
+
+    /**
+     * 开启SSL通信
+     */
+    public function offSSL()
+    {
+        $this->is_ssl = true;
+    }
+
+    protected $sslPath = [];
+
+    /**
+     * 设置SSL文件路径
+     * @param $ssl_cert_file_path
+     * @param $ssl_key_file_path
+     */
+    public function setSslPath($ssl_cert_file_path, $ssl_key_file_path)
+    {
+        $this->sslPath = [
+            'ssl_cert_file' => $ssl_cert_file_path,
+            'ssl_key_file' => $ssl_key_file_path,
+        ];
+    }
+
+
+    /**
+     * Client constructor.
+     * @param $address
+     * @param null $data
+     */
+    public function __construct($address = null, $data = null)
+    {
+        if ($address) {
+            $this->parsing($address);
+        }
+        if ($data) {
+            $this->data = $data;
+        }
+    }
+
+    /**
+     * @param $address
+     * @param null $data
+     * @return static
+     */
+    public static function create($address = null, $data = null)
+    {
+        return new static($address, $data);
+    }
+
+
+    /**
+     * @param $address
+     */
+    private function parsing($address)
+    {
+        $parse = Help::parseAddress($address);
+        if (isset($parse['scheme'])) {
+            $this->type = $parse['scheme'];
+        }
+
+        if (isset($parse['host'])) {
+            $this->host = $parse['host'];
+        }
+
+        if (isset($parse['port'])) {
+            $this->port = $parse['port'];
+        }
+    }
+
+
     public function offLog($fileNmae)
     {
         $this->is_log = true;
         $this->logFileName = $fileNmae;
     }
 
-
-    /**
-     * @return static
-     */
-    public static function init()
-    {
-        return new static();
-    }
 
     /**
      * 设置响应格式为XML
@@ -138,56 +239,14 @@ class HttpClinet
 
     public function getResponse()
     {
-        $this->send();
         return $this->responseData;
     }
-
-    private function isLog($body)
-    {
-        if ($this->is_log) {
-            Log::notes($body, $this->logFileName);
-        }
-    }
-
-
-    /**
-     * CRUL方法
-     * @param array $_param
-     * @return array|bool
-     */
-    private function send()
-    {
-        try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->url);
-            if ($this->header) {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
-            }
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->methods);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36');
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-            curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
-            //数据
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $body = curl_exec($ch);
-            curl_close($ch);
-            $this->isLog($body);
-            $this->isResponseType($body);
-        } catch (Exception $exception) {
-            echo $exception->getMessage();
-        }
-    }
-
 
     /**
      * @param $body
      * @return array|mixed
      */
-    private function isResponseType($body)
+    protected function isResponseType($body)
     {
         if ($this->responseType == 'json' || $this->responseType === 'json') {
             return $this->jsonToArray($body);
@@ -203,7 +262,7 @@ class HttpClinet
      * @param $xml
      * @return mixed
      */
-    private function xmlToArray($xml)
+    protected function xmlToArray($xml)
     {
         $this->responseData = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
         return $this->responseData;
@@ -213,10 +272,21 @@ class HttpClinet
      * @param $json
      * @return array|mixed
      */
-    private function jsonToArray($json)
+    protected function jsonToArray($json)
     {
         $this->responseData = json_decode($json, true);
         return $this->responseData;
+    }
+
+
+    /**
+     * @param $body
+     */
+    protected function isLog($body)
+    {
+        if ($this->is_log) {
+            Log::notes($body, $this->logFileName);
+        }
     }
 
 

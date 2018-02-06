@@ -5,12 +5,14 @@ use Config;
 
 use Upadd\Swoole\TaskServer;
 use Upadd\Swoole\TcpServer;
+
+
 /**
  * 测试
  * @Cli php console.php --u=test --p=main
  * @package console\swoole\server
  */
-class TestServer extends TcpServer
+class TestServer extends TaskServer
 {
 
     /**
@@ -20,18 +22,16 @@ class TestServer extends TcpServer
      */
     public function doWork($param=[],$client=[])
     {
-        return $this->tcp($param,$client);
+        return $this->task($param,$client);
     }
+
 
     private function tcp($param=[],$client=[])
     {
         return json([$param,$client]);
     }
 
-
-
     private function task($param=[],$client=[]){
-        file_put_contents('tcp.log', json($param));
         echo "-----------------\r\n";
         print_r([$param,$client]);
         echo "================end=============\r\n";

@@ -19,7 +19,7 @@
   },
   "autoload": {
     "classmap": [
-      "vendor/Upadd"
+      "vendor/upadd"
     ]
   },
   "minimum-stability": "dev"

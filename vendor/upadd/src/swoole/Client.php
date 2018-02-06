@@ -1,14 +1,13 @@
 <?php
 
-namespace Upadd\Bin;
+namespace Upadd\Swoole;
 
+use Config;
+use Upadd\Bin\UpaddException;
 use Upadd\Swoole\Lib\Help;
-use Upadd\Bin\Client\CurlOperation;
 
-abstract class Client
+class Client
 {
-    use CurlOperation;
-
     /**
      * @var null
      */
@@ -24,6 +23,11 @@ abstract class Client
      * @var null
      */
     protected $port = null;
+
+    /**
+     * @var
+     */
+    protected $client;
 
     /**
      * 提交url
@@ -88,13 +92,60 @@ abstract class Client
 
 
     /**
+     * 监听状态
+     * @var bool
+     */
+    protected $is_monitor = false;
+
+
+    /**
+     *
+     */
+    public function monitor()
+    {
+        $this->is_monitor = true;
+    }
+
+    protected $is_ssl = false;
+
+
+    /**
+     * 开启SSL通信
+     */
+    public function offSSL()
+    {
+        $this->is_ssl = true;
+    }
+
+    protected $sslPath = [];
+
+    /**
+     * 设置SSL文件路径
+     * @param $ssl_cert_file_path
+     * @param $ssl_key_file_path
+     */
+    public function setSslPath($ssl_cert_file_path, $ssl_key_file_path)
+    {
+        $this->sslPath = [
+            'ssl_cert_file' => $ssl_cert_file_path,
+            'ssl_key_file' => $ssl_key_file_path,
+        ];
+    }
+
+
+    /**
      * Client constructor.
      * @param $address
      * @param null $data
      */
-    public function __construct($address, $data = null)
+    public function __construct($address = null, $data = null)
     {
-        $parse = Help::parseAddress($address);
+        if ($address) {
+            $this->parsing($address);
+        }
+        if ($data) {
+            $this->data = $data;
+        }
     }
 
     /**
@@ -102,9 +153,29 @@ abstract class Client
      * @param null $data
      * @return static
      */
-    public static function create($address, $data = null)
+    public static function create($address = null, $data = null)
     {
         return new static($address, $data);
+    }
+
+
+    /**
+     * @param $address
+     */
+    private function parsing($address)
+    {
+        $parse = Help::parseAddress($address);
+        if (isset($parse['scheme'])) {
+            $this->type = $parse['scheme'];
+        }
+
+        if (isset($parse['host'])) {
+            $this->host = $parse['host'];
+        }
+
+        if (isset($parse['port'])) {
+            $this->port = $parse['port'];
+        }
     }
 
 
@@ -208,28 +279,15 @@ abstract class Client
     }
 
 
+    /**
+     * @param $body
+     */
     protected function isLog($body)
     {
         if ($this->is_log) {
             Log::notes($body, $this->logFileName);
         }
     }
-
-
-    /**
-     * @return mixed
-     */
-    abstract public function sync();
-
-    /**
-     * @return mixed
-     */
-    abstract public function async();
-
-    /**
-     * @return mixed
-     */
-    abstract public function close();
 
 
 }

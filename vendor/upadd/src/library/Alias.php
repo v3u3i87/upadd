@@ -23,6 +23,7 @@ class Alias
         'Log' => 'Upadd\Bin\Package\Log',
         'Data' => 'Upadd\Bin\Package\Data',
         'Model' => 'Upadd\Frame\Model',
+        'Di'=>'Upadd\Bin\Package\Di',
 //            'Cache'=>'Upadd\Bin\Cache',
 //            'Async'=>'\Upadd\Bin\Async',
 //        'Tag' => 'Upadd\Bin\Package\Tag',

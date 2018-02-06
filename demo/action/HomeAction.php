@@ -11,6 +11,8 @@
 namespace demo\action;
 
 use Data;
+use example\Logic\Test\Info;
+
 
 class HomeAction extends \Upadd\Frame\Action
 {
@@ -18,6 +20,8 @@ class HomeAction extends \Upadd\Frame\Action
 
     public function test()
     {
+        $info = Info::__init();
+        $info->demo();
         return 'hi, welcome to use Upadd';
     }
 
@@ -30,6 +34,7 @@ class HomeAction extends \Upadd\Frame\Action
     {
         return $this->msg(200, 'ok');
     }
+
 
     public function xml()
     {

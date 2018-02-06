@@ -135,4 +135,17 @@ return [
 
     'udpParam'=>[],
 
+
+    ////clinet
+    'tcpClinet'=>[
+        'socket_buffer_size' => 1024 * 1024 * 2, //2M缓存区
+        'open_length_check' => 1,       // 开启协议解析
+        'package_length_type' => 'N',     // 长度字段的类型
+        'package_length_offset' => 0,       //第N个字节是包长度的值
+        'package_body_offset' => 4,       //第N个字节开始计算长度
+        'package_max_length' => 2000000,  //协议最大长度
+        ////////EOF检测
+        'open_eof_split' => true,   // 开启EOF检测
+        'package_eof' => '\r\n\r\n',   // 设置EOF标记
+    ],
 ];

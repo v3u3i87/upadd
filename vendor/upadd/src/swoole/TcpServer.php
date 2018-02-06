@@ -35,12 +35,12 @@ abstract class TcpServer extends Server
      */
     public function onConnect(swoole_server $_server, $fd, $from_id)
     {
-
+        print_r([$fd,$from_id]);
     }
 
     public function onClose(swoole_server $_server, $fd, $from_id)
     {
-
+        print_r([$fd,$from_id]);
     }
 
 

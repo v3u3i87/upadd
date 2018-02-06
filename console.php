@@ -1,6 +1,6 @@
 <?php
 /**
-| php console.php --u=test --p=main
+ * | php console.php --u=test --p=main
  **/
 ini_set('max_execution_time', 0);
 set_time_limit(0);
@@ -13,11 +13,11 @@ define('APP_LANG', 'zh_cn');
 /*
  * 定义传统形式访问
  */
-define('APP_ROUTES', true);
+define('APP_ROUTES', false);
 
 //加载composer in vendor
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 //加载Upadd
 require __DIR__ . '/vendor/upadd/src/run.php';
 
-$app->dispenser->console();
+$app->dispenser->console(isset($argv) ? $argv : []);

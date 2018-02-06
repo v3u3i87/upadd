@@ -14,13 +14,6 @@ class TestAction extends \Upadd\Frame\Action
 
     public $client = null;
 
-
-    public function zmq(){
-        $client = Http::create('http://zmq.cc');
-        $client->asyncHttp();
-    }
-
-
     /**
      * php console.php --u=test --p=tcp
      */

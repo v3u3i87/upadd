@@ -26,16 +26,14 @@ class Log
     public function notes($cont = array(), $fileName = 'notes.log')
     {
         if (is_array($cont) || is_object($cont)) {
-            $info = json($cont) . "\r\n";
+            $content = json($cont) . "\r\n";
         } elseif (is_string($cont)) {
-            $info = $cont . "\r\n";
+            $content = $cont . "\r\n";
         }
 
-        $info .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
+        $content .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
         $file = self::isBak($fileName);
-        $fh = fopen($file, 'a+');
-        fwrite($fh, $info);
-        fclose($fh);
+        self::addContent($file, $content);
     }
 
 
@@ -65,7 +63,7 @@ class Log
         $cont['time'] = date('Y-m-d H:i:s');
         $content = json($cont) . ",\r";
         $file = self::isBak($fileName);
-        file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
+        self::addContent($file, $content);
     }
 
 
@@ -78,7 +76,7 @@ class Log
     {
         $content = $cont."\n\r";
         $file = self::isBak($fileName);
-        file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
+        self::addContent($file, $content);
     }
 
 

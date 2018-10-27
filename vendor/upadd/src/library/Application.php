@@ -48,7 +48,6 @@ class Application
      */
     public function runWorkModule()
     {
-        $di = new \Upadd\Bin\Di;
         $app = [
             'GetConfiguration' => new \Upadd\Bin\Config\GetConfiguration,
             'Request' => new \Upadd\Bin\Http\Request,
@@ -59,9 +58,8 @@ class Application
 //            'Cache'=>new \Upadd\Bin\Cache,
 //            'Async'=>new \Upadd\Bin\Async,
         ];
-        $di->import($app);
-        $app['Di'] = $di;
-        return ($this->_work = $app);
+        $this->_work = $app;
+        return $this->_work;
     }
 
 
@@ -99,7 +97,7 @@ class Application
      */
     public function setWorkConfig()
     {
-        static::$_config['sys'] = array_merge(static::$_config['sys'], ['work' => $this->_work]);
+        static::$_config['sys'] = (array_merge(static::$_config['sys'], ['work' => $this->_work]));
     }
 
 
@@ -128,8 +126,7 @@ class Application
      */
     public function setSession()
     {
-        if ($this->getSessionStatus())
-        {
+        if ($this->getSessionStatus()) {
             $config = static::$_config['sys']['session'];
             if ($config['domain']) {
                 ini_set('session.cookie_domain', $config['domain']);

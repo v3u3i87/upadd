@@ -2,9 +2,10 @@
 /**
  * | php console.php --u=test --p=main
  **/
-ini_set('max_execution_time', 0);
 set_time_limit(0);
+ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
+
 define('RUNTIME', microtime(true));
 //项目名称
 define('APP_NAME', 'console');

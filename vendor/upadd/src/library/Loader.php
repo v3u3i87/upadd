@@ -23,7 +23,6 @@ class Loader
     {
         self::is_create_data_dir();
         spl_autoload_register(function ($className) {
-
             $_filePath = UPADD_HOST . '/' . str_replace('\\', '/', $className) . '.php';
             if (is_file($_filePath)) {
                 require $_filePath;

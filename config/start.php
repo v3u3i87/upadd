@@ -3,7 +3,7 @@
 return array(
 
     'environment' => array(
-        'local' => array('z.local', '2d56c0b26270', 'dev', 'Mac-zmq.lan','localhost'),
+        'local' => ['you name in a', 'you name in b'],
     ),
 
     /**
@@ -71,7 +71,7 @@ return array(
      * 1G=1099511627776
      * 10M=10485760
      */
-    'log_maximum'=> 10485760,
+    'log_maximum' => 10485760,
 
 
 );

@@ -15,7 +15,7 @@ return [
 
     'http'=>[
         'name'=>'upadd_http',
-        'host'=>'http://0.0.0.0:9090',
+        'host'=>'http://0.0.0.0:9013',
     ],
 
     'webSocket'=>[

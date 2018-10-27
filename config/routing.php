@@ -1,14 +1,13 @@
 <?php
 
-Routes::get('/', function(){
-    return 'hi, welcome to use upadd in Anonymous functions...';
+Routes::get('/', function () {
+    return 'welcome to use upadd...';
 });
 
 
-Routes::group(array('prefix' => '/test'), function ()
-{
+Routes::group(array('prefix' => '/test'), function () {
 
-    Routes::any('/main', 'demo\action\HomeAction@test');
+    Routes::any('/main', 'demo\action\TestDataAction@test');
     //testPath
     Routes::any('/path', 'demo\action\HomeAction@testPath');
 

@@ -26,9 +26,7 @@ class Info
 
     public function demo()
     {
-        p(Di::getAll());
-        $req = Di::get('Request');
-        p($req->server);
+
     }
 
 

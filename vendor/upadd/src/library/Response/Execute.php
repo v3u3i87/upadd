@@ -62,9 +62,7 @@ class Execute
             'json' => $this->getJson(),
             'xml' => $this->getXml(),
         ];
-
         $type = $this->isType();
-
         if ($type == 'array') {
             if (isset($obj[$this->type])) {
                 return $obj[$this->type];
@@ -97,6 +95,16 @@ class Execute
         return $this->content;
     }
 
+
+    /**
+     * 发送客户端
+     */
+    public function command()
+    {
+        $obj = $this->getObj();
+        $this->content = $obj->setContent($this->content);
+        echo $this->content;
+    }
 
     public function sendSwooleHtpp()
     {

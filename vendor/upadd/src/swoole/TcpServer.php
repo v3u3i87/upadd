@@ -10,6 +10,7 @@ namespace Upadd\Swoole;
  * Time: 下午8:51
  * Name:
  */
+
 use Config;
 use Swoole\Server as swoole_server;
 use Upadd\Bin\UpaddException;
@@ -27,22 +28,6 @@ abstract class TcpServer extends Server
         return $config;
     }
 
-    /**
-     * 连接对象发送数据
-     * @param $serv
-     * @param $fd
-     * @param $from_id
-     */
-    public function onConnect(swoole_server $_server, $fd, $from_id)
-    {
-        print_r([$fd,$from_id]);
-    }
-
-    public function onClose(swoole_server $_server, $fd, $from_id)
-    {
-        print_r([$fd,$from_id]);
-    }
-
 
     /**
      * 具体业务逻辑代码
@@ -50,7 +35,7 @@ abstract class TcpServer extends Server
      * @param $param
      * @return mixed
      */
-    abstract protected function doWork($param = [], $client = []);
+    abstract protected function doWork($param, $client = []);
 
 
     /**
@@ -63,11 +48,11 @@ abstract class TcpServer extends Server
      */
     public function onReceive(swoole_server $_server, $fd, $from_id, $data)
     {
-         return $_server->send($fd, $this->doWork(
+        return $this->doWork(
             ['fd' => $fd, 'from_id' => $from_id, 'results' => $data],
             //客户端信息
-            ['connection_info' => $_server->connection_info($data['fd'])]
-        ));
+            ['connection_info' => $_server->connection_info($fd)]
+        );
     }
 
     /**
@@ -83,7 +68,6 @@ abstract class TcpServer extends Server
             'results' => $results
         ];
     }
-
 
 
 }

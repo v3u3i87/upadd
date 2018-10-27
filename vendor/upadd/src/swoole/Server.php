@@ -13,9 +13,8 @@ namespace Upadd\Swoole;
 use Swoole\Server as swoole_server;
 use Swoole\Http\Server as swoole_http_server;
 use Config;
-use Upadd\Bin\UpaddException;
 use Upadd\Swoole\Lib\Help;
-
+use Upadd\Bin\UpaddException;
 
 abstract class Server
 {
@@ -42,13 +41,13 @@ abstract class Server
      * 地址
      * @var string
      */
-    protected $host = '127.0.0.1';
+    protected $host = '0.0.0.0';
 
     /**
      * 端口
      * @var string
      */
-    protected $port = '9988';
+    protected $port = '6688';
 
     /**
      * 进程名称
@@ -77,7 +76,7 @@ abstract class Server
     public function __construct($name, $address = null)
     {
         if (!extension_loaded('swoole')) {
-            throw new UpaddException('Load Redis extension failure!');
+            throw new UpaddException('Load swoole extension failure!');
         }
 
         $this->name($name);
@@ -97,6 +96,12 @@ abstract class Server
      * @return mixed
      */
     abstract public function configure();
+
+    /**
+     * @return mixed
+     */
+    protected function doListen(){}
+
 
     /**
      * 启动服务
@@ -148,7 +153,8 @@ abstract class Server
     }
 
 
-    /** 对外创建
+    /**
+     * 对外创建
      * @param $name
      * @param $address
      * @return static
@@ -178,7 +184,7 @@ abstract class Server
      */
     public function initServer()
     {
-        return new swoole_server($this->host, $this->port);
+        return new swoole_server($this->host, $this->port, SWOOLE_PROCESS, SWOOLE_SOCK_TCP);
     }
 
 
@@ -189,7 +195,7 @@ abstract class Server
         foreach ($handles as $value) {
             if ('on' == substr($value, 0, 2)) {
                 if ($isListenerPort) {
-                    if (in_array($value, ['onConnect', 'onClose', 'onReceive', 'onPacket', 'onReceive'])) {
+                    if (in_array($value, ['onConnect', 'onClose', 'onReceive', 'onPacket'])) {
                         $this->server->on(lcfirst(substr($value, 2)), [$this, $value]);
                     }
                 } else {
@@ -208,6 +214,7 @@ abstract class Server
     public function bootstrap($swoole = null)
     {
         $this->server = null === $swoole ? $this->initServer() : $swoole;
+        $this->doListen();
         $this->server->set($this->config);
         $this->handleCallback();
         return $this;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin;
 
 use Config;
@@ -104,8 +105,7 @@ class Grab extends Debug
      */
     private static function __print($error = [])
     {
-        if (Config::get('error@debug'))
-        {
+        if (Config::get('error@debug')) {
             if ($error) {
                 if (is_run_evn()) {
                     echo '<pre>';

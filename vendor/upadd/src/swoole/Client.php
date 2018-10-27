@@ -195,21 +195,12 @@ class Client
     }
 
     /**
-     * 设置为GET
+     * 请求方式设置
      * @return string
      */
-    public function setMethodsGet()
+    public function setMethods($type = 'POST')
     {
-        return $this->methods = 'GET';
-    }
-
-    /**
-     * 设置为POST
-     * @return string
-     */
-    public function setMethodsPost()
-    {
-        return $this->methods = 'POST';
+        return $this->methods = $type;
     }
 
 
@@ -235,6 +226,14 @@ class Client
     public function setData($key, $value)
     {
         $this->data[$key] = $value;
+    }
+
+    /**
+     * @param $data
+     */
+    public function setSendData($data)
+    {
+        $this->data = $data;
     }
 
     public function getResponse()

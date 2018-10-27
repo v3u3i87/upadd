@@ -3,5 +3,6 @@
 .project
 .idea
 data
+composer.lock
 *~
 .DS_Store

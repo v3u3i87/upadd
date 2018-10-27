@@ -236,7 +236,7 @@ if (!function_exists('is_create_dir')) {
         // 设置总目录
         if (!is_dir($dir) || !is_writable($dir)) {
             if (!mkdir($dir, 0777)) {
-                exit($dir . lang('is_dir'));
+                exit($dir);
             }
         }
         return true;
@@ -537,5 +537,18 @@ if (!function_exists('is_ssl')) {
             return true;
         }
         return false;
+    }
+}
+
+if (!function_exists('get_domain')) {
+    /**
+     *  获取当前域名
+     */
+    function get_domain()
+    {
+        if (isset($_SERVER['SERVER_NAME'])) {
+            $_ip = $_SERVER['SERVER_NAME'];
+        }
+        return $_ip;
     }
 }

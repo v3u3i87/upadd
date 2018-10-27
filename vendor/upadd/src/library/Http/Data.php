@@ -72,4 +72,15 @@ class Data extends Input
     }
 
 
+    public function del()
+    {
+        if ($this->data) {
+            $this->data = [];
+        }
+
+        if ($this->stream) {
+            $this->stream = null;
+        }
+    }
+
 }

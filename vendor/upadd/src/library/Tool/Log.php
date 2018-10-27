@@ -19,18 +19,38 @@ class Log
 {
 
     /**
+     * @return false|string
+     */
+    private static function time()
+    {
+        return date('Y-m-d H:i:s', time());
+    }
+
+    /**
+     * cmd
+     * @param string $info
+     */
+    public static function cmd($info)
+    {
+        $now = self::time();
+        echo '[' . $now . '] ' . $info . PHP_EOL;
+    }
+
+
+    /**
      * 全局笔记
      * @param array $cont
      * @param string $fileName
      */
-    public function notes($cont = array(), $fileName = 'notes.log')
+    public function notes($cont = '', $fileName = 'notes.log')
     {
         if (is_array($cont) || is_object($cont)) {
             $content = json($cont) . "\r\n";
         } elseif (is_string($cont)) {
             $content = $cont . "\r\n";
+        } else {
+            $cont = 'not';
         }
-
         $content .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
         $file = self::isBak($fileName);
         self::addContent($file, $content);
@@ -48,7 +68,7 @@ class Log
         $info .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
         $info .= $cont . "\r\r\r";
         $file = self::isBak($fileName);
-        self::addContent($file,$info);
+        self::addContent($file, $info);
     }
 
 
@@ -72,9 +92,9 @@ class Log
      * @param string $cont
      * @param string $fileName
      */
-    public static function run($cont, $fileName = 'run.log')
+    public static function run($cont='', $fileName = 'run.log')
     {
-        $content = $cont."\n\r";
+        $content = $cont . "\n\r";
         $file = self::isBak($fileName);
         self::addContent($file, $content);
     }

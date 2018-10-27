@@ -198,6 +198,18 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
         return $list;
     }
 
+
+    /**
+     * 获取表列详细信息
+     * @return array|bool|mixed
+     */
+    public function getTablesInfo()
+    {
+        $this->_sql = " SHOW FULL COLUMNS FROM `{$this->dbName}`.`{$this->_table}` ";
+        return $this->select();
+    }
+
+
     /**
      * 批量插入
      * @param array $field
@@ -602,12 +614,17 @@ class Pretreatment extends \Upadd\Bin\Db\LinkPdoMysql
             throw new UpaddException('in_where 类型,需传key或data');
         }
         if (is_array($data)) {
-            $data = lode(',', $data);
+            $tmp=[];
+            foreach ($data as $k=>$v){
+                $tmp[] = "'{$v}'";
+            }
+            $data = lode(',', $tmp);
         }
+
         if ($this->_where) {
-            $this->_in_where = " AND {$key} IN ({$data}) ";
+            $this->_in_where = " AND `{$key}` IN ({$data}) ";
         } else {
-            $this->_in_where = " WHERE {$key} IN ({$data}) ";
+            $this->_in_where = " WHERE `{$key}` IN ({$data}) ";
         }
         return $this;
     }

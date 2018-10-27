@@ -59,12 +59,19 @@ class Dispenser
 
 
     /**
+     * response
+     * @var
+     */
+    private $execute;
+
+    /**
      * 实例化 work
      * Dispenser constructor.
      */
     public function __construct()
     {
         $this->_work = Config::get('sys@work');
+        $this->execute = new response();
     }
 
     /**
@@ -79,12 +86,11 @@ class Dispenser
         //日志
         $request->setRequestLog();
         $this->_responseData = $this->http();
-        $response = new response();
-        $response->type = $this->_responseType;
-        $response->code = $this->_responseCode;
-        $response->header = $this->_responseHeader;
-        $response->content = $this->_responseData;
-        echo $response->sendHttp();
+        $this->execute->type = $this->_responseType;
+        $this->execute->code = $this->_responseCode;
+        $this->execute->header = $this->_responseHeader;
+        $this->execute->content = $this->_responseData;
+        echo $this->execute->sendHttp();
     }
 
 
@@ -104,10 +110,9 @@ class Dispenser
                 return $this->commandLine();
             }
             $this->_responseData = $this->command();
-            $response = new response();
-            $response->type = $this->_responseType;
-            $response->code = $this->_responseCode;
-            $response->header = $this->_responseHeader;
+            $this->execute->type = $this->_responseType;
+            $this->execute->code = $this->_responseCode;
+            $this->execute->header = $this->_responseHeader;
             return $this->_responseData;
         } else {
             throw new UpaddException('console Cant get the data');
@@ -120,8 +125,17 @@ class Dispenser
      */
     private function commandLine()
     {
-        print_r(['这里是新输出', $this->commandData]);
-        echo "\n\r";
+        $cli_action_autoload = Config::get('start@cli_action_autoload');
+        if (array_key_exists('u', $this->commandData) && array_key_exists('p', $this->commandData)) {
+            $this->getAction($cli_action_autoload . ucfirst($this->commandData['u']) . 'Action' . '@' . $this->commandData['p']);
+        }
+        unset($this->commandData['u']);
+        unset($this->commandData['p']);
+        $this->_responseData = $this->command();
+        $this->execute->type = $this->_responseType;
+        $this->execute->content = $this->_responseData;
+        //返回响应对象
+        return $this->execute->command();
     }
 
     /**
@@ -152,7 +166,14 @@ class Dispenser
             }
         }
 
+        if ($swoole_http_request) {
+            $params['HttpServer'] = $swoole_http_request;
+        } else {
+            $params['HttpServer'] = [];
+        }
+
         $rawContent = $swoole_http_request->rawContent();
+//        print_r($rawContent);
         if ($rawContent) {
             Data::setStream($rawContent);
         }
@@ -160,18 +181,23 @@ class Dispenser
         $request = $this->_work['Request'];
         $request->header = isset($swoole_http_request->header) ? $swoole_http_request->header : [];
         $request->server = isset($swoole_http_request->server) ? $swoole_http_request->server : [];
-        Log::notes([$request->header, $request->server]);
+//        Log::notes([$request->header, $request->server]);
+        unset($swoole_http_request);
+        unset($rawContent);
+        unset($params);
         //过滤浏览器自动请求  favicon.ico
         if ($request->server['request_uri'] !== '/favicon.ico') {
             //设置请求日志
             $request->setRequestLog();
             $this->_responseData = $this->http();
-            $response = new response();
-            $response->type = $this->_responseType;
-            $response->code = $this->_responseCode;
-            $response->header = $this->_responseHeader;
-            $response->content = $this->_responseData;
-            return $response->sendSwooleHtpp();
+            $this->execute->type = $this->_responseType;
+            $this->execute->code = $this->_responseCode;
+            $this->execute->header = $this->_responseHeader;
+            $this->execute->content = $this->_responseData;
+            Data::del();
+            return $this->execute->sendSwooleHtpp();
+        } else {
+            return false;
         }
     }
 
@@ -184,11 +210,24 @@ class Dispenser
     {
         if ($methods) {
             $_objAction = explode('@', $methods);
+            $this->isAction($_objAction);
             //路由设置控制器
             $this->getRoute()->setAction($_objAction[0], $_objAction[1]);
             return (list($this->_action, $this->_method) = $_objAction);
         }
         throw new UpaddException('[ The Action set wrong.. ]');
+    }
+
+
+    /**
+     * @param $_objAction
+     * @throws UpaddException
+     */
+    private function isAction($_objAction)
+    {
+        if (count($_objAction) != 2) {
+            throw new UpaddException('[ The Action set wrong.. ]');
+        }
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Swoole;
 
 use Config;
@@ -33,7 +34,7 @@ class HttpServer extends Server
      */
     public function initServer()
     {
-        $this->dispenser =  new Dispenser();
+        $this->dispenser = new Dispenser();
         return new swoole_http_server($this->host, $this->port);
     }
 
@@ -59,9 +60,8 @@ class HttpServer extends Server
     {
         $content = $this->dispenser->swoole($request);
         $response->status($content['code']);
-        if(count($content['header']) >=1 ){
-            foreach ($content['header'] as $key=>$val)
-            {
+        if (isset($content['header'])) {
+            foreach ($content['header'] as $key => $val) {
                 $response->header($key, $val);
             }
         }

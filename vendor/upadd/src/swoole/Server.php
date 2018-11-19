@@ -15,6 +15,7 @@ use Swoole\Http\Server as swoole_http_server;
 use Config;
 use Upadd\Swoole\Lib\Help;
 use Upadd\Bin\UpaddException;
+use Log;
 
 abstract class Server
 {
@@ -67,6 +68,12 @@ abstract class Server
      */
     protected $pidFile = '';
 
+    private $serviceType = '';
+
+    /**
+     * @var array
+     */
+    protected $localInfo = [];
 
     /**
      * Server constructor.
@@ -84,10 +91,21 @@ abstract class Server
             $address = 'tcp://' . $this->host . ':' . $this->port;
         }
         $addressParam = Help::parseAddress($address);
+        if (isset($addressParam['scheme'])) {
+            $this->serviceType = strtoupper($addressParam['scheme']);
+        }
+
         $this->type = $addressParam['sock'];
         $this->host = $addressParam['host'];
         $this->port = $addressParam['port'];
         $this->config = array_merge($this->config, (array)$this->configure());
+        //设置本地信息
+        $this->localInfo = [
+            'serviceType' => $this->serviceType,
+            'host' => $this->host,
+            'port' => $this->port,
+            'config' => $this->config
+        ];
     }
 
 
@@ -100,7 +118,9 @@ abstract class Server
     /**
      * @return mixed
      */
-    protected function doListen(){}
+    protected function doListen()
+    {
+    }
 
 
     /**
@@ -110,6 +130,10 @@ abstract class Server
     public function onStart(swoole_server $_server)
     {
         swoole_set_process_name($this->name . " Master");
+	Log::cmd("pid:{$this->pid} {$this->name} Start type:{$this->type} ip:{$this->host} port:{$this->port} ");
+        $this->localInfo['pid'] = $this->pid;
+        $this->localInfo['managerNmae'] = $this->name;
+        p($this->localInfo, true);
         echo "Start\n";
     }
 
@@ -120,7 +144,7 @@ abstract class Server
 
     public function onManagerStop(swoole_server $_server)
     {
-        echo "Manager Stop , shutdown server\n";
+        Log::cmd("Manager Stop , shutdown server");
         $_server->shutdown();
     }
 
@@ -139,7 +163,8 @@ abstract class Server
 
     public function onWorkerError(swoole_server $_server, $worker_id, $worker_pid, $exit_code)
     {
-        var_dump($this->name . " Worker Error", array($_server, $worker_id, $worker_pid, $exit_code));
+        //array($_server, $worker_id, $worker_pid, $exit_code)
+        Log::cmd($this->name . " Worker Error");
     }
 
     /**
@@ -149,7 +174,7 @@ abstract class Server
      */
     public function onWorkerStop(swoole_server $_server, $worker_id)
     {
-        var_dump(sprintf('Server %s Worker[ #%s ] is shutdown', $this->name, $worker_id));
+        Log::cmd(sprintf('Server %s Worker[ #%s ] is shutdown', $this->name, $worker_id));
     }
 
 
@@ -172,9 +197,7 @@ abstract class Server
     public function name($name)
     {
         $this->name = $name;
-
-        $this->pid = host() . '/tmp/' . str_replace(' ', '-', $this->name) . '.pid';
-
+        $this->pid = '/tmp/' . str_replace(' ', '-', $this->name) . '.pid';
         return $this;
     }
 
@@ -184,7 +207,11 @@ abstract class Server
      */
     public function initServer()
     {
-        return new swoole_server($this->host, $this->port, SWOOLE_PROCESS, SWOOLE_SOCK_TCP);
+        if ($this->serviceType === 'UDP') {
+            return new swoole_server($this->host, $this->port, SWOOLE_PROCESS, SWOOLE_SOCK_UDP);
+        } else {
+            return new swoole_server($this->host, $this->port, SWOOLE_PROCESS, SWOOLE_SOCK_TCP);
+        }
     }
 
 
@@ -207,11 +234,11 @@ abstract class Server
     }
 
     /**
-     * 引导服务，当启动是接收到 swoole server 信息，则默认以这个swoole 服务进行引导
+     * 引导启动
      * @param swoole_server|swoole_server_port $swoole
      * @return $this
      */
-    public function bootstrap($swoole = null)
+    protected function bootstrap($swoole = null)
     {
         $this->server = null === $swoole ? $this->initServer() : $swoole;
         $this->doListen();
@@ -226,7 +253,6 @@ abstract class Server
         try {
             $this->bootstrap();
             $this->server->start();
-
         } catch (UpaddException $e) {
             throw new UpaddException($e->getMessage());
         }

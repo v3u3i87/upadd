@@ -39,10 +39,15 @@ if (!function_exists('p')) {
      */
     function p($data = array(), $type = null)
     {
-        header('Content-Type:text/html;charset=utf-8');
-        echo '<pre>';
-        print_r($data);
-        echo '</pre>';
+        if (is_run_evn()) {
+            header('Content-Type:text/html;charset=utf-8');
+            echo '<pre>';
+            print_r($data);
+            echo '</pre>';
+        } else {
+            print_r($data);
+            echo "\n\r";
+        }
         !$type ? exit () : null;
     }
 

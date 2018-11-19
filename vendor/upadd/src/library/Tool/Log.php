@@ -19,23 +19,15 @@ class Log
 {
 
     /**
-     * @return false|string
-     */
-    private static function time()
-    {
-        return date('Y-m-d H:i:s', time());
-    }
-
-    /**
      * cmd
      * @param string $info
      */
-    public static function cmd($info)
+    public function cmd($content)
     {
-        $now = self::time();
-        echo '[' . $now . '] ' . $info . PHP_EOL;
+        $now = $this->time();
+        $data = $this->setContent($content);
+        echo '[' . $now . '] ' . $data . PHP_EOL;
     }
-
 
     /**
      * 全局笔记
@@ -45,7 +37,7 @@ class Log
     public function notes($cont = '', $fileName = 'notes.log')
     {
         if (is_array($cont) || is_object($cont)) {
-            $content = json($cont) . "\r\n";
+            $content = json_decode($cont) . "\r\n";
         } elseif (is_string($cont)) {
             $content = $cont . "\r\n";
         } else {
@@ -62,7 +54,7 @@ class Log
      * @param 内容 $cont
      * @param 文件名称以及格式 $file
      */
-    public static function write($cont, $fileName)
+    public function write($cont, $fileName)
     {
         $info = 'URL:' . self::getHttpUrl() . "\r\n";
         $info .= 'Time: ' . date("Y-m-d H:i:s") . "\r\n";
@@ -77,11 +69,17 @@ class Log
      * @param 内容 $cont
      * @param 文件名称以及格式 $file
      */
-    public static function request($cont, $fileName = 'request.log')
+    public function request($cont, $fileName = 'request.log')
     {
-        $cont['url'] = self::getHttpUrl();
-        $cont['time'] = date('Y-m-d H:i:s');
-        $content = json($cont) . ",\r";
+        $data = [];
+        if (is_array($cont)) {
+            $data = array_merge($cont, $data);
+        }else{
+            $data['content'] = $cont;
+        }
+        $data['url'] = self::getHttpUrl();
+        $data['time'] = date('Y-m-d H:i:s');
+        $content = json_encode($cont) . ",\r";
         $file = self::isBak($fileName);
         self::addContent($file, $content);
     }
@@ -92,11 +90,36 @@ class Log
      * @param string $cont
      * @param string $fileName
      */
-    public static function run($cont='', $fileName = 'run.log')
+    public static function run($cont = '', $fileName = 'run.log')
     {
         $content = $cont . "\n\r";
         $file = self::isBak($fileName);
         self::addContent($file, $content);
+    }
+
+
+    /**
+     * @return false|string
+     */
+    private function time()
+    {
+        return date('Y-m-d H:i:s', time());
+    }
+
+
+    /**
+     * @param $content
+     * @return mixed|string
+     */
+    private function setContent($content)
+    {
+        $data = '';
+        if (is_array($content)) {
+            $data = json_encode($content);
+        } elseif (is_string($content)) {
+            $data = $content;
+        }
+        return $data;
     }
 
 

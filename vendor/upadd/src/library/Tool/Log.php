@@ -74,7 +74,7 @@ class Log
         $data = [];
         if (is_array($cont)) {
             $data = array_merge($cont, $data);
-        }else{
+        } else {
             $data['content'] = $cont;
         }
         $data['url'] = self::getHttpUrl();
@@ -90,8 +90,11 @@ class Log
      * @param string $cont
      * @param string $fileName
      */
-    public static function run($cont = '', $fileName = 'run.log')
+    public static function run($cont, $fileName = 'run.log')
     {
+        if (is_array($cont)) {
+            $cont = json_encode($cont);
+        }
         $content = $cont . "\n\r";
         $file = self::isBak($fileName);
         self::addContent($file, $content);

@@ -14,6 +14,7 @@ namespace Upadd\Bin\Http;
 use Config;
 use Data;
 use Log;
+use Upadd\Bin\Di;
 use Upadd\Bin\Response\Execute as response;
 use Upadd\Bin\View\Prompt;
 use Upadd\Bin\UpaddException;
@@ -70,7 +71,7 @@ class Dispenser
      */
     public function __construct()
     {
-        $this->_work = Config::get('sys@work');
+        $this->_work = Di::all();
         $this->execute = new response();
     }
 

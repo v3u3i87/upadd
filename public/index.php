@@ -3,6 +3,7 @@
 /**
 | Author: Richard.z <v3u3i87@gmail.com>
  **/
+ini_set('memory_limit', '2024M');
 define('RUNTIME', microtime(true));
 define('APP_NAME', 'demo');
 define('APP_LANG', 'zh_cn');

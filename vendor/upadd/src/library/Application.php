@@ -6,7 +6,7 @@ namespace Upadd\Bin;
 use Upadd\Bin\Grab;
 use Upadd\Bin\Factory;
 use Upadd\Bin\Loader;
-
+use Upadd\Bin\Di;
 use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Http\Dispenser;
 
@@ -18,13 +18,7 @@ class Application
      * 配置文件
      * @var array
      */
-    private static $_config = [];
-
-    /**
-     * 初始化组件对象
-     * @var array
-     */
-    private $app = [];
+    private $configMap = [];
 
     /**
      * 派发器
@@ -33,12 +27,19 @@ class Application
     private $dispenser;
 
 
+    private static $init = null;
+
+
     /**
      * @return Application
      */
     public static function init()
     {
-        return new static();
+        if (self::$init === null) {
+            self::$init = new static();
+//            p(self::$init, true);
+            return self::$init;
+        }
     }
 
 
@@ -48,24 +49,24 @@ class Application
     final private function __construct()
     {
         $this->loadConfig();
-        $this->loadSession();
         $this->loadWorks();
         $this->loadAppWorksFiles();
         $this->loadFactory();
         $this->loadAlias()->run();
         Grab::run();
-        $this->loadSystemWorkConfig();
+        $this->loadSession();
+//        $this->loadSystemWorkConfig();
         $this->loadRoute();
         $this->loadInitConfig();
     }
 
-    /**
-     * 获取配置文件
-     */
+
     private function loadConfig()
     {
-        static::$_config = $this->getConfiguration()->getConfigLoad();
+        $this->configMap = Di::set('Configuration', new \Upadd\Bin\Config\Configuration)->getConfigLoad();
+        Di::setConfigData($this->configMap);
     }
+
 
     private function loadInitConfig()
     {
@@ -94,7 +95,7 @@ class Application
     private function loadSession()
     {
         if ($this->getSessionStatus()) {
-            \Upadd\Bin\Session\Load::setFileType(static::$_config['sys']['session']);
+            \Upadd\Bin\Session\Load::setFileType($this->configMap['sys']['session']);
         }
     }
 
@@ -104,14 +105,14 @@ class Application
      */
     private function loadWorks()
     {
-        $this->app = [
+        Di::import([
             'GetConfiguration' => new \Upadd\Bin\Config\GetConfiguration,
             'Request' => new \Upadd\Bin\Http\Request,
             'Route' => new \Upadd\Bin\Http\Route,
             'getSession' => \Upadd\Bin\Session\getSession::init(),
             'Log' => new \Upadd\Bin\Tool\Log,
             'Data' => new \Upadd\Bin\Http\Data,
-        ];
+        ]);
     }
 
 
@@ -122,17 +123,9 @@ class Application
 
     private function loadFactory()
     {
-        return Factory::Import($this->app);
+        return Factory::Import(Di::all());
     }
 
-    /**
-     * 实例化全局配置文件
-     * @return Configuration
-     */
-    protected function getConfiguration()
-    {
-        return ($this->_work['Configuration'] = new Configuration());
-    }
 
     /**
      * 获取别名
@@ -141,7 +134,7 @@ class Application
      */
     private function loadAlias()
     {
-        return (new Alias(static::$_config));
+        return (new Alias($this->configMap));
     }
 
 
@@ -151,7 +144,7 @@ class Application
      */
     private function loadSystemWorkConfig()
     {
-        static::$_config['sys'] = (array_merge(static::$_config['sys'], ['app' => $this->app]));
+        $this->configMap['sys'] = (array_merge($this->configMap['sys']));
     }
 
 
@@ -160,8 +153,8 @@ class Application
      */
     private function loadRoute()
     {
-        $route = $this->app['Route'];
-        $route->getRequest($this->app['Request']);
+        $route = Di::get('Route');
+        $route->getRequest(Di::get('Request'));
     }
 
     /**
@@ -171,7 +164,7 @@ class Application
      */
     private function getSessionStatus()
     {
-        return (static::$_config['sys']['is_session']);
+        return ($this->configMap['sys']['is_session']);
     }
 
 
@@ -203,32 +196,5 @@ class Application
         $this->dispenser = new Dispenser();
     }
 
-//
-//    /**
-//     * @param $callable
-//     * @param array $argv
-//     */
-//    public function run($callable)
-//    {
-//        date_default_timezone_set('Asia/Shanghai');
-//        if (is_callable($callable)) {
-//            call_user_func_array($callable, func_get_args());
-//        }
-//        $this->dispenser = new Dispenser();
-//    }
-
-
-    /**
-     * @param string $name
-     * @return array|mixed|null
-     */
-    public function getWorks($name = '')
-    {
-        if ($name) {
-            return isset($this->app[$name]) ? $this->app[$name] : null;
-        } else {
-            return $this->app;
-        }
-    }
 
 }

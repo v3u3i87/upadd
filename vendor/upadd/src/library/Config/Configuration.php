@@ -7,16 +7,11 @@ use Upadd\Bin\UpaddException;
 class Configuration
 {
 
-    public $_config = array();
+    private $hostName = null;
 
-    //电脑名称
-    public $hostName = null;
+    private $_evn = null;
 
-    public $_evn = null;
-
-    public $_sys = [];
-
-    public static $_configData = array();
+    private static $_configData = [];
 
     /**
      * 加载配置文件
@@ -24,11 +19,11 @@ class Configuration
      */
     public function getConfigLoad()
     {
-        $this->_sys = $this->mergeConfig();
-        $this->_config['sys'] = $this->_sys;
+        $conf = [];
+        $conf['sys'] = $this->mergeConfig();
         $this->hostName = gethostname();
-        if (array_key_exists('environment', $this->_sys)) {
-            $evn = $this->_sys['environment'];
+        if (array_key_exists('environment', $conf['sys'])) {
+            $evn = $conf['sys']['environment'];
             $this->_evn = $this->getEvnName($evn);
         }
         $configPath = host() . '/config';
@@ -36,15 +31,14 @@ class Configuration
             //获取配置目录的所有文件
             $config = $this->getConfigName($configPath . '/' . $this->_evn);
             if ($config) {
-                $this->_config = array_merge($this->_config, $config);
+                $conf = array_merge($conf, $config);
             }
         } else {
-            $this->_config['database'] = $this->getConfigName($configPath . '/' . 'database.php', false);
+            $conf['database'] = $this->getConfigName($configPath . '/' . 'database.php', false);
         }
-
-        static::$_configData = $this->_config;
-        return $this->_config;
+        return (static::$_configData = $conf);
     }
+
 
     /**
      * 获取配置文件
@@ -56,7 +50,6 @@ class Configuration
         if ($type) {
             return $this->soFileLoad($configPath);
         }
-
         if (file_exists($configPath)) {
             return (require $configPath);
         }

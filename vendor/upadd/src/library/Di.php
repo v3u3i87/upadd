@@ -1,4 +1,5 @@
 <?php
+
 namespace Upadd\Bin;
 
 use Upadd\Bin\Api\DiInterface;
@@ -10,12 +11,9 @@ class Di
     /**
      * @var array
      */
-    public $service = [];
+    public static $service = [];
 
-    /**
-     * @var array
-     */
-    public static $shared = [];
+    public static $configData = [];
 
 
     /**
@@ -27,6 +25,19 @@ class Di
         $this->service[$name] = $value;
     }
 
+
+    public static function setConfigData($config)
+    {
+        static::$configData = $config;
+    }
+
+
+    public static function getConfig()
+    {
+        return static::$configData;
+    }
+
+
     /**
      * @param $name
      * @return mixed
@@ -34,8 +45,8 @@ class Di
      */
     public function __get($name)
     {
-        if (isset($this->service[$name])) {
-            return $this->service[$name];
+        if (isset(static::$service[$name])) {
+            return static::$service[$name];
         } else {
             throw new UpaddException("Service '" . $name . "' wasn't found in the dependency injection container");
         }
@@ -46,13 +57,13 @@ class Di
      * @param array $import
      * @throws \Upadd\Bin\UpaddException
      */
-    public function import(array $import)
+    public static function import(array $import)
     {
         if (is_array($import)) {
-            if (count($this->service) >= 1) {
-                $this->service = array_merge($this->service, $import);
+            if (count(static::$service) >= 1) {
+                static::$service = array_merge(static::$service, $import);
             } else {
-                $this->service = $import;
+                static::$service = $import;
             }
         } else {
             throw new UpaddException("import not Service '");
@@ -64,9 +75,10 @@ class Di
      * @param $name
      * @param $definition
      */
-    public function set($name, $definition)
+    public static function set($name, $definition)
     {
-        $this->service[$name] = $definition;
+        static::$service[$name] = $definition;
+        return static::$service[$name];
     }
 
 
@@ -75,19 +87,19 @@ class Di
      * @return mixed
      * @throws \Upadd\Bin\UpaddException
      */
-    public function get($name)
+    public static function get($name)
     {
-        if (isset($this->service[$name])) {
-            $instance = $this->service[$name];
+        if (isset(static::$service[$name])) {
+            $instance = static::$service[$name];
         } else {
             throw new UpaddException("Service '" . $name . "' wasn't found in the dependency injection container");
         }
 
         if (is_object($instance)) {
             if ($instance instanceof DiInterface) {
-                $instance->binding($this);
+                $instance->binding($instance);
             }
-        }else {
+        } else {
             throw new UpaddException("Service '" . $name . "' not is object");
         }
         return $instance;
@@ -97,10 +109,10 @@ class Di
      * @param $name
      * @throws \Upadd\Bin\UpaddException
      */
-    public function del($name)
+    public static function del($name)
     {
-        if (isset($this->service[$name])) {
-            unset($this->service[$name]);
+        if (isset(static::$service[$name])) {
+            unset(static::$service[$name]);
         } else {
             throw new UpaddException("Service '" . $name . "' wasn't found in the dependency injection container");
         }
@@ -109,9 +121,9 @@ class Di
     /**
      * @return array
      */
-    public function getAll()
+    public static function all()
     {
-        return $this->service;
+        return static::$service;
     }
 
 }

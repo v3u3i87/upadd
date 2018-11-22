@@ -9,16 +9,16 @@ namespace Upadd\Swoole;
  * Name:
  */
 use Config;
-
+use Log;
 use Upadd\Bin\UpaddException;
-use swoole_server;
+use Swoole\Server as swoole_server;
 
 abstract class UpdServer extends Server{
 
 
    public function configure()
    {
-       $config = Config::get('swoole@webSocketParam');
+       $config = Config::get('swoole@tcp_param');
        $config['daemonize'] = Config::get('swoole@daemonize');
        return $config;
    }
@@ -29,20 +29,13 @@ abstract class UpdServer extends Server{
      * @param array $client_info
      * @return void
      */
-    public function onPacket(swoole_server $server, $data, array $client_info)
+    public function onPacket(swoole_server $server, $clinetData, array $clientInfo)
     {
-        $content = $this->doPacket($server, $data, $client_info);
-
-        $server->sendto($client_info['address'], $client_info['port'], $content);
+//        p($clientInfo,true);
+        $content = $this->doWork($server, $clinetData, $clientInfo);
+//        Log::cmd($content);
+//        $server->sendto($clientInfo['address'], $clientInfo['port'], $content);
     }
-
-    /**
-     * @param swoole_server $server
-     * @param $data
-     * @param $client_info
-     * @return mixed
-     */
-    abstract public function doPacket(swoole_server $server, $data, $client_info);
 
     /**
      * 业务逻辑代码
@@ -50,6 +43,6 @@ abstract class UpdServer extends Server{
      * @param $param
      * @return mixed
      */
-    abstract protected function doWork($param = [], $client = []);
+    abstract protected function doWork($server, $clinetData, $clientInfo);
 
 }

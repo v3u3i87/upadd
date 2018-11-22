@@ -60,7 +60,7 @@ class AsyncTcp extends Client
     }
 
     /**
-     * 发送数据通道
+     * 发送数据启动通道
      * @return bool
      */
     public function onConnect()

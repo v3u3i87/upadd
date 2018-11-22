@@ -47,12 +47,21 @@ class Grab extends Debug
         $body .= "Msg:" . $error[1] . "\n";
         $body .= "File:" . $error[2] . "\n";
         $body .= "Line:" . $error[3] . "\n";
-        if ($error[4]) {
-            $body .= "Info:\n" . json($error[4]) . "\n";
+        if(is_run_evn()){
+            if ($error[4]) {
+                $body .= "Info:\n" . json($error[4]) . "\n";
+            }
+            $body .= "---\n";
+            Log::run($body);
+            self::__print($error,"setError");
+        }else{
+            if ($error[4]) {
+                $body .= "Info:\n" . json($error[4]) . "\n";
+            }
+            $body .= "---\n";
+
+            echo $body;
         }
-        $body .= "---\n";
-        Log::run($body);
-        self::__print($error);
     }
 
     /**
@@ -69,7 +78,7 @@ class Grab extends Debug
             'previous' => $e->getPrevious(),
         ];
         Log::run($error);
-        self::__print($error);
+        self::__print($error,"setGlobalException");
     }
 
 
@@ -96,14 +105,14 @@ class Grab extends Debug
         $endtime .= 'End Run Time consuming ' . round($time, 3) . ' second';
         $endtime .= "\r\n" . "======\n\r";
         Log::run($endtime);
-        self::__print($error);
+        self::__print($error,"setExit");
     }
 
     /**
      * 打印错误或是异常
      * @param array $error
      */
-    private static function __print($error = [])
+    private static function __print($error = [],$type)
     {
         if (Config::get('error@debug')) {
             if ($error) {
@@ -112,7 +121,8 @@ class Grab extends Debug
                     print_r($error);
                     echo '</pre>';
                 } else {
-                    print_r($error);
+                    $time = date('Y-m-d H:i:s', time());
+                    echo "[{$time}] error Type {$type} Grab ".PHP_EOL;
                 }
             }
         }

@@ -18,7 +18,7 @@ return [
     'data_dir'=>UPADD_HOST.'/data/',
     'log_path'=>UPADD_HOST.'/data/'.APP_NAME.'/log/',
     'config_dir'=>UPADD_HOST.'/config/',
-    'upadd_version'=>'Upadd-0.5',
+    'upadd_version'=>'upadd-v1.0',
     //判断是否启用插件
     'is_plug'=>false,
     //系统缓存

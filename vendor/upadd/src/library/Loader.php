@@ -19,7 +19,7 @@ use Upadd\Bin\UpaddException;
 class Loader
 {
 
-    public static function Run()
+    public static function execute()
     {
         self::is_create_data_dir();
         spl_autoload_register(function ($className) {

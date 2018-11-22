@@ -2,9 +2,13 @@
 
 namespace Upadd\Bin;
 
+
+use Upadd\Bin\Grab;
+use Upadd\Bin\Factory;
+use Upadd\Bin\Loader;
+
 use Upadd\Bin\Config\Configuration;
 use Upadd\Bin\Http\Dispenser;
-use Config;
 
 
 class Application
@@ -14,61 +18,111 @@ class Application
      * 配置文件
      * @var array
      */
-    public static $_config = [];
+    private static $_config = [];
 
     /**
      * 初始化组件对象
      * @var array
      */
-    public $_work = [];
+    private $app = [];
 
     /**
      * 派发器
      * @var
      */
-    public $dispenser;
+    private $dispenser;
 
 
     /**
-     * @param $callable
-     * @param array $argv
+     * @return Application
      */
-    public function run($callable)
+    public static function init()
     {
-        date_default_timezone_set('Asia/Shanghai');
-        if (is_callable($callable)) {
-            call_user_func_array($callable, func_get_args());
+        return new static();
+    }
+
+
+    /**
+     * Application constructor.
+     */
+    final private function __construct()
+    {
+        $this->loadConfig();
+        $this->loadSession();
+        $this->loadWorks();
+        $this->loadAppWorksFiles();
+        $this->loadFactory();
+        $this->loadAlias()->run();
+        Grab::run();
+        $this->loadSystemWorkConfig();
+        $this->loadRoute();
+        $this->loadInitConfig();
+    }
+
+    /**
+     * 获取配置文件
+     */
+    private function loadConfig()
+    {
+        static::$_config = $this->getConfiguration()->getConfigLoad();
+    }
+
+    private function loadInitConfig()
+    {
+        $hostConfigPath = host() . '/config';
+        /**
+         * 扩展文件
+         */
+        $extend = $hostConfigPath . '/extend.php';
+        file_exists($extend) && require $extend;
+        /**
+         * 路由配置
+         */
+        $routing = $hostConfigPath . '/routing.php';
+        file_exists($routing) && require $routing;
+        /**
+         * 过滤器
+         */
+        $filters = $hostConfigPath . '/filters.php';
+        file_exists($filters) && require $filters;
+    }
+
+    /**
+     * load session
+     * @return bool
+     */
+    private function loadSession()
+    {
+        if ($this->getSessionStatus()) {
+            \Upadd\Bin\Session\Load::setFileType(static::$_config['sys']['session']);
         }
-        $this->dispenser = new Dispenser();
     }
 
     /**
      * 实例化全局工作模块
      * @param $work
      */
-    public function runWorkModule()
+    private function loadWorks()
     {
-        $app = [
+        $this->app = [
             'GetConfiguration' => new \Upadd\Bin\Config\GetConfiguration,
             'Request' => new \Upadd\Bin\Http\Request,
             'Route' => new \Upadd\Bin\Http\Route,
             'getSession' => \Upadd\Bin\Session\getSession::init(),
             'Log' => new \Upadd\Bin\Tool\Log,
             'Data' => new \Upadd\Bin\Http\Data,
-//            'Cache'=>new \Upadd\Bin\Cache,
-//            'Async'=>new \Upadd\Bin\Async,
         ];
-        $this->_work = $app;
-        return $this->_work;
     }
 
 
-    /**
-     * 获取配置文件
-     */
-    public function loadConfig()
+    private function loadAppWorksFiles()
     {
-        return (static::$_config = $this->getConfiguration()->getConfigLoad());
+        return Loader::execute();
+    }
+
+    private function loadFactory()
+    {
+        return Factory::Import($this->app);
     }
 
     /**
@@ -85,7 +139,7 @@ class Application
      * @return \Upadd\Bin\Alias
      * @throws \Upadd\Bin\UpaddException
      */
-    public function getAlias()
+    private function loadAlias()
     {
         return (new Alias(static::$_config));
     }
@@ -95,19 +149,19 @@ class Application
      * 全局配置工作
      * @return array
      */
-    public function setWorkConfig()
+    private function loadSystemWorkConfig()
     {
-        static::$_config['sys'] = (array_merge(static::$_config['sys'], ['work' => $this->_work]));
+        static::$_config['sys'] = (array_merge(static::$_config['sys'], ['app' => $this->app]));
     }
 
 
     /**
      * 把路由加载到请求器
      */
-    public function setRoute()
+    private function loadRoute()
     {
-        $route = $this->_work['Route'];
-        $route->getRequest($this->_work['Request']);
+        $route = $this->app['Route'];
+        $route->getRequest($this->app['Request']);
     }
 
     /**
@@ -117,44 +171,63 @@ class Application
      */
     private function getSessionStatus()
     {
-        return static::$_config['sys']['is_session'];
+        return (static::$_config['sys']['is_session']);
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function loadCig()
+    {
+        return $this->dispenser->fpm();
     }
 
     /**
-     * 设置 session
-     * @return bool
+     * @param array $argv
+     * @return mixed
      */
-    public function setSession()
+    public function loadConsole($argv = [])
     {
-        if ($this->getSessionStatus()) {
-            $config = static::$_config['sys']['session'];
-            if ($config['domain']) {
-                ini_set('session.cookie_domain', $config['domain']);
-            }
-            if ($config['expire']) {
-                ini_set('session.gc_maxlifetime', $config['expire']);
-                ini_set('session.cookie_lifetime', $config['expire']);
-            }
-            if ($config['use_cookies']) {
-                ini_set('session.use_cookies', $config['use_cookies'] ? 1 : 0);
-            }
-            if ($config['cache_limiter']) {
-                session_cache_limiter($config['cache_limiter']);
-            }
-            if ($config['cache_expire']) {
-                session_cache_expire($config['cache_expire']);
-            }
+        return $this->dispenser->console($argv);
+    }
 
-            $seeion = new \Upadd\Bin\Session\SessionFile();
-            session_set_save_handler(
-                array($seeion, 'open'),
-                array($seeion, 'close'),
-                array($seeion, 'read'),
-                array($seeion, 'write'),
-                array($seeion, 'destroy'),
-                array($seeion, 'gc')
-            );
-            session_start();
+
+    /**
+     * @param $callable
+     * @param array $argv
+     */
+    public function execute()
+    {
+        date_default_timezone_set('Asia/Shanghai');
+        $this->dispenser = new Dispenser();
+    }
+
+//
+//    /**
+//     * @param $callable
+//     * @param array $argv
+//     */
+//    public function run($callable)
+//    {
+//        date_default_timezone_set('Asia/Shanghai');
+//        if (is_callable($callable)) {
+//            call_user_func_array($callable, func_get_args());
+//        }
+//        $this->dispenser = new Dispenser();
+//    }
+
+
+    /**
+     * @param string $name
+     * @return array|mixed|null
+     */
+    public function getWorks($name = '')
+    {
+        if ($name) {
+            return isset($this->app[$name]) ? $this->app[$name] : null;
+        } else {
+            return $this->app;
         }
     }
 

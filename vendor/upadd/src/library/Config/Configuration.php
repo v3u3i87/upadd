@@ -4,7 +4,8 @@ namespace Upadd\Bin\Config;
 
 use Upadd\Bin\UpaddException;
 
-class Configuration{
+class Configuration
+{
 
     public $_config = array();
 
@@ -26,22 +27,19 @@ class Configuration{
         $this->_sys = $this->mergeConfig();
         $this->_config['sys'] = $this->_sys;
         $this->hostName = gethostname();
-        if(array_key_exists('environment',$this->_sys))
-        {
+        if (array_key_exists('environment', $this->_sys)) {
             $evn = $this->_sys['environment'];
             $this->_evn = $this->getEvnName($evn);
         }
-        $configPath = host().'/config';
-        if($this->_evn)
-        {
+        $configPath = host() . '/config';
+        if ($this->_evn) {
             //获取配置目录的所有文件
-            $config = $this->getConfigName($configPath.'/'.$this->_evn );
-            if($config)
-            {
-                $this->_config = array_merge($this->_config,$config);
+            $config = $this->getConfigName($configPath . '/' . $this->_evn);
+            if ($config) {
+                $this->_config = array_merge($this->_config, $config);
             }
-        }else{
-            $this->_config['database'] = $this->getConfigName($configPath.'/'.'database.php',false);
+        } else {
+            $this->_config['database'] = $this->getConfigName($configPath . '/' . 'database.php', false);
         }
 
         static::$_configData = $this->_config;
@@ -53,15 +51,13 @@ class Configuration{
      * @param $configPath
      * @return array|bool
      */
-    public function getConfigName($configPath,$type=true)
+    public function getConfigName($configPath, $type = true)
     {
-        if($type)
-        {
-           return $this->soFileLoad($configPath);
+        if ($type) {
+            return $this->soFileLoad($configPath);
         }
 
-        if(file_exists($configPath))
-        {
+        if (file_exists($configPath)) {
             return (require $configPath);
         }
         return false;
@@ -74,19 +70,14 @@ class Configuration{
      */
     protected function soFileLoad($configPath)
     {
-        if($file = scandir($configPath))
-        {
-            if(count($file) >= 2)
-            {
+        if ($file = scandir($configPath)) {
+            if (count($file) >= 2) {
                 $_config = array();
-                foreach ($file as $k => $v)
-                {
-                    if ($k >= 2)
-                    {
-                        $fileName = $configPath.'/'.$v;
+                foreach ($file as $k => $v) {
+                    if ($k >= 2) {
+                        $fileName = $configPath . '/' . $v;
                         //判断文件是否存在
-                        if(file_exists($fileName))
-                        {
+                        if (file_exists($fileName)) {
                             $tmpFile = require $fileName;
                             $_config[substr($v, 0, -4)] = $tmpFile;
                         }
@@ -103,18 +94,16 @@ class Configuration{
      * 获取配置文件
      * @param string $fileNmae
      */
-    public function getConfLoad($fileNmae=null)
+    public function getConfLoad($fileNmae = null)
     {
         try {
 
-            $file = host().'/config/'.$fileNmae.'.php';
+            $file = host() . '/config/' . $fileNmae . '.php';
 
-            if(file_exists($file) && is_file($file))
-            {
+            if (file_exists($file) && is_file($file)) {
                 return require $file;
             }
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             throw new UpaddException($e->getMessage());
         }
     }
@@ -126,17 +115,13 @@ class Configuration{
      */
     public function getEvnName($env = array())
     {
-        if($env)
-        {
-            foreach ($env as $k => $v)
-            {
-                if(is_array($v))
-                {
-                    if (in_array($this->hostName, $v))
-                    {
+        if ($env) {
+            foreach ($env as $k => $v) {
+                if (is_array($v)) {
+                    if (in_array($this->hostName, $v)) {
                         return $k;
                     }
-                }else{
+                } else {
                     return $k;
                 }
             }
@@ -150,7 +135,7 @@ class Configuration{
      */
     protected function getSys()
     {
-        return (require host().VENDOR.'/src/public/config.php');
+        return (require host() . VENDOR . '/src/public/config.php');
     }
 
     /**
@@ -159,7 +144,7 @@ class Configuration{
      */
     protected function getStart()
     {
-        return (require host().'/config/start.php');
+        return (require host() . '/config/start.php');
     }
 
     /**
@@ -168,7 +153,7 @@ class Configuration{
      */
     protected function mergeConfig()
     {
-        return array_merge($this->getStart(),$this->getSys());
+        return array_merge($this->getStart(), $this->getSys());
     }
 
     /**
@@ -178,10 +163,8 @@ class Configuration{
      */
     public static function get($key)
     {
-        if(list($_key,$val) = lode('@',$key))
-        {
-            if(isset(static::$_configData[$_key][$val]))
-            {
+        if (list($_key, $val) = lode('@', $key)) {
+            if (isset(static::$_configData[$_key][$val])) {
                 return static::$_configData[$_key][$val];
             }
         }

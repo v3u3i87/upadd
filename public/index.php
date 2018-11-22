@@ -13,4 +13,4 @@ require  '../vendor/autoload.php';
 //加载Upadd
 require '../vendor/upadd/src/run.php';
 
-$app->dispenser->fpm();
+$app->loadCig();

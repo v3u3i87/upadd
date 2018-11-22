@@ -22,4 +22,4 @@ require __DIR__ . '/vendor/autoload.php';
 //加载Upadd
 require __DIR__ . '/vendor/upadd/src/run.php';
 
-$app->dispenser->console(isset($argv) ? $argv : []);
+$app->loadConsole(isset($argv) ? $argv : []);

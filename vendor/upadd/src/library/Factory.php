@@ -34,6 +34,7 @@ abstract class Factory
     {
 
         $action = static::getName();
+
         switch (count($args)) {
             case 0:
                 return $action->$method();
@@ -51,7 +52,7 @@ abstract class Factory
                 return $action->$method($args[0], $args[1], $args[2], $args[3]);
 
             default:
-                return call_user_func_array(array($action, $method), $args);
+                return call_user_func_array(array($action, $method), ...$args);
         }
     }
 
